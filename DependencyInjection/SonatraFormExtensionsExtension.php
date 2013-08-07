@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\Loader;
 class SonatraFormExtensionsExtension extends Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
