@@ -11,9 +11,9 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class SonatraFormExtensionsExtension extends Extension
+class SonatraFormExtensionsExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -43,6 +43,27 @@ class SonatraFormExtensionsExtension extends Extension
 
                 $this->$method($config[$type], $container);
             }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        $exts = $container->getExtensions();
+
+        if (isset($exts['twig'])) {
+            $resources = array();
+
+            foreach (array('div') as $template) {
+                $resources[] = 'SonatraFormExtensionsBundle:Form:form_' . $template . '_layout.html.twig';
+            }
+
+            $container->prependExtensionConfig(
+                    'twig',
+                    array('form'  => array('resources' => $resources))
+            );
         }
     }
 

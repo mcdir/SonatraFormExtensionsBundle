@@ -12,20 +12,10 @@
 namespace Sonatra\Bundle\FormExtensionsBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Sonatra\Bundle\FormExtensionsBundle\DependencyInjection\Compiler\FormPass;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
 class SonatraFormExtensionsBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
-        $container->addCompilerPass(new FormPass());
-    }
 }
