@@ -5,6 +5,7 @@ The Sonatra FormExtensionsBundle add form types.
 
 Features include:
 
+- Profiler
 - Select2 Type
 - Currency Type
 
