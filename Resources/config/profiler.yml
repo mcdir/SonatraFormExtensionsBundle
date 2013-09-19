@@ -1,0 +1,21 @@
+parameters:
+    data_collector.sonatra_form_extensions.class: Sonatra\Bundle\FormExtensionsBundle\Profiler\DataCollector\FormDataCollector
+    sonatra_form_extensions.twig.tracable_engine.class: Sonatra\Bundle\FormExtensionsBundle\Twig\Form\TwigRendererEngineTraceable
+    sonatra.formextensions.type_extension.profiler.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ProfilerTypeExtension
+
+services:
+    data_collector.sonatra_form_extensions:
+        public: false
+        class: '%data_collector.sonatra_form_extensions.class%'
+        arguments: ['@twig.form.engine']
+        tags: [ { name: data_collector, template: '@SonatraFormExtensions/Profiler/profiler.html.twig', id: sonatra_form_extensions } ]
+
+    sonatra_form_extensions.twig.tracable_engine:
+        public: false
+        class: '%sonatra_form_extensions.twig.tracable_engine.class%'
+        arguments: ['%twig.form.resources%']
+        calls: [ ['setStopwatch', ['@?debug.stopwatch']] ]
+
+    sonatra.formextensions.type_extension.profiler:
+        class: '%sonatra.formextensions.type_extension.profiler.class%'
+        tags: [ { name: form.type_extension, alias: form } ]
