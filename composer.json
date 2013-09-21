@@ -15,8 +15,8 @@
     "require": {
         "php": ">=5.3.2",
         "symfony/framework-bundle": "~2.3",
-        "sonatra/ajax-bundle":"~1.0",
-        "ivaynberg/select2": "*"
+        "sonatra/ajax-bundle": "~1.0",
+        "sonatra_ivaynberg/select2": "3.4.3"
     },
     "require-dev": {
         "symfony/console": "~2.3",
@@ -30,5 +30,18 @@
         "branch-alias": {
             "dev-master": "1.0.x-dev"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "sonatra_ivaynberg/select2",
+                "version": "3.4.3",
+                "dist": {
+                    "url": "https://github.com/ivaynberg/select2/zipball/3.4.3.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ]
 }
