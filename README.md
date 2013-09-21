@@ -1,4 +1,4 @@
-﻿Sonatra Form Extensions Bundle
+Sonatra Form Extensions Bundle
 ==============================
 
 The Sonatra FormExtensionsBundle add form types.

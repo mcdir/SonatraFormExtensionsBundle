@@ -2,12 +2,12 @@
     "name": "sonatra/form-extensions-bundle",
     "type": "symfony-bundle",
     "description": "Sonatra Form Extensions Bundle",
-    "keywords": ["Init form-extensions, PDO"],
+    "keywords": ["Init form-extensions", "PDO"],
     "homepage": "http://sonatra.com",
     "license": "MIT",
     "authors": [
         {
-            "name": "François Pluchino",
+            "name": "FranÃ§ois Pluchino",
             "email": "francois.pluchino@sonatra.com"
         }
     ],
