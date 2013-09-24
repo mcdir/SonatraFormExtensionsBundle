@@ -12,8 +12,8 @@ All form types of this bundle must be used such as defined in the
 should add to your template, the javascripts and stylesheets form renderer with the twig functions:
 
 - Form view: form_assets_widget()
-- Stylesheets: block_global_stylesheets()
-- Javascripts: block_global_javascripts()
+- Stylesheets: form_global_stylesheets()
+- Javascripts: form_global_javascripts()
 
 Form rendering all the javascripts and stylesheet in global template from the all the form, you must
 used the twig function `form_assets_widget` instead of `form_widget`.
