@@ -22,19 +22,9 @@ Add Sonatra FormExtensionsBundle in your composer.json:
     "require": {
         "sonatra/form-extensions-bundle": "~1.0"
     },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "ivaynberg/select2",
-                "version": "dev-master",
-                "dist": {
-                    "url": "https://github.com/ivaynberg/select2/zipball/master",
-                    "type": "zip"
-                }
-            }
-        }
-    ]
+    "repositories" : [
+        { "type" : "composer", "url" : "http://packager.sonatra.com" }
+	]
 }
 ```
 
