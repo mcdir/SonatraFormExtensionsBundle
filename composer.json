@@ -31,17 +31,7 @@
             "dev-master": "1.0.x-dev"
         }
     },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "sonatra_ivaynberg/select2",
-                "version": "3.4.3",
-                "dist": {
-                    "url": "https://github.com/ivaynberg/select2/zipball/3.4.3.zip",
-                    "type": "zip"
-                }
-            }
-        }
-    ]
+    "repositories" : [
+        { "type" : "composer", "url" : "http://packager.sonatra.com" }
+	]
 }
