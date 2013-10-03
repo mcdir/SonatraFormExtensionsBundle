@@ -30,37 +30,9 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sonatra_form_extensions');
 
-        $this->addProfilerSection($rootNode);
         $this->addSelect2($rootNode);
 
         return $treeBuilder;
-    }
-
-    /**
-     * Add profiler section.
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addProfilerSection(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->arrayNode('profiler')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('enabled')->defaultValue('%kernel.debug%')->end()
-                        ->arrayNode('engines')
-                            ->info('Replacing the renderer engine service id by a traceable version service id')
-                            ->fixXmlConfig('engine')
-                            ->useAttributeAsKey('id')
-                            ->prototype('scalar')->end()
-                            ->defaultValue(array('twig.form.engine' => 'sonatra_form_extensions.twig.tracable_engine'))
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ;
     }
 
     /**

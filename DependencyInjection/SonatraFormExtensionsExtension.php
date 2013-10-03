@@ -37,19 +37,6 @@ class SonatraFormExtensionsExtension extends Extension implements PrependExtensi
         $loader->load('twig.yml');
         $loader->load('form.yml');
 
-        if (0 === strpos($config['profiler']['enabled'], '%')) {
-            $config['profiler']['enabled'] = $container->getParameter(trim($config['profiler']['enabled'], '%'));
-        }
-
-        if ($config['profiler']['enabled']) {
-            $loader->load('profiler.yml');
-
-            foreach ($config['profiler']['engines'] as $engine => $tracable) {
-                $container->setDefinition($engine, $container->findDefinition($tracable));
-                $container->removeDefinition($tracable);
-            }
-        }
-
         foreach (array('select2') as $type) {
             if (isset($config[$type]) && !empty($config[$type]['enabled'])) {
                 $method = 'register' . ucfirst($type) . 'Configuration';
