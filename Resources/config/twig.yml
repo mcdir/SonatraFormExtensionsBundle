@@ -1,9 +1,9 @@
 parameters:
-    sonatra.formextensions.twig.extension.base.class: Sonatra\Bundle\FormExtensionsBundle\Twig\Extension\FormExtension
+    sonatra_form_extensions.twig.extension.base.class: Sonatra\Bundle\FormExtensionsBundle\Twig\Extension\FormExtension
 
 services:
-    sonatra.formextensions.twig.extension:
+    sonatra_form_extensions.twig.extension:
         public: false
-        class: '%sonatra.formextensions.twig.extension.base.class%'
+        class: '%sonatra_form_extensions.twig.extension.base.class%'
         arguments: ['@twig.form.renderer']
         tags: [ { name: twig.extension } ]

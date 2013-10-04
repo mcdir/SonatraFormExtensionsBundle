@@ -1,32 +1,32 @@
 parameters:
-    sonatra.formextensions.type.select2.class: Sonatra\Bundle\FormExtensionsBundle\Form\Type\Select2Type
-    sonatra.formextensions.type.currency.class: Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType
+    form.type.sonatra.select2.class: Sonatra\Bundle\FormExtensionsBundle\Form\Type\Select2Type
+    form.type.sonatra.currency.class: Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType
 
-    sonatra.formextensions.type_extension.datetime_jquery.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateTimeJqueryTypeExtension
-    sonatra.formextensions.type_extension.date_jquery.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateJqueryTypeExtension
-    sonatra.formextensions.type_extension.time_jquery.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\TimeJqueryTypeExtension
+    form.type_extension.sonatra.datetime_jquery.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateTimeJqueryTypeExtension
+    form.type_extension.sonatra.date_jquery.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateJqueryTypeExtension
+    form.type_extension.sonatra.time_jquery.class: Sonatra\Bundle\FormExtensionsBundle\Form\Extension\TimeJqueryTypeExtension
 
 services:
     # Select2
-    sonatra.formextensions.type.select2:
-        class: '%sonatra.formextensions.type.select2.class%'
+    form.type.sonatra.select2:
+        class: '%form.type.sonatra.select2.class%'
         arguments: ['@service_container']
         abstract: true
 
     # Type
-    sonatra.formextensions.type.currency:
-        class: '%sonatra.formextensions.type.currency.class%'
+    form.type.sonatra.currency:
+        class: '%form.type.sonatra.currency.class%'
         tags: [ { name: form.type, alias: currency } ]
 
     # Extension
-    sonatra.formextensions.type_extension.datetime_jquery:
-        class: '%sonatra.formextensions.type_extension.datetime_jquery.class%'
+    form.type_extension.sonatra.datetime_jquery:
+        class: '%form.type_extension.sonatra.datetime_jquery.class%'
         tags: [ { name: form.type_extension, alias: datetime } ]
 
-    sonatra.formextensions.type_extension.date_jquery:
-        class: '%sonatra.formextensions.type_extension.date_jquery.class%'
+    form.type_extension.sonatra.date_jquery:
+        class: '%form.type_extension.sonatra.date_jquery.class%'
         tags: [ { name: form.type_extension, alias: date } ]
 
-    sonatra.formextensions.type_extension.time_jquery:
-        class: '%sonatra.formextensions.type_extension.time_jquery.class%'
+    form.type_extension.sonatra.time_jquery:
+        class: '%form.type_extension.sonatra.time_jquery.class%'
         tags: [ { name: form.type_extension, alias: time } ]

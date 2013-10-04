@@ -75,7 +75,7 @@ class SonatraFormExtensionsExtension extends Extension implements PrependExtensi
      */
     private function registerSelect2Configuration(array $configs, ContainerBuilder $container)
     {
-        $serviceId = 'sonatra.formextensions.type.select2';
+        $serviceId = 'form.type.sonatra.select2';
 
         foreach ($this->getChoiceTypeNames() as $type) {
             $typeDef = new DefinitionDecorator($serviceId);
