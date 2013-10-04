@@ -55,6 +55,37 @@ public function registerBundles()
 }
 ```
 
+Adds javascript files in your template or assetic asset:
+
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/themes/base/jquery.ui.core.css'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/themes/base/jquery.ui.datepicker.css'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/themes/base/jquery.ui.resizable.css'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/themes/base/jquery.ui.selectable.css'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/themes/base/jquery.ui.slider.css'
+
+- '%kernel.root_dir%/../vendor/ivaynberg/select2/select2.css'
+- '%kernel.root_dir%/../vendor/trentrichardson/jquery-timepicker-addon/src/jquery-ui-timepicker-addon.css'
+
+Adds stylesheet files in your template or assetic asset:
+
+- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery/jquery.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.core.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.widget.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.position.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.mouse.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.draggable.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.droppable.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.sortable.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.resizable.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.selectable.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.datepicker.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.slider.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.effect.js'
+- '%kernel.root_dir%/../vendor/jquery/jquery-ui/ui/jquery.ui.effect-slide.js'
+- '%kernel.root_dir%/../vendor/ivaynberg/select2/select2.js'
+- '%kernel.root_dir%/../vendor/trentrichardson/jquery-timepicker-addon/src/jquery-ui-timepicker-addon.js'
+- '%kernel.root_dir%/../vendor/trentrichardson/jquery-timepicker-addon/src/jquery-ui-sliderAccess.js'
+
 ### Step 3: Configure the bundle (optionnal)
 
 You can override the default configuration adding `sonatra_form_extensions` tree in `app/config/config.yml`.
