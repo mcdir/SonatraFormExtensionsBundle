@@ -183,57 +183,57 @@
     $( '#{{ id }}' ).datetimepicker( {
         {% if 'false' == time_only or ('false' == show_timepicker and 'true' == time_only) %}
         closeText: "{{ 'datetime_jquery.closeText'|trans }}",
-		prevText: "{{ 'datetime_jquery.prevText'|trans }}",
-		nextText: "{{ 'datetime_jquery.nextText'|trans }}",
-		currentText: "{{ 'datetime_jquery.currentText'|trans }}",
-		monthNames: {{ 'datetime_jquery.monthNames'|trans|raw }},
-		monthNamesShort: {{ 'datetime_jquery.monthNamesShort'|trans|raw }},
-		dayNames: {{ 'datetime_jquery.dayNames'|trans|raw }},
-		dayNamesShort: {{ 'datetime_jquery.dayNamesShort'|trans|raw }},
-		dayNamesMin: {{ 'datetime_jquery.dayNamesMin'|trans|raw }},
-		weekHeader: "{{ 'datetime_jquery.weekHeader'|trans }}",
-		dateFormat: "{{ date_format }}",
-		firstDay: {{ 'datetime_jquery.firstDay'|trans|raw }},
-		isRTL: {{ 'datetime_jquery.isRTL'|trans|raw }},
-		showMonthAfterYear: {{ 'datetime_jquery.showMonthAfterYear'|trans|raw }},
-		yearSuffix: "{{ 'datetime_jquery.yearSuffix'|trans }}",
-		{% endif %}
+        prevText: "{{ 'datetime_jquery.prevText'|trans }}",
+        nextText: "{{ 'datetime_jquery.nextText'|trans }}",
+        currentText: "{{ 'datetime_jquery.currentText'|trans }}",
+        monthNames: {{ 'datetime_jquery.monthNames'|trans|raw }},
+        monthNamesShort: {{ 'datetime_jquery.monthNamesShort'|trans|raw }},
+        dayNames: {{ 'datetime_jquery.dayNames'|trans|raw }},
+        dayNamesShort: {{ 'datetime_jquery.dayNamesShort'|trans|raw }},
+        dayNamesMin: {{ 'datetime_jquery.dayNamesMin'|trans|raw }},
+        weekHeader: "{{ 'datetime_jquery.weekHeader'|trans }}",
+        dateFormat: "{{ date_format }}",
+        firstDay: {{ 'datetime_jquery.firstDay'|trans|raw }},
+        isRTL: {{ 'datetime_jquery.isRTL'|trans|raw }},
+        showMonthAfterYear: {{ 'datetime_jquery.showMonthAfterYear'|trans|raw }},
+        yearSuffix: "{{ 'datetime_jquery.yearSuffix'|trans }}",
+        {% endif %}
 
-		{% if 'true' == show_timepicker %}
-		timeOnlyTitle: "{{ 'datetime_jquery.timeOnlyTitle'|trans|raw }}",
-		timeText: "{{ 'datetime_jquery.timeText'|trans|raw }}",
-		hourText: "{{ 'datetime_jquery.hourText'|trans|raw }}",
-		minuteText: "{{ 'datetime_jquery.minuteText'|trans|raw }}",
-		secondText: "{{ 'datetime_jquery.secondText'|trans|raw }}",
-		millisecText: "{{ 'datetime_jquery.millisecText'|trans|raw }}",
-		timezoneText: "{{ 'datetime_jquery.timezoneText'|trans|raw }}",
-		timeFormat: "{{ time_format }}",
-		amNames: {{ 'datetime_jquery.amNames'|trans|raw }},
-		pmNames: {{ 'datetime_jquery.pmNames'|trans|raw }},
-		{% endif %}
+        {% if 'true' == show_timepicker %}
+        timeOnlyTitle: "{{ 'datetime_jquery.timeOnlyTitle'|trans|raw }}",
+        timeText: "{{ 'datetime_jquery.timeText'|trans|raw }}",
+        hourText: "{{ 'datetime_jquery.hourText'|trans|raw }}",
+        minuteText: "{{ 'datetime_jquery.minuteText'|trans|raw }}",
+        secondText: "{{ 'datetime_jquery.secondText'|trans|raw }}",
+        millisecText: "{{ 'datetime_jquery.millisecText'|trans|raw }}",
+        timezoneText: "{{ 'datetime_jquery.timezoneText'|trans|raw }}",
+        timeFormat: "{{ time_format }}",
+        amNames: {{ 'datetime_jquery.amNames'|trans|raw }},
+        pmNames: {{ 'datetime_jquery.pmNames'|trans|raw }},
+        {% endif %}
 
-		{% if show_timezone %}showTimezone: true,{% endif %}
-		{% if not show_time %}showTime: false,{% endif %}
-		{% if not step_hour != 1 %}stepHour: {{ step_hour|raw }},{% endif %}
-		{% if not step_minute != 1 %}stepMinute: {{ step_minute|raw }},{% endif %}
-		{% if not step_second != 1 %}stepSecond: {{ step_second|raw }},{% endif %}
-		{% if not hour != 0 %}hour: {{ hour|raw }},{% endif %}
-		{% if not minute != 0 %}minute: {{ minute|raw }},{% endif %}
-		{% if not second != 0 %}second: {{ second|raw }},{% endif %}
-		{% if not timezone != 0 %}timezone: {{ timezone|raw }},{% endif %}
-		{% if not hour_min != 0 %}hourMin: {{ hour_min|raw }},{% endif %}
-		{% if not minute_min != 0 %}minuteMin: {{ minute_min|raw }},{% endif %}
-		{% if not second_min != 0 %}secondMin: {{ second_min|raw }},{% endif %}
-		{% if not hour_max != 59 %}hourMax: {{ hour_max|raw }},{% endif %}
-		{% if not minute_max != 59 %}minuteMax: {{ minute_max|raw }},{% endif %}
-		{% if not second_max != 0 %}secondMax: {{ second_max|raw }},{% endif %}
-		{% if not show_button_panel %}showButtonPanel: false,{% endif %}
-		{% if min_date_time is not null %}minDateTime: {{ min_date_time|raw }},{% endif %}
-		{% if max_date_time is not null %}maxDateTime: {{ max_date_time|raw }},{% endif %}
+        {% if show_timezone %}showTimezone: true,{% endif %}
+        {% if not show_time %}showTime: false,{% endif %}
+        {% if not step_hour != 1 %}stepHour: {{ step_hour|raw }},{% endif %}
+        {% if not step_minute != 1 %}stepMinute: {{ step_minute|raw }},{% endif %}
+        {% if not step_second != 1 %}stepSecond: {{ step_second|raw }},{% endif %}
+        {% if not hour != 0 %}hour: {{ hour|raw }},{% endif %}
+        {% if not minute != 0 %}minute: {{ minute|raw }},{% endif %}
+        {% if not second != 0 %}second: {{ second|raw }},{% endif %}
+        {% if not timezone != 0 %}timezone: {{ timezone|raw }},{% endif %}
+        {% if not hour_min != 0 %}hourMin: {{ hour_min|raw }},{% endif %}
+        {% if not minute_min != 0 %}minuteMin: {{ minute_min|raw }},{% endif %}
+        {% if not second_min != 0 %}secondMin: {{ second_min|raw }},{% endif %}
+        {% if not hour_max != 59 %}hourMax: {{ hour_max|raw }},{% endif %}
+        {% if not minute_max != 59 %}minuteMax: {{ minute_max|raw }},{% endif %}
+        {% if not second_max != 0 %}secondMax: {{ second_max|raw }},{% endif %}
+        {% if not show_button_panel %}showButtonPanel: false,{% endif %}
+        {% if min_date_time is not null %}minDateTime: {{ min_date_time|raw }},{% endif %}
+        {% if max_date_time is not null %}maxDateTime: {{ max_date_time|raw }},{% endif %}
 
-		showSecond: {{ with_seconds|raw }},
-		timeOnly: {{ time_only|raw }},
-		showTimepicker: {{ show_timepicker|raw }}
+        showSecond: {{ with_seconds|raw }},
+        timeOnly: {{ time_only|raw }},
+        showTimepicker: {{ show_timepicker|raw }}
     } );
 {% endif %}
 {% endblock datetime_javascript %}

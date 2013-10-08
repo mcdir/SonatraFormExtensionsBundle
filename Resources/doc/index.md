@@ -24,7 +24,7 @@ Add Sonatra FormExtensionsBundle in your composer.json:
     },
     "repositories" : [
         { "type" : "composer", "url" : "http://packager.sonatra.com" }
-	]
+    ]
 }
 ```
 

@@ -1,48 +1,48 @@
 {
-	"name" : "sonatra/form-extensions-bundle",
-	"description" : "Sonatra Form Extensions Bundle",
-	"type" : "symfony-bundle",
-	"authors" : [{
-			"name" : "François Pluchino",
-			"email" : "francois.pluchino@sonatra.com"
-		}
-	],
-	"keywords" : [
-		"Init form-extensions",
-		"PDO"
-	],
-	"homepage" : "http://sonatra.com",
-	"license" : [
-		"MIT"
-	],
-	"require" : {
-		"php" : ">=5.3.2",
-		"sonatra/ajax-bundle" : "~1.0",
-		"symfony/framework-bundle" : "~2.3",
-		"sonatra_jquery/jquery" : "1.10.x",
-		"sonatra_jquery/jquery-ui" : "dev-master",
-		"sonatra_ivaynberg/select2" : "~3.4",
-		"sonatra_trentrichardson/jquery-timepicker-addon" : "dev-master"
-	},
-	"require-dev" : {
-		"symfony/console" : "~2.3",
-		"symfony/finder" : "~2.3"
-	},
-	"autoload" : {
-		"psr-0" : {
-			"Sonatra\\Bundle\\FormExtensionsBundle" : ""
-		}
-	},
-	"target-dir" : "Sonatra/Bundle/FormExtensionsBundle",
-	"minimum-stability" : "dev",
-	"repositories" : [{
-			"type" : "composer",
-			"url" : "http://packager.sonatra.com"
-		}
-	],
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "1.0.x-dev"
-		}
-	}
+    "name" : "sonatra/form-extensions-bundle",
+    "description" : "Sonatra Form Extensions Bundle",
+    "type" : "symfony-bundle",
+    "authors" : [{
+            "name" : "François Pluchino",
+            "email" : "francois.pluchino@sonatra.com"
+        }
+    ],
+    "keywords" : [
+        "Init form-extensions",
+        "PDO"
+    ],
+    "homepage" : "http://sonatra.com",
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+        "php" : ">=5.3.2",
+        "sonatra/ajax-bundle" : "~1.0",
+        "symfony/framework-bundle" : "~2.3",
+        "sonatra_jquery/jquery" : "1.10.x",
+        "sonatra_jquery/jquery-ui" : "dev-master",
+        "sonatra_ivaynberg/select2" : "~3.4",
+        "sonatra_trentrichardson/jquery-timepicker-addon" : "dev-master"
+    },
+    "require-dev" : {
+        "symfony/console" : "~2.3",
+        "symfony/finder" : "~2.3"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Sonatra\\Bundle\\FormExtensionsBundle" : ""
+        }
+    },
+    "target-dir" : "Sonatra/Bundle/FormExtensionsBundle",
+    "minimum-stability" : "dev",
+    "repositories" : [{
+            "type" : "composer",
+            "url" : "http://packager.sonatra.com"
+        }
+    ],
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "1.0.x-dev"
+        }
+    }
 }
