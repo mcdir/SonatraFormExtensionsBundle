@@ -1,3 +1,7 @@
+{% use 'form_div_layout.html.twig' with datetime_widget as base_datetime_widget,
+                                        date_widget as base_date_widget,
+                                        time_widget as base_time_widget %}
+
 {#} Widget {#}
 {% block select2_widget %}
 {% spaceless %}
@@ -9,10 +13,7 @@
 {{ form_widget(form) }}
 {% endif %}
 </div>
-{% endspaceless %}
-{% endblock select2_widget %}
-
-{% block select2_javascript %}
+{% asset_javascript %}
     $( '#{{ id }}' ).select2( {
         {% if minimum_input_length is not null %}minimumInputLength: {{ minimum_input_length }},{% endif %}
         {% if minimum_results_for_search is not null %}minimumResultsForSearch: {{ minimum_results_for_search }},{% endif %}
@@ -104,81 +105,40 @@
         $label.val(JSON.stringify(lData));
     }){% endif %};
 
-{% endblock select2_javascript %}
-
-
+{% endasset %}
+{% endspaceless %}
+{% endblock select2_widget %}
 
 {% block choice_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock choice_select2_widget %}
 
-{% block choice_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock choice_select2_javascript %}
-
-
-
 {% block language_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock language_select2_widget %}
-
-{% block language_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock language_select2_javascript %}
-
-
 
 {% block country_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock country_select2_widget %}
 
-{% block country_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock country_select2_javascript %}
-
-
-
 {% block timezone_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock timezone_select2_widget %}
-
-{% block timezone_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock timezone_select2_javascript %}
-
-
 
 {% block locale_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock locale_select2_widget %}
 
-{% block locale_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock locale_select2_javascript %}
-
-
-
 {% block entity_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock entity_select2_widget %}
-
-{% block entity_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock entity_select2_javascript %}
-
-
 
 {% block collection_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock collection_select2_widget %}
 
-{% block collection_select2_javascript %}
-{{ block('select2_javascript') }}
-{% endblock collection_select2_javascript %}
 
-
-
-{% block datetime_javascript %}
+{% block datetime_widget_content %}
 {% if not read_only %}
     $( '#{{ id }}' ).datetimepicker( {
         {% if 'false' == time_only or ('false' == show_timepicker and 'true' == time_only) %}
@@ -236,23 +196,26 @@
         showTimepicker: {{ show_timepicker|raw }}
     } );
 {% endif %}
-{% endblock datetime_javascript %}
+{% endblock datetime_widget_content %}
 
+{% block datetime_widget %}
+{% spaceless %}
+    {{ block('base_datetime_widget') }}
+    {{ block('datetime_widget_content') }}
+{% endspaceless %}
+{% endblock datetime_widget %}
 
-
-{% block date_javascript %}
-{{ block('datetime_javascript') }}
-{% endblock date_javascript %}
-
-
+{% block date_widget %}
+{% spaceless %}
+	{{ block('base_date_widget') }}
+	{{ block('datetime_widget_content') }}
+{% endspaceless %}
+{% endblock date_widget %}
 
 {% block time_widget %}
-{% set type = 'text' %}
-{{ block('datetime_widget') }}
+{% spaceless %}
+    {% set type = 'text' %}
+    {{ block('base_time_widget') }}
+    {{ block('datetime_widget_content') }}
+{% endspaceless %}
 {% endblock time_widget %}
-
-
-
-{% block time_javascript %}
-{{ block('datetime_javascript') }}
-{% endblock time_javascript %}

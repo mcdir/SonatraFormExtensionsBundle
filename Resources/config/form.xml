@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Types -->
+        <service id="form.type.sonatra.select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Type\Select2Type" abstract="true">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="form.type.sonatra.currency" class="Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType">
+            <tag name="form.type" alias="currency" />
+        </service>
+
+        <!-- Extensions -->
+        <service id="form.type_extension.sonatra.datetime_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateTimeJqueryTypeExtension">
+            <tag name="form.type_extension" alias="datetime" />
+        </service>
+
+        <service id="form.type_extension.sonatra.date_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateJqueryTypeExtension">
+            <tag name="form.type_extension" alias="date" />
+        </service>
+
+        <service id="form.type_extension.sonatra.time_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\TimeJqueryTypeExtension">
+            <tag name="form.type_extension" alias="time" />
+        </service>
+    </services>
+</container>

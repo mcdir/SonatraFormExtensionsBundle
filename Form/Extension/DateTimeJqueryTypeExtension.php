@@ -73,7 +73,7 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $format = function(Options $options) {
+        $format = function (Options $options) {
             $date_format = \IntlDateFormatter::NONE;
             $time_format = \IntlDateFormatter::NONE;
 

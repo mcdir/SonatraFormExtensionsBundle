@@ -33,8 +33,8 @@ class SonatraFormExtensionsExtension extends Extension implements PrependExtensi
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('form.yml');
+        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('form.xml');
 
         foreach (array('select2') as $type) {
             if (isset($config[$type]) && !empty($config[$type]['enabled'])) {

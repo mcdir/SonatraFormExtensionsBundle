@@ -50,7 +50,7 @@ class Configuration implements ConfigurationInterface
                     ->treatTrueLike(array('enabled' => true))
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('enabled')->defaultFalse()->end()
+                        ->booleanNode('enabled')->defaultTrue()->end()
                     ->end()
                 ->end()
             ->end()
