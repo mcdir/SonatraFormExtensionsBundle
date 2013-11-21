@@ -94,6 +94,6 @@ class SonatraFormExtensionsExtension extends Extension implements PrependExtensi
      */
     private function getChoiceTypeNames()
     {
-        return array('choice', 'language', 'country', 'timezone', 'locale', 'entity', 'collection');
+        return array('choice', 'language', 'country', 'timezone', 'locale');
     }
 }

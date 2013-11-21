@@ -20,11 +20,12 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Sonatra\Bundle\AjaxBundle\AjaxEvents;
-use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxSelect2Event;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Select2ChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Select2EntityChoiceList;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ArrayToStringTransformer;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\StringToStringTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToStringTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToStringTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -34,7 +35,7 @@ class Select2Type extends AbstractType
     /**
      * @var string
      */
-    private $typeName;
+    private $type;
 
     /**
      * @var EventDispatcher
@@ -55,12 +56,12 @@ class Select2Type extends AbstractType
      * Constructor.
      *
      * @param ContainerInterface $container
-     * @param string             $typeName
+     * @param string             $type
      * @param integer            $defaultPageSize
      */
-    public function __construct(ContainerInterface $container, $typeName = 'entity', $defaultPageSize = 10)
+    public function __construct(ContainerInterface $container, $type, $defaultPageSize = 10)
     {
-        $this->typeName = $typeName;
+        $this->type = $type;
         $this->dispatcher = $container->get('event_dispatcher');
         $this->request = $container->get('request');
         $this->ajaxPageSize = $defaultPageSize;
@@ -71,12 +72,20 @@ class Select2Type extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($options['ajax'] || null !== $options['tags']) {
+        if ($options['ajax']) {
+            $builder->resetViewTransformers();
+
             if ($options['multiple']) {
-                $builder->addViewTransformer(new ArrayToStringTransformer($options['required'], $options['compound']));
+                $builder->addViewTransformer(new ChoicesToStringTransformer($options['choice_list'], $options['required']));
+
             } else {
-                $builder->addViewTransformer(new StringToStringTransformer($options['required']));
+                $builder->addViewTransformer(new ChoiceToStringTransformer($options['choice_list'], $options['required']));
             }
+
+        } elseif ($options['multiple']) {
+            $builder->resetViewTransformers();
+
+            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['required']));
         }
     }
 
@@ -122,18 +131,12 @@ class Select2Type extends AbstractType
                 'select_query'               => $options['select_query'],
                 'select_ajax'                => $options['select_ajax'],
                 'select_data'                => $options['select_data'],
-                'tags'                       => $options['tags'],
                 'width'                      => $options['width'],
         ));
 
-        if (!($options['choice_list'] instanceof Select2ChoiceListInterface)) {
-            $view->vars['ajax'] = false;
-        }
-
         if ($view->vars['ajax']) {
             $ajaxId = null !== $options['ajax_id'] ? $options['ajax_id'] : $view->vars['id'];
-            $eOptions = array_replace($options, array('ajaxPageSize' => $this->ajaxPageSize));
-            $event = new GetAjaxSelect2Event($ajaxId, $this->request, $eOptions);
+            $event = new GetAjaxChoiceListEvent($ajaxId, $this->request, $options['choice_list']);
 
             $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
         }
@@ -145,17 +148,15 @@ class Select2Type extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['form']->vars['no_label_for'] = true;
-        $selected = $view->vars['value'];
 
-        if (is_string($selected)) {
-            $selected = explode(',', $view->vars['value']);
-        }
+        $selected = (array) (is_string($view->vars['data']) ? explode(',', $view->vars['data']) : $view->vars['data']);
 
-        if ($view->vars['ajax']) {
-            $view->vars['choices_selected'] = $options['choice_list']->getIntersect($selected);
+        if ($options['ajax']) {
+            $view->vars['choices_selected'] = $options['choice_list']->getLabelChoicesForValues($selected);
 
-        } else {
-            $view->vars['choices_selected'] = $options['choice_list']->getChoices();
+            if (is_array($view->vars['value'])) {
+                $view->vars['value'] = implode(',', $view->vars['value']);
+            }
         }
     }
 
@@ -168,7 +169,7 @@ class Select2Type extends AbstractType
             'ajax'                       => false,
             'ajax_url'                   => null,
             'ajax_id'                    => null,
-            'quiet_millis'               => 100,
+            'quiet_millis'               => 200,
             'page_size'                  => $this->ajaxPageSize,
             'width'                      => 'resolve',
             'close_on_select'            => null,
@@ -195,32 +196,37 @@ class Select2Type extends AbstractType
             'format_selection_too_big'   => null,
             'format_load_more'           => null,
             'format_searching'           => null,
-            'multiple'                   => null,
             'select_id'                  => null,
             'create_search_choice'       => null,
             'init_selection'             => null,
             'select_query'               => null,
             'select_ajax'                => null,
             'select_data'                => null,
-            'tags'                       => null,
-            'choice_list'                => function (Options $options, $previousValue) {
-                if ('entity' === $this->typeName) {
-                    return new Select2EntityChoiceList(
-                        $options['em'],
-                        $options['class'],
-                        $options['property'],
-                        $options['query_builder'],
-                        $options['choices'],
-                        $options['group_by'],
-                        $options['ajax'],
-                        '',
-                        1,
-                        $this->ajaxPageSize,
-                        array()
-                    );
+        ));
+
+        $resolver->setNormalizers(array(
+            'expanded'    => function (Options $options, $value) {
+                return false;
+            },
+            'compound'    => function (Options $options, $value) {
+                if ($options['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface) {
+                    return false;
                 }
 
-                return $previousValue;
+                return $value;
+            },
+            'choice_list' => function (Options $options, $value) {
+                if (!$value instanceof AjaxChoiceListInterface) {
+                    $value = new AjaxSimpleChoiceList($options['choices'], $options['preferred_choices']);
+                }
+
+                $value->setAjax($options['ajax']);
+                $value->setPageSize($options['page_size']);
+                $value->setPageNumber(1);
+                $value->setSearch('');
+                $value->setIds(array());
+
+                return $value;
             }
         ));
     }
@@ -230,7 +236,7 @@ class Select2Type extends AbstractType
      */
     public function getParent()
     {
-        return $this->typeName;
+        return $this->type;
     }
 
     /**
@@ -238,6 +244,6 @@ class Select2Type extends AbstractType
      */
     public function getName()
     {
-        return $this->typeName . '_select2';
+        return $this->type . '_select2';
     }
 }

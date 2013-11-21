@@ -6,14 +6,15 @@
 {% block select2_widget %}
 {% spaceless %}
 <div class="select2-wrapper">
-{% if ajax or tags is not null %}
-<input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value|raw }}" />
+{% if ajax %}
+<input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value }}" />
 <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
 {% else %}
 {{ form_widget(form) }}
 {% endif %}
 </div>
 {% asset_javascript %}
+    <script type="text/javascript">
     $( '#{{ id }}' ).select2( {
         {% if minimum_input_length is not null %}minimumInputLength: {{ minimum_input_length }},{% endif %}
         {% if minimum_results_for_search is not null %}minimumResultsForSearch: {{ minimum_results_for_search }},{% endif %}
@@ -21,7 +22,7 @@
         placeholder: {{ placeholder|default('select2.placeholder')|trans|raw }},
         {% if select_separator is not null %}separator: {{ select_separator|raw }},{% endif %}
         allowClear: {{ allow_clear|raw }},
-        {% if ajax or tags is not null %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
+        {% if ajax %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
         {% if close_on_select is not null %}closeOnSelect: {% if close_on_select %}true{% else %}false{% endif %},{% endif %}
         {% if open_on_enter is not null %}openOnEnter: {% if open_on_enter %}true{% else %}false{% endif %},{% endif %}
         {% if select_id is not null %}id: {{ select_id|raw }},{% endif %}
@@ -79,7 +80,7 @@
             }
         },{% endif %}
         {% if select_data is not null %}data: {{ select_data|json_encode|raw }},{% endif %}
-        {% if tags is not null %}tags: {{ tags|json_encode|raw }},{% endif %}
+        {% if tags is defined %}tags: {{ tags|json_encode|raw }},{% endif %}
         {% if container_css is not null %}containerCss: {{ container_css|raw }},{% endif %}
         {% if container_css_class is not null %}containerCssClass: {{ container_css_class|raw }},{% endif %}
         {% if dropdown_css is not null %}dropdownCss: {{ dropdown_css|raw }},{% endif %}
@@ -104,7 +105,7 @@
         {% endif %}
         $label.val(JSON.stringify(lData));
     }){% endif %};
-
+    </script>
 {% endasset %}
 {% endspaceless %}
 {% endblock select2_widget %}
@@ -133,13 +134,11 @@
 {{ block('select2_widget') }}
 {% endblock entity_select2_widget %}
 
-{% block collection_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock collection_select2_widget %}
-
 
 {% block datetime_widget_content %}
 {% if not read_only %}
+    {% asset_javascript %}
+    <script type="text/javascript">
     $( '#{{ id }}' ).datetimepicker( {
         {% if 'false' == time_only or ('false' == show_timepicker and 'true' == time_only) %}
         closeText: "{{ 'datetime_jquery.closeText'|trans }}",
@@ -195,6 +194,8 @@
         timeOnly: {{ time_only|raw }},
         showTimepicker: {{ show_timepicker|raw }}
     } );
+    </script>
+    {% endasset %}
 {% endif %}
 {% endblock datetime_widget_content %}
 
