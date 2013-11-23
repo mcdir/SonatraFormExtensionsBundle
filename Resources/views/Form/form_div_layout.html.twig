@@ -10,7 +10,7 @@
 <input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value }}" />
 <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
 {% else %}
-{{ form_widget(form) }}
+{{ block('choice_widget') }}
 {% endif %}
 </div>
 {% asset_javascript %}
@@ -42,7 +42,7 @@
             var items = [];
             var values = element.val().split(',');
             $(selected).each(function() {
-                if (-1 < $.inArray(this.id, values)) {
+                if (-1 < $.inArray(this.id+'', values)) {
                     items.push(this);
                 }
             });

@@ -49,7 +49,17 @@ class ChoiceToStringTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        return (string) current($this->choiceList->getValuesForChoices(array($value)));
+        $choice = current($this->choiceList->getValuesForChoices(array($value)));
+
+        if (is_object($choice)) {
+            if (!method_exists($choice, 'getId')) {
+                throw new TransformationFailedException('The choice is an object and must be have a "getId" method');
+            }
+
+            return (string) $choice->getId();
+        }
+
+        return (string) $choice;
     }
 
     /**
