@@ -153,24 +153,67 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function getLabelChoicesForValues(array $values)
     {
-        if (!$this->ajax) {
-            return array();
-        }
-
         $choices = array();
+        $data = array();
 
         foreach ($this->getRemainingViews() as $choice) {
             // group choice
             if (is_array($choice)) {
                 foreach ($choice as $subChoice) {
+                    $data[] = $subChoice->value;
                     $this->extractLabel($choices, $subChoice, $values);
                 }
+
             } else {
+                $data[] = $choice->value;
                 $this->extractLabel($choices, $choice, $values);
             }
         }
 
+        foreach ($values as $value) {
+            if (!in_array($value, $data)) {
+                $choices[] = array(
+                    'id'   => $value,
+                    'text' => $value,
+                );
+            }
+        }
+
         return $choices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataChoices()
+    {
+        if ($this->ajax) {
+            return array();
+        }
+
+        $choices = $this->getRemainingViews();
+        $data = array();
+
+        foreach ($choices as $index => $choice) {
+            // group choice
+            if (is_array($choice)) {
+                $children = array();
+
+                foreach ($choice as $subChoice) {
+                    $this->extractLabel($children, $subChoice, array($choice->value));
+                }
+
+                $data[] = array(
+                    'text'     => $index,
+                    'children' => $children,
+                );
+
+            } else {
+                $this->extractLabel($data, $choice, array($choice->value));
+            }
+        }
+
+        return $data;
     }
 
     /**

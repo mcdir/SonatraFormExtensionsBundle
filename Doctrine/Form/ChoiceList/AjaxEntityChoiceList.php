@@ -251,6 +251,29 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
+    public function getDataChoices()
+    {
+        if ($this->ajax) {
+            return array();
+        }
+
+        $choices = $this->getRemainingViews();
+
+        $data = array();
+
+        foreach ($choices as $choice) {
+            $data[] = array(
+                'id'   => (string) $choice->value,
+                'text' => $choice->label
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getValuesForChoices(array $values)
     {
         if (!$this->ajax) {

@@ -28,6 +28,13 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
     public function getLabelChoicesForValues(array $values);
 
     /**
+     * Get all data of choices.
+     *
+     * @return array The list of map 'id' and 'text'
+     */
+    public function getDataChoices();
+
+    /**
      * Set ajax.
      *
      * @param boolean $ajax

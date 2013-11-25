@@ -205,18 +205,24 @@ abstract class AbstractSelect2Type extends AbstractType
             'select_data'                => null,
         ));
 
-        $resolver->setNormalizers(array(
-            'expanded'    => function (Options $options, $value) {
-                return false;
-            },
-            'compound'    => function (Options $options, $value) {
+        $normalizers = array(
+            'compound' => function (Options $options, $value) {
                 if ($options['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface) {
                     return false;
                 }
 
                 return $value;
             },
-            'choice_list' => function (Options $options, $value) {
+        );
+
+        if ($resolver->isKnown('expanded')) {
+            $normalizers['expanded'] = function (Options $options, $value) {
+                return false;
+            };
+        }
+
+        if ($resolver->isKnown('choice_list')) {
+            $normalizers['choice_list'] = function (Options $options, $value) {
                 if (!$value instanceof AjaxChoiceListInterface) {
                     $value = new AjaxSimpleChoiceList($options['choices'], $options['preferred_choices']);
                 }
@@ -228,8 +234,10 @@ abstract class AbstractSelect2Type extends AbstractType
                 $value->setIds(array());
 
                 return $value;
-            },
-        ));
+            };
+        }
+
+        $resolver->setNormalizers($normalizers);
     }
 
     /**
