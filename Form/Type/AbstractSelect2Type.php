@@ -22,10 +22,10 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Sonatra\Bundle\AjaxBundle\AjaxEvents;
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToStringTransformer;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToStringTransformer;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
+use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -72,20 +72,17 @@ abstract class AbstractSelect2Type extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($options['ajax']) {
-            $builder->resetViewTransformers();
+        $builder->resetViewTransformers();
 
-            if ($options['multiple']) {
-                $builder->addViewTransformer(new ChoicesToStringTransformer($options['choice_list'], $options['required']));
+        if ($options['multiple']) {
+            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['allow_add'], $options['required']));
 
-            } else {
-                $builder->addViewTransformer(new ChoiceToStringTransformer($options['choice_list'], $options['required']));
-            }
+        } else {
+            $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list'], $options['allow_add'], $options['required']));
+        }
 
-        } elseif ($options['multiple']) {
-            $builder->resetViewTransformers();
-
-            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['required']));
+        if ($options['ajax'] && $options['multiple']) {
+            $builder->addEventSubscriber(new FixStringInputListener());
         }
     }
 
@@ -134,7 +131,11 @@ abstract class AbstractSelect2Type extends AbstractType
                 'width'                      => $options['width'],
         ));
 
-        if ($view->vars['ajax']) {
+        if (is_array($options['tags'])) {
+            $view->vars['tags'] = $options['tags'];
+        }
+
+        if ($view->vars['ajax'] && isset($options['choice_list'])) {
             $ajaxId = null !== $options['ajax_id'] ? $options['ajax_id'] : $view->vars['id'];
             $event = new GetAjaxChoiceListEvent($ajaxId, $this->request, $options['choice_list']);
 
@@ -149,15 +150,13 @@ abstract class AbstractSelect2Type extends AbstractType
     {
         $view->vars['form']->vars['no_label_for'] = true;
 
-        $selected = (array) (is_string($view->vars['value']) ? explode(',', $view->vars['value']) : $view->vars['value']);
+        if ($options['ajax'] && isset($options['choice_list'])) {
+            $view->vars['choices_selected'] = $options['choice_list']->getLabelChoicesForValues((array) $view->vars['value']);
+        }
 
-        if ($options['ajax']) {
-            $view->vars['choices_selected'] = $options['choice_list']->getLabelChoicesForValues($selected);
-
-            // convert array to string on error form validation
-            if (is_array($view->vars['value'])) {
-                $view->vars['value'] = implode(',', $view->vars['value']);
-            }
+        // convert array to string
+        if ($options['ajax'] && is_array($view->vars['value'])) {
+            $view->vars['value'] = implode(',', $view->vars['value']);
         }
     }
 
@@ -167,6 +166,7 @@ abstract class AbstractSelect2Type extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
+            'allow_add'                  => false,
             'ajax'                       => false,
             'ajax_url'                   => null,
             'ajax_id'                    => null,
@@ -203,12 +203,26 @@ abstract class AbstractSelect2Type extends AbstractType
             'select_query'               => null,
             'select_ajax'                => null,
             'select_data'                => null,
+            'tags'                       => null,
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'allow_add' => 'bool',
+            'ajax'      => 'bool',
+            'tags'      => array('null', 'array'),
         ));
 
         $normalizers = array(
             'compound' => function (Options $options, $value) {
                 if ($options['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface) {
                     return false;
+                }
+
+                return $value;
+            },
+            'allow_add' => function (Options $options, $value) {
+                if (null !== $options['tags']) {
+                    return true;
                 }
 
                 return $value;

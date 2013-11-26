@@ -12,18 +12,23 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class ChoiceToStringTransformer implements DataTransformerInterface
+class ChoiceToValueTransformer implements DataTransformerInterface
 {
     /**
-     * @var ChoiceListInterface
+     * @var AjaxChoiceListInterface
      */
     private $choiceList;
+
+    /**
+     * @var boolean
+     */
+    private $allowAdd;
 
     /**
      * @var boolean
@@ -33,33 +38,25 @@ class ChoiceToStringTransformer implements DataTransformerInterface
     /**
      * Constructor.
      *
-     * @param ChoiceListInterface $choiceList
-     * @param boolean             $required
+     * @param AjaxChoiceListInterface $choiceList
+     * @param boolean                 $allowAdd
+     * @param boolean                 $required
      */
-    public function __construct(ChoiceListInterface $choiceList, $required = false)
+    public function __construct(AjaxChoiceListInterface $choiceList, $allowAdd = false, $required = true)
     {
         $this->choiceList = $choiceList;
+        $this->allowAdd = $allowAdd;
         $this->required = $required;
     }
 
     /**
-     * @param string $value
+     * @param string $choice
      *
      * @return string
      */
-    public function transform($value)
+    public function transform($choice)
     {
-        $choice = current($this->choiceList->getValuesForChoices(array($value)));
-
-        if (is_object($choice)) {
-            if (!method_exists($choice, 'getId')) {
-                throw new TransformationFailedException('The choice is an object and must be have a "getId" method');
-            }
-
-            return (string) $choice->getId();
-        }
-
-        return (string) $choice;
+        return (string) current($this->choiceList->getValuesForChoices(array($choice)));
     }
 
     /**
@@ -67,7 +64,7 @@ class ChoiceToStringTransformer implements DataTransformerInterface
      *
      * @return string
      *
-     * @throws TransformationFailedException If the given value is not an string
+     * @throws TransformationFailedException If the given value is not an array
      *                                       or if no matching choice could be
      *                                       found for some given value.
      */
@@ -79,8 +76,21 @@ class ChoiceToStringTransformer implements DataTransformerInterface
 
         // These are now valid ChoiceList values, so we can return null
         // right away
-        if (('' === $value || null === $value) && !$this->required) {
-            return null;
+        if ('' === $value) {
+            $value = null;
+        }
+
+        if (null === $value) {
+            if (!$this->required) {
+                return null;
+
+            } else {
+                throw new TransformationFailedException('Value is required.');
+            }
+        }
+
+        if ($this->allowAdd) {
+            return $value;
         }
 
         $choices = $this->choiceList->getChoicesForValues(array($value));

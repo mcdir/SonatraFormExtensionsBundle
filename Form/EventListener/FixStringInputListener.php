@@ -11,32 +11,17 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\EventListener;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Resize a string collection form element based on the data sent from the client.
+ * Fix the string input for choices and collection.
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class StringResizeFormListener implements EventSubscriberInterface
+class FixStringInputListener implements EventSubscriberInterface
 {
-    /**
-     * @var boolean
-     */
-    private $required;
-
-    /**
-     * Constructor.
-     *
-     * @param boolean $required
-     */
-    public function __construct($required = true)
-    {
-        $this->required = $required;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -53,16 +38,18 @@ class StringResizeFormListener implements EventSubscriberInterface
     public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();
-        $event->setData(null);
 
-        if (null === $data || '' === $data) {
-            if ($this->required) {
-                $event->setData('');
-            }
-
-            return;
+        if (is_array($data) && 1 === count($data) && is_string($data[0])) {
+            $data = $data[0];
         }
 
-        $event->setData(explode(',', $data));
+        if (is_string($data)) {
+            if ('' === $data) {
+                $event->setData(array());
+
+            } else {
+                $event->setData(explode(',', $data));
+            }
+        }
     }
 }

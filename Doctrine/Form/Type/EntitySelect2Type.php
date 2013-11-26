@@ -12,18 +12,15 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Type;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\Type\AbstractSelect2Type;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -56,20 +53,6 @@ class EntitySelect2Type extends AbstractSelect2Type
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::getPropertyAccessor();
 
         parent::__construct($container, 'entity', $defaultPageSize);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        parent::buildForm($builder, $options);
-
-        if (!$options['ajax'] && $options['multiple']) {
-            $builder->resetViewTransformers();
-            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['required']));
-            $builder->addViewTransformer(new CollectionToArrayTransformer(), true);
-        }
     }
 
     /**
