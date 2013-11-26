@@ -15,9 +15,10 @@ use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Exception\StringCastException;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -309,7 +310,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getLabelChoicesForValues(array $values)
     {
-        if (!$this->ajax || 0 === count($values)) {
+        if (0 === count($values)) {
             return array();
         }
 
@@ -318,11 +319,14 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $labels = array();
 
         foreach ($values as $value) {
-            if (is_object($value)) {
-                $choices[] = array(
+            if ($value instanceof ChoiceView) {
+                $choices[] = $choices[] = array(
                     'id'   => (string) $value->value,
                     'text' => $value->label
                 );
+
+            } elseif (is_object($value)) {
+                $choices[] = $value;
 
             } else {
                 $ids[] = $value;

@@ -17,7 +17,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataMapper\CollectionMapper;
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
 use Sonatra\Bundle\AjaxBundle\AjaxEvents;
@@ -32,7 +31,6 @@ class CollectionSelect2Type extends AbstractSelect2Type
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->setDataMapper(new CollectionMapper());
         $builder->addEventSubscriber(new FixStringInputListener());
     }
 
@@ -55,9 +53,10 @@ class CollectionSelect2Type extends AbstractSelect2Type
         }
 
         $view->vars = array_replace($view->vars, array(
-            'multiple'    => $options['multiple'],
-            'tags'        => $choiceList->getDataChoices(),
-            'choice_list' => $choiceList,
+            'multiple'         => $options['multiple'],
+            'tags'             => $choiceList->getDataChoices(),
+            'choice_list'      => $choiceList,
+            'choices_selected' => $choiceList->getLabelChoicesForValues((array) $view->vars['value']),
         ));
 
         if ($options['ajax']) {
@@ -74,7 +73,6 @@ class CollectionSelect2Type extends AbstractSelect2Type
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['form']->vars['no_label_for'] = true;
-        $view->vars['choices_selected'] = $view->vars['choice_list']->getLabelChoicesForValues((array) $view->vars['value']);
 
         // convert array to string
         if (is_array($view->vars['value'])) {
