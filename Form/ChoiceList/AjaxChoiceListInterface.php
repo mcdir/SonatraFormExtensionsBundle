@@ -35,6 +35,20 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
     public function getDataChoices();
 
     /**
+     * Set allow add.
+     *
+     * @param boolean $allowAdd
+     */
+    public function setAllowAdd($allowAdd);
+
+    /**
+     * Check if allow add.
+     *
+     * @return boolean
+    */
+    public function getAllowAdd();
+
+    /**
      * Set ajax.
      *
      * @param boolean $ajax

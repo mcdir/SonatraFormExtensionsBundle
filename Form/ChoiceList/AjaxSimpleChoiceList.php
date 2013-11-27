@@ -23,6 +23,11 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * @var boolean
      */
+    private $allowAdd;
+
+    /**
+     * @var boolean
+     */
     private $ajax;
 
     /**
@@ -68,6 +73,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function __construct($choices, array $preferredChoices = array())
     {
+        $this->allowAdd = false;
         $this->ajax = false;
         $this->pageSize = 10;
         $this->pageNumber = 1;
@@ -185,6 +191,32 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
+    public function getChoicesForValues(array $values)
+    {
+        if (!$this->allowAdd || empty($values) || (1 === count($values) && '' === $values[0])) {
+            return parent::getChoicesForValues($values);
+        }
+
+        $items = parent::getChoicesForValues($values);
+        $choices = array();
+
+        foreach ($values as $index => $value) {
+            $pos = array_search($value, $items);
+
+            if (false !== $pos) {
+                $choices[] = $items[$pos];
+
+            } else {
+                $choices[] = $value;
+            }
+        }
+
+        return $choices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDataChoices()
     {
         if ($this->ajax) {
@@ -214,6 +246,24 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAllowAdd($allowAdd)
+    {
+        $this->cacheChoices = null;
+        $this->cacheFilteredChoices = null;
+        $this->allowAdd = $allowAdd;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllowAdd()
+    {
+        return $this->allowAdd;
     }
 
     /**

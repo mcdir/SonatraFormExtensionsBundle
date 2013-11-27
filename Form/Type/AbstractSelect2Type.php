@@ -75,10 +75,10 @@ abstract class AbstractSelect2Type extends AbstractType
         $builder->resetViewTransformers();
 
         if ($options['multiple']) {
-            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['allow_add'], $options['required']));
+            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['required']));
 
         } else {
-            $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list'], $options['allow_add'], $options['required']));
+            $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list'], $options['required']));
         }
 
         if ($options['ajax'] && $options['multiple']) {
@@ -241,6 +241,7 @@ abstract class AbstractSelect2Type extends AbstractType
                     $value = new AjaxSimpleChoiceList($options['choices'], $options['preferred_choices']);
                 }
 
+                $value->setAllowAdd($options['allow_add']);
                 $value->setAjax($options['ajax']);
                 $value->setPageSize($options['page_size']);
                 $value->setPageNumber(1);

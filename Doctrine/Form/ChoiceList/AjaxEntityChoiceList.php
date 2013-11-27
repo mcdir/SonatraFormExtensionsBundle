@@ -33,6 +33,11 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * @var boolean
      */
+    private $allowAdd;
+
+    /**
+     * @var boolean
+     */
     private $ajax;
 
     /**
@@ -108,6 +113,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     public function __construct(ObjectManager $manager, $class, Request $request, $labelPath = null, AjaxORMQueryBuilderLoader $entityLoader = null, $entities = null,  array $preferredEntities = array(), $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->request = $request;
+        $this->allowAdd = false;
         $this->ajax = false;
         $this->pageSize = 10;
         $this->pageNumber = 1;
@@ -203,6 +209,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getChoicesForValues(array $values)
     {
+        //TODO allow add
+
         if (!$this->ajax) {
             return parent::getChoicesForValues($values);
         }
@@ -349,6 +357,23 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $this->extractLabels($choices, $labels);
 
         return $labels;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAllowAdd($allowAdd)
+    {
+        $this->reset();
+        $this->allowAdd = $allowAdd;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllowAdd()
+    {
+        return $this->allowAdd;
     }
 
     /**

@@ -28,24 +28,17 @@ class ChoicesToValuesTransformer implements DataTransformerInterface
     /**
      * @var boolean
      */
-    private $allowAdd;
-
-    /**
-     * @var boolean
-     */
     private $required;
 
     /**
      * Constructor.
      *
      * @param AjaxChoiceListInterface $choiceList
-     * @param boolean                 $allowAdd
      * @param boolean                 $required
      */
-    public function __construct(AjaxChoiceListInterface $choiceList, $allowAdd = false, $required = true)
+    public function __construct(AjaxChoiceListInterface $choiceList, $required = true)
     {
         $this->choiceList = $choiceList;
-        $this->allowAdd = $allowAdd;
         $this->required = $required;
     }
 
@@ -90,10 +83,6 @@ class ChoicesToValuesTransformer implements DataTransformerInterface
 
         if ($this->required && empty($array)) {
             throw new TransformationFailedException('Values is required.');
-        }
-
-        if ($this->allowAdd) {
-            return $array;
         }
 
         $choices = $this->choiceList->getChoicesForValues($array);

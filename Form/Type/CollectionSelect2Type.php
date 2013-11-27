@@ -45,6 +45,7 @@ class CollectionSelect2Type extends AbstractSelect2Type
 
         if (null === $choiceList) {
             $choiceList = new AjaxSimpleChoiceList($options['tags']);
+            $choiceList->setAllowAdd($options['allow_add']);
             $choiceList->setAjax($options['ajax']);
             $choiceList->setPageSize($options['page_size']);
             $choiceList->setPageNumber(1);
