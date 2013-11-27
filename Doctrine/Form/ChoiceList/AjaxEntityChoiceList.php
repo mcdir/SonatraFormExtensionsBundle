@@ -96,6 +96,11 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     private $filtered;
 
     /**
+     * @var ObjectManager
+     */
+    private $manager;
+
+    /**
      * Creates a new ajax entity choice list.
      *
      * @param ObjectManager             $manager           An EntityManager instance
@@ -124,6 +129,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $this->propertyAccessor = $propertyAccessor;
         $this->entityLoader = $entityLoader;
         $this->filtered = false;
+        $this->manager = $manager;
 
         parent::__construct($manager, $class, $labelPath, $entityLoader, $entities,  $preferredEntities, $groupPath, $propertyAccessor);
     }
@@ -209,9 +215,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getChoicesForValues(array $values)
     {
-        //TODO allow add
-
-        if (!$this->ajax) {
+        if (!$this->allowAdd || empty($values) || (1 === count($values) && '' === $values[0])) {
             return parent::getChoicesForValues($values);
         }
 
@@ -248,6 +252,13 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             foreach ($values as $i => $value) {
                 if (isset($entitiesByValue[$value])) {
                     $entities[$i] = $entitiesByValue[$value];
+
+                } else {
+                    $entity = new $this->class();
+                    $entity->{'set'.ucfirst($this->labelPath)}($value);
+
+                    $this->manager->persist($entity);
+                    $entities[$i] = $entity;
                 }
             }
 

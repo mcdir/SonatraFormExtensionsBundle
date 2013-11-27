@@ -22,6 +22,12 @@
             <argument>collection</argument>
         </service>
 
+        <service id="form.type_extension.sonatra.entity_collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension\EntityCollectionSelect2Extension">
+            <tag name="form.type_extension" alias="collection_select2" />
+            <argument type="service" id="service_container" />
+            <argument type="service" id="doctrine" />
+        </service>
+
         <service id="form.type.sonatra.currency" class="Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType">
             <tag name="form.type" alias="currency" />
         </service>
