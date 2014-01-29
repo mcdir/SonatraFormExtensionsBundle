@@ -111,9 +111,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      * @param array                     $entities          An array of choices
      * @param array                     $preferredEntities An array of preferred choices
      * @param string                    $groupPath         A property path pointing to the property used
-     *                                                         to group the choices. Only allowed if
-     *                                                         the choices are given as flat array.
-     * @param PropertyAccessorInterface $propertyAccessor The reflection graph for reading property paths.
+     *                                                     to group the choices. Only allowed if
+     *                                                     the choices are given as flat array.
+     * @param PropertyAccessorInterface $propertyAccessor  The reflection graph for reading property paths.
      */
     public function __construct(ObjectManager $manager, $class, Request $request, $labelPath = null, AjaxORMQueryBuilderLoader $entityLoader = null, $entities = null,  array $preferredEntities = array(), $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
     {

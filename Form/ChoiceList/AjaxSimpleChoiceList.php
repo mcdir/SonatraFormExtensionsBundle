@@ -11,7 +11,6 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList;
 
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 
@@ -63,11 +62,11 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * Creates a new ajax simple choice list.
      *
-     * @param array $choices The array of choices with the choices as keys and
-     *                       the labels as values. Choices may also be given
-     *                       as hierarchy of unlimited depth by creating nested
-     *                       arrays. The title of the sub-hierarchy is stored
-     *                       in the array key pointing to the nested array.
+     * @param array $choices          The array of choices with the choices as keys and
+     *                                the labels as values. Choices may also be given
+     *                                as hierarchy of unlimited depth by creating nested
+     *                                arrays. The title of the sub-hierarchy is stored
+     *                                in the array key pointing to the nested array.
      * @param array $preferredChoices A flat array of choices that should be
      *                                presented to the user with priority.
      */
