@@ -1,0 +1,276 @@
+{#} Form Javascript {#}
+{% block form_javascript %}
+{% spaceless %}
+    {% for child in form %}
+        {{ form_javascript(child) }}
+    {% endfor %}
+{% endspaceless %}
+{% endblock form_javascript %}
+
+{#} Form Stylesheet {#}
+{% block form_stylesheet %}
+{% spaceless %}
+    {% for child in form %}
+        {{ form_stylesheet(child) }}
+    {% endfor %}
+{% endspaceless %}
+{% endblock form_stylesheet %}
+
+{#} Widget {#}
+{% block select2_widget %}
+{% spaceless %}
+<div class="select2-wrapper">
+{% if ajax or tags is not null %}
+<input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value|raw }}" />
+<input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
+{% else %}
+{{ form_widget(form) }}
+{% endif %}
+</div>
+{% endspaceless %}
+{% endblock select2_widget %}
+
+{% block select2_javascript %}
+    $( '#{{ id }}' ).select2( {
+        {% if minimum_input_length is not null %}minimumInputLength: {{ minimum_input_length }},{% endif %}
+        {% if minimum_results_for_search is not null %}minimumResultsForSearch: {{ minimum_results_for_search }},{% endif %}
+        {% if maximum_selection_size is not null %}maximumSelectionSize: {{ maximum_selection_size }},{% endif %}
+        placeholder: {{ placeholder|default('select2.placeholder')|trans|raw }},
+        {% if select_separator is not null %}separator: {{ select_separator|raw }},{% endif %}
+        allowClear: {{ allow_clear|raw }},
+        {% if ajax or tags is not null %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
+        {% if close_on_select is not null %}closeOnSelect: {% if close_on_select %}true{% else %}false{% endif %},{% endif %}
+        {% if open_on_enter is not null %}openOnEnter: {% if open_on_enter %}true{% else %}false{% endif %},{% endif %}
+        {% if select_id is not null %}id: {{ select_id|raw }},{% endif %}
+        {% if matcher is not null %}matcher: {{ matcher|raw }},{% endif %}
+        {% if format_result is not null %}formatResult: {{ format_result|raw }},{% endif %}
+        {% if format_result_css_class is not null %}formatResultCssClass: {{ format_result_css_class|raw }},{% endif %}
+        formatNoMatches: {% if format_no_matches is not null %}{{ format_no_matches|raw }}{% else %}function () { return {{ 'select2.format_no_matches'|trans|raw }}; }{% endif %},
+        formatSearching: {% if format_searching is not null %}{{ format_searching|raw }}{% else %}function () { return {{ 'select2.format_searching'|trans|raw }}; }{% endif %},
+        formatInputTooShort: {% if format_input_too_short is not null %}{{ format_input_too_short|raw }}{% else %}function (input, min) { return {{ 'select2.format_input_too_short'|trans|raw }}; }{% endif %},
+        formatSelectionTooBig: {% if format_selection_too_big is not null %}{{ format_selection_too_big|raw }}{% else %}function (limit) { return {{ 'select2.format_selection_too_big'|trans|raw }}; }{% endif %},
+        formatLoadMore: {% if format_load_more is not null %}{{ format_load_more|raw }}{% else %}function (pageNumber) { return {{ 'select2.format_load_more'|trans|raw }}; }{% endif %},
+        {% if format_selection is not null %}formatSelection: {{ format_selection|raw }},{% endif %}
+        {% if create_search_choice is not null %}createSearchChoice: {{ create_search_choice|raw }},{% endif %}
+        {% if ajax %}{% if init_selection is not null %}initSelection: {{ init_selection|raw }},{% else %}initSelection: function (element, callback) {
+            var selected = $.parseJSON($( '#{{ id }}__label' ).val());
+            {% if multiple %}
+            var items = [];
+            var values = element.val().split(',');
+            $(selected).each(function() {
+                if (-1 < $.inArray(this.id, values)) {
+                    items.push(this);
+                }
+            });
+            callback(items);
+            {% else %}
+            $(selected).each(function() {
+                if (this.id == element.val()) {
+                    callback(this);
+                    return;
+                }
+            });
+            {% endif %}
+        },{% endif %}
+        {% endif %}
+        {% if tokenizer is not null %}tokenizer: {{ tokenizer|raw }},{% endif %}
+        {% if token_separators is not null %}tokenSeparators: {{ token_separators|raw }},{% endif %}
+        {% if select_query is not null %}query: {{ select_query|raw }},{% endif %}
+        {% if select_ajax is not null %}ajax: {{ select_ajax|raw }}{% elseif ajax %}ajax: {
+            url: "{{ ajax_url|raw }}",
+            dataType: 'json',
+            quietMillis: {{ quiet_millis }},
+            data: function (search, pageNumber) {
+                var value = $( '#{{ id }}' ).prop( 'value' );
+                return {
+                    s: search,
+                    pn: pageNumber,
+                    ps: {{ page_size }},
+                    ids : value,
+                    ajax_id: "{% if ajax_id is defined and ajax_id != '' %}{{ ajax_id }}{% else %}{{ id }}"{% endif %}
+                };
+            },
+            results: function (data, pageNumber) {
+                var more = (pageNumber * {{ page_size }}) < data.length;
+                return {results: data.results, more: more};
+            }
+        },{% endif %}
+        {% if select_data is not null %}data: {{ select_data|json_encode|raw }},{% endif %}
+        {% if tags is not null %}tags: {{ tags|json_encode|raw }},{% endif %}
+        {% if container_css is not null %}containerCss: {{ container_css|raw }},{% endif %}
+        {% if container_css_class is not null %}containerCssClass: {{ container_css_class|raw }},{% endif %}
+        {% if dropdown_css is not null %}dropdownCss: {{ dropdown_css|raw }},{% endif %}
+        {% if dropdown_css_class is not null %}dropdownCssClass: {{ dropdown_css_class|raw }},{% endif %}
+        {% if escape_markup is not null %}escapeMarkup: {{ escape_markup|raw }},{% endif %}
+        width: '{{ width }}'
+    } ){% if ajax %}.change(function(event) {
+        var $label = $( '#{{ id }}__label' );
+        var lData = $.parseJSON($label.val());
+        {% if multiple %}
+        if (event.added) {
+            lData.push(event.added);
+        } else if (event.removed) {
+            for (var i=0; i < lData.length;i++) {
+                if ( lData[i].id == event.removed.id ) {
+                     lData.splice(i, 1);
+                 }
+            }
+        }
+        {% else %}
+        lData = [$(this).select2('data')];
+        {% endif %}
+        $label.val(JSON.stringify(lData));
+    }){% endif %};
+
+{% endblock select2_javascript %}
+
+
+
+{% block choice_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock choice_select2_widget %}
+
+{% block choice_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock choice_select2_javascript %}
+
+
+
+{% block language_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock language_select2_widget %}
+
+{% block language_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock language_select2_javascript %}
+
+
+
+{% block country_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock country_select2_widget %}
+
+{% block country_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock country_select2_javascript %}
+
+
+
+{% block timezone_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock timezone_select2_widget %}
+
+{% block timezone_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock timezone_select2_javascript %}
+
+
+
+{% block locale_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock locale_select2_widget %}
+
+{% block locale_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock locale_select2_javascript %}
+
+
+
+{% block entity_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock entity_select2_widget %}
+
+{% block entity_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock entity_select2_javascript %}
+
+
+
+{% block collection_select2_widget %}
+{{ block('select2_widget') }}
+{% endblock collection_select2_widget %}
+
+{% block collection_select2_javascript %}
+{{ block('select2_javascript') }}
+{% endblock collection_select2_javascript %}
+
+
+
+{% block datetime_javascript %}
+{% if not read_only %}
+    $( '#{{ id }}' ).datetimepicker( {
+        {% if 'false' == time_only or ('false' == show_timepicker and 'true' == time_only) %}
+        closeText: "{{ 'datetime_jquery.closeText'|trans }}",
+		prevText: "{{ 'datetime_jquery.prevText'|trans }}",
+		nextText: "{{ 'datetime_jquery.nextText'|trans }}",
+		currentText: "{{ 'datetime_jquery.currentText'|trans }}",
+		monthNames: {{ 'datetime_jquery.monthNames'|trans|raw }},
+		monthNamesShort: {{ 'datetime_jquery.monthNamesShort'|trans|raw }},
+		dayNames: {{ 'datetime_jquery.dayNames'|trans|raw }},
+		dayNamesShort: {{ 'datetime_jquery.dayNamesShort'|trans|raw }},
+		dayNamesMin: {{ 'datetime_jquery.dayNamesMin'|trans|raw }},
+		weekHeader: "{{ 'datetime_jquery.weekHeader'|trans }}",
+		dateFormat: "{{ date_format }}",
+		firstDay: {{ 'datetime_jquery.firstDay'|trans|raw }},
+		isRTL: {{ 'datetime_jquery.isRTL'|trans|raw }},
+		showMonthAfterYear: {{ 'datetime_jquery.showMonthAfterYear'|trans|raw }},
+		yearSuffix: "{{ 'datetime_jquery.yearSuffix'|trans }}",
+		{% endif %}
+
+		{% if 'true' == show_timepicker %}
+		timeOnlyTitle: "{{ 'datetime_jquery.timeOnlyTitle'|trans|raw }}",
+		timeText: "{{ 'datetime_jquery.timeText'|trans|raw }}",
+		hourText: "{{ 'datetime_jquery.hourText'|trans|raw }}",
+		minuteText: "{{ 'datetime_jquery.minuteText'|trans|raw }}",
+		secondText: "{{ 'datetime_jquery.secondText'|trans|raw }}",
+		millisecText: "{{ 'datetime_jquery.millisecText'|trans|raw }}",
+		timezoneText: "{{ 'datetime_jquery.timezoneText'|trans|raw }}",
+		timeFormat: "{{ time_format }}",
+		amNames: {{ 'datetime_jquery.amNames'|trans|raw }},
+		pmNames: {{ 'datetime_jquery.pmNames'|trans|raw }},
+		{% endif %}
+
+		{% if show_timezone %}showTimezone: true,{% endif %}
+		{% if not show_time %}showTime: false,{% endif %}
+		{% if not step_hour != 1 %}stepHour: {{ step_hour|raw }},{% endif %}
+		{% if not step_minute != 1 %}stepMinute: {{ step_minute|raw }},{% endif %}
+		{% if not step_second != 1 %}stepSecond: {{ step_second|raw }},{% endif %}
+		{% if not hour != 0 %}hour: {{ hour|raw }},{% endif %}
+		{% if not minute != 0 %}minute: {{ minute|raw }},{% endif %}
+		{% if not second != 0 %}second: {{ second|raw }},{% endif %}
+		{% if not timezone != 0 %}timezone: {{ timezone|raw }},{% endif %}
+		{% if not hour_min != 0 %}hourMin: {{ hour_min|raw }},{% endif %}
+		{% if not minute_min != 0 %}minuteMin: {{ minute_min|raw }},{% endif %}
+		{% if not second_min != 0 %}secondMin: {{ second_min|raw }},{% endif %}
+		{% if not hour_max != 59 %}hourMax: {{ hour_max|raw }},{% endif %}
+		{% if not minute_max != 59 %}minuteMax: {{ minute_max|raw }},{% endif %}
+		{% if not second_max != 0 %}secondMax: {{ second_max|raw }},{% endif %}
+		{% if not show_button_panel %}showButtonPanel: false,{% endif %}
+		{% if min_date_time is not null %}minDateTime: {{ min_date_time|raw }},{% endif %}
+		{% if max_date_time is not null %}maxDateTime: {{ max_date_time|raw }},{% endif %}
+
+		showSecond: {{ with_seconds|raw }},
+		timeOnly: {{ time_only|raw }},
+		showTimepicker: {{ show_timepicker|raw }}
+    } );
+{% endif %}
+{% endblock datetime_javascript %}
+
+
+
+{% block date_javascript %}
+{{ block('datetime_javascript') }}
+{% endblock date_javascript %}
+
+
+
+{% block time_widget %}
+{% set type = 'text' %}
+{{ block('datetime_widget') }}
+{% endblock time_widget %}
+
+
+
+{% block time_javascript %}
+{{ block('datetime_javascript') }}
+{% endblock time_javascript %}
