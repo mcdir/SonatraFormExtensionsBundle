@@ -1,0 +1,34 @@
+{
+    "name": "sonatra/form-extensions-bundle",
+    "type": "symfony-bundle",
+    "description": "Sonatra Form Extensions Bundle",
+    "keywords": ["Init form-extensions, PDO"],
+    "homepage": "http://sonatra.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "François Pluchino",
+            "email": "francois.pluchino@sonatra.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/framework-bundle": "~2.3",
+        "sonatra/ajax-bundle":"~1.0",
+        "ivaynberg/select2": "*"
+    },
+    "require-dev": {
+        "symfony/console": "~2.3",
+        "symfony/finder": "~2.3"
+    },
+    "autoload": {
+        "psr-0": { "Sonatra\\Bundle\\FormExtensionsBundle": "" }
+    },
+    "target-dir": "Sonatra/Bundle/FormExtensionsBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
