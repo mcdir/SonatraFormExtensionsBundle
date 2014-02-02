@@ -19,7 +19,7 @@
         {% if minimum_input_length is not null %}minimumInputLength: {{ minimum_input_length }},{% endif %}
         {% if minimum_results_for_search is not null %}minimumResultsForSearch: {{ minimum_results_for_search }},{% endif %}
         {% if maximum_selection_size is not null %}maximumSelectionSize: {{ maximum_selection_size }},{% endif %}
-        placeholder: {{ placeholder|default('select2.placeholder')|trans|raw }},
+        placeholder: {{ placeholder|default('select2.placeholder')|trans({}, translation_domain)|raw }},
         {% if select_separator is not null %}separator: {{ select_separator|raw }},{% endif %}
         allowClear: {{ allow_clear|raw }},
         {% if ajax or tags is defined %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
@@ -29,11 +29,11 @@
         {% if matcher is not null %}matcher: {{ matcher|raw }},{% endif %}
         {% if format_result is not null %}formatResult: {{ format_result|raw }},{% endif %}
         {% if format_result_css_class is not null %}formatResultCssClass: {{ format_result_css_class|raw }},{% endif %}
-        formatNoMatches: {% if format_no_matches is not null %}{{ format_no_matches|raw }}{% else %}function () { return {{ 'select2.format_no_matches'|trans|raw }}; }{% endif %},
-        formatSearching: {% if format_searching is not null %}{{ format_searching|raw }}{% else %}function () { return {{ 'select2.format_searching'|trans|raw }}; }{% endif %},
-        formatInputTooShort: {% if format_input_too_short is not null %}{{ format_input_too_short|raw }}{% else %}function (input, min) { return {{ 'select2.format_input_too_short'|trans|raw }}; }{% endif %},
-        formatSelectionTooBig: {% if format_selection_too_big is not null %}{{ format_selection_too_big|raw }}{% else %}function (limit) { return {{ 'select2.format_selection_too_big'|trans|raw }}; }{% endif %},
-        formatLoadMore: {% if format_load_more is not null %}{{ format_load_more|raw }}{% else %}function (pageNumber) { return {{ 'select2.format_load_more'|trans|raw }}; }{% endif %},
+        formatNoMatches: {% if format_no_matches is not null %}{{ format_no_matches|raw }}{% else %}function () { return {{ 'select2.format_no_matches'|trans({}, translation_domain)|raw }}; }{% endif %},
+        formatSearching: {% if format_searching is not null %}{{ format_searching|raw }}{% else %}function () { return {{ 'select2.format_searching'|trans({}, translation_domain)|raw }}; }{% endif %},
+        formatInputTooShort: {% if format_input_too_short is not null %}{{ format_input_too_short|raw }}{% else %}function (input, min) { return {{ 'select2.format_input_too_short'|trans({}, translation_domain)|raw }}; }{% endif %},
+        formatSelectionTooBig: {% if format_selection_too_big is not null %}{{ format_selection_too_big|raw }}{% else %}function (limit) { return {{ 'select2.format_selection_too_big'|trans({}, translation_domain)|raw }}; }{% endif %},
+        formatLoadMore: {% if format_load_more is not null %}{{ format_load_more|raw }}{% else %}function (pageNumber) { return {{ 'select2.format_load_more'|trans({}, translation_domain)|raw }}; }{% endif %},
         {% if format_selection is not null %}formatSelection: {{ format_selection|raw }},{% endif %}
         {% if create_search_choice is not null %}createSearchChoice: {{ create_search_choice|raw }},{% elseif tags is defined %}createSearchChoice: function(term, data) {
             if ($(data).filter(function() {
@@ -154,34 +154,34 @@
     <script type="text/javascript">
     $( '#{{ id }}' ).datetimepicker( {
         {% if 'false' == time_only or ('false' == show_timepicker and 'true' == time_only) %}
-        closeText: "{{ 'datetime_jquery.closeText'|trans }}",
-        prevText: "{{ 'datetime_jquery.prevText'|trans }}",
-        nextText: "{{ 'datetime_jquery.nextText'|trans }}",
-        currentText: "{{ 'datetime_jquery.currentText'|trans }}",
-        monthNames: {{ 'datetime_jquery.monthNames'|trans|raw }},
-        monthNamesShort: {{ 'datetime_jquery.monthNamesShort'|trans|raw }},
-        dayNames: {{ 'datetime_jquery.dayNames'|trans|raw }},
-        dayNamesShort: {{ 'datetime_jquery.dayNamesShort'|trans|raw }},
-        dayNamesMin: {{ 'datetime_jquery.dayNamesMin'|trans|raw }},
-        weekHeader: "{{ 'datetime_jquery.weekHeader'|trans }}",
+        closeText: "{{ 'datetime_jquery.closeText'|trans({}, translation_domain) }}",
+        prevText: "{{ 'datetime_jquery.prevText'|trans({}, translation_domain) }}",
+        nextText: "{{ 'datetime_jquery.nextText'|trans({}, translation_domain) }}",
+        currentText: "{{ 'datetime_jquery.currentText'|trans({}, translation_domain) }}",
+        monthNames: {{ 'datetime_jquery.monthNames'|trans({}, translation_domain)|raw }},
+        monthNamesShort: {{ 'datetime_jquery.monthNamesShort'|trans({}, translation_domain)|raw }},
+        dayNames: {{ 'datetime_jquery.dayNames'|trans({}, translation_domain)|raw }},
+        dayNamesShort: {{ 'datetime_jquery.dayNamesShort'|trans({}, translation_domain)|raw }},
+        dayNamesMin: {{ 'datetime_jquery.dayNamesMin'|trans({}, translation_domain)|raw }},
+        weekHeader: "{{ 'datetime_jquery.weekHeader'|trans({}, translation_domain) }}",
         dateFormat: "{{ date_format }}",
-        firstDay: {{ 'datetime_jquery.firstDay'|trans|raw }},
-        isRTL: {{ 'datetime_jquery.isRTL'|trans|raw }},
-        showMonthAfterYear: {{ 'datetime_jquery.showMonthAfterYear'|trans|raw }},
-        yearSuffix: "{{ 'datetime_jquery.yearSuffix'|trans }}",
+        firstDay: {{ 'datetime_jquery.firstDay'|trans({}, translation_domain)|raw }},
+        isRTL: {{ 'datetime_jquery.isRTL'|trans({}, translation_domain)|raw }},
+        showMonthAfterYear: {{ 'datetime_jquery.showMonthAfterYear'|trans({}, translation_domain)|raw }},
+        yearSuffix: "{{ 'datetime_jquery.yearSuffix'|trans({}, translation_domain) }}",
         {% endif %}
 
         {% if 'true' == show_timepicker %}
-        timeOnlyTitle: "{{ 'datetime_jquery.timeOnlyTitle'|trans|raw }}",
-        timeText: "{{ 'datetime_jquery.timeText'|trans|raw }}",
-        hourText: "{{ 'datetime_jquery.hourText'|trans|raw }}",
-        minuteText: "{{ 'datetime_jquery.minuteText'|trans|raw }}",
-        secondText: "{{ 'datetime_jquery.secondText'|trans|raw }}",
-        millisecText: "{{ 'datetime_jquery.millisecText'|trans|raw }}",
-        timezoneText: "{{ 'datetime_jquery.timezoneText'|trans|raw }}",
+        timeOnlyTitle: "{{ 'datetime_jquery.timeOnlyTitle'|trans({}, translation_domain)|raw }}",
+        timeText: "{{ 'datetime_jquery.timeText'|trans({}, translation_domain)|raw }}",
+        hourText: "{{ 'datetime_jquery.hourText'|trans({}, translation_domain)|raw }}",
+        minuteText: "{{ 'datetime_jquery.minuteText'|trans({}, translation_domain)|raw }}",
+        secondText: "{{ 'datetime_jquery.secondText'|trans({}, translation_domain)|raw }}",
+        millisecText: "{{ 'datetime_jquery.millisecText'|trans({}, translation_domain)|raw }}",
+        timezoneText: "{{ 'datetime_jquery.timezoneText'|trans({}, translation_domain)|raw }}",
         timeFormat: "{{ time_format }}",
-        amNames: {{ 'datetime_jquery.amNames'|trans|raw }},
-        pmNames: {{ 'datetime_jquery.pmNames'|trans|raw }},
+        amNames: {{ 'datetime_jquery.amNames'|trans({}, translation_domain)|raw }},
+        pmNames: {{ 'datetime_jquery.pmNames'|trans({}, translation_domain)|raw }},
         {% endif %}
 
         {% if show_timezone %}showTimezone: true,{% endif %}

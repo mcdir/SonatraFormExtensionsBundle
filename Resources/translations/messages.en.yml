@@ -1,0 +1,7 @@
+select2:
+    placeholder: '""'
+    format_no_matches: '"No matches found"'
+    format_input_too_short: '"Please enter " + (min - input.length) + " more character" + ((min - input.length) == 1 ? "" : "s")'
+    format_selection_too_big: '"You can only select " + limit + " item" + (limit == 1 ? "" : "s")'
+    format_load_more: '"Loading more results..."'
+    format_searching: '"Searching..."'
