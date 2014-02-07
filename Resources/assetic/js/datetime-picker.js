@@ -785,8 +785,8 @@
                     var match = $calendarAll.css('transform').match(reMatrix);
 
                     if (match) {
-                        transform.e = match[1];
-                        transform.f = match[2];
+                        transform.e = parseInt(match[1]);
+                        transform.f = parseInt(match[2]);
                     }
                 }
             }
