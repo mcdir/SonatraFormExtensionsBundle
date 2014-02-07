@@ -26,8 +26,8 @@ class DateJqueryTypeExtension extends DateTimeJqueryTypeExtension
         parent::setDefaultOptions($resolver);
 
         $resolver->setDefaults(array(
-                'time_only'       => false,
-                'show_timepicker' => false,
+            'date_picker' => true,
+            'time_picker' => false,
         ));
     }
 

@@ -20,10 +20,11 @@
         "symfony/framework-bundle" : "~2.3",
         "sonatra/twig-extensions-bundle" : "~1.0",
         "sonatra/ajax-bundle" : "~1.0",
-        "sonatra_jquery/jquery" : "1.10.x",
+        "sonatra_jquery/jquery" : "1.11.*",
         "sonatra_ivaynberg/select2" : "~3.4",
-        "sonatra_jquery/jquery-ui" : "dev-master",
-        "sonatra_trentrichardson/jquery-timepicker-addon" : "dev-master"
+        "sonatra/bootstrap-bundle": "~1.0",
+        "sonatra_moment/moment": "dev-master",
+        "sonatra_eightmedia/hammer-js": "dev-master"
     },
     "require-dev" : {
         "symfony/console" : "~2.3",

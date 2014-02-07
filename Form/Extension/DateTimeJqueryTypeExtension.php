@@ -27,45 +27,46 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['time_only'] = $options['time_only'];
+        $attr = $options['attr'];
+        $dataAttributes = array(
+            'locale',
+            'date_picker',
+            'time_picker',
+            'time_picker_first',
+            'button_id',
+            'open_focus',
+            'format',
+            'with_minutes',
+            'with_seconds',
+        );
 
-        $format = $options['format'];
-        $format = str_replace('M', 'm', $format);
-        $format = str_replace('yyyy', 'yy', $format);
-        $format = str_replace('a', 'TT', $format);
-        $pos = strpos($format, ' ');
+        foreach ($dataAttributes as $dataAttr) {
+            $name = str_replace('_', '-', $dataAttr);
+            $value = $options[$dataAttr];
 
-        if (false !== $pos) {
-            $view->vars['date_format']       = substr($format, 0, $pos);
-            $view->vars['time_format']       = substr($format, $pos + 1);
+            if (true === $value) {
+                $value = 'true';
 
-        } else {
-            $view->vars['date_format']       = $options['time_only'] ? '' : $format;
-            $view->vars['time_format']       = $options['time_only'] ? $format : '';
+            } elseif (false === $value) {
+                $value = 'false';
+
+            } elseif (null === $value) {
+                continue;
+            }
+
+            $attr['data-' . $name] = $value;
         }
 
-        $view->vars['with_seconds']      = $options['with_seconds'] ? 'true' : 'false';
-        $view->vars['time_only']         = $options['time_only'] ? 'true' : 'false';
-        $view->vars['show_timepicker']   = $options['show_timepicker'] ? 'true' : 'false';
+        $attr = array_merge($attr, array(
+            'data-datetime-picker' => 'true',
+            'data-button-id'       => $view->vars['id'] . '_datetime_btn',
+        ));
 
-        $view->vars['show_timezone']     = $options['show_timezone'];
-        $view->vars['show_time']         = $options['show_time'];
-        $view->vars['step_hour']         = $options['step_hour'];
-        $view->vars['step_minute']       = $options['step_minute'];
-        $view->vars['step_second']       = $options['step_second'];
-        $view->vars['hour']              = $options['hour'];
-        $view->vars['minute']            = $options['minute'];
-        $view->vars['second']            = $options['second'];
-        $view->vars['timezone']          = $options['timezone'];
-        $view->vars['hour_min']          = $options['hour_min'];
-        $view->vars['minute_min']        = $options['minute_min'];
-        $view->vars['second_min']        = $options['second_min'];
-        $view->vars['hour_max']          = $options['hour_max'];
-        $view->vars['minute_max']        = $options['minute_max'];
-        $view->vars['second_max']        = $options['second_max'];
-        $view->vars['show_button_panel'] = $options['show_button_panel'];
-        $view->vars['min_date_time']     = $options['min_date_time'];
-        $view->vars['max_date_time']     = $options['max_date_time'];
+        $attr['data-format'] = str_replace('d', 'D', $attr['data-format']);
+        $attr['data-format'] = str_replace('y', 'Y', $attr['data-format']);
+        $attr['data-format'] = str_replace('a', 'A', $attr['data-format']);
+
+        $view->vars['attr'] = $attr;
     }
 
     /**
@@ -77,16 +78,12 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
             $date_format = \IntlDateFormatter::NONE;
             $time_format = \IntlDateFormatter::NONE;
 
-            $med = \IntlDateFormatter::MEDIUM;
-            $short = \IntlDateFormatter::SHORT;
-
-            if (!$options['time_only'] ||
-                    (!$options['show_timepicker'] && $options['time_only'])) {
-                $date_format = $short;
+            if ($options['date_picker']) {
+                $date_format = \IntlDateFormatter::SHORT;
             }
 
-            if ($options['show_timepicker']) {
-                $time_format = $options['with_seconds'] ? $med : $short;
+            if ($options['time_picker']) {
+                $time_format = $options['with_seconds'] ? \IntlDateFormatter::MEDIUM : \IntlDateFormatter::SHORT;
             }
 
             $formater = new \IntlDateFormatter(
@@ -100,41 +97,35 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
 
             $formater->setLenient(false);
             $pattern = $formater->getPattern();
-            $pattern = str_replace('yy', 'yyyy', $pattern);
+
+            if (false !== strpos($pattern, 'yyyy')) {
+                return $pattern;
+
+            } elseif (false !== strpos($pattern, 'yy')) {
+                $pattern = str_replace('yy', 'yyyy', $pattern);
+
+            } elseif (false !== strpos($pattern, 'y')) {
+                $pattern = str_replace('y', 'yyyy', $pattern);
+            }
 
             return $pattern;
         };
 
         $resolver->setDefaults(array(
                 'widget'            => 'single_text',
-                'time_only'         => false,
-                'show_timepicker'   => true,
                 'locale'            => \Locale::getDefault(),
                 'user_timezone'     => null,
-                'format'            => $format,
-                'show_timezone'     => false,
-                'show_time'         => true,
-                'step_hour'         => 1,
-                'step_minute'       => 1,
-                'step_second'       => 1,
-                'hour'              => 0,
-                'minute'            => 0,
-                'second'            => 0,
-                'timezone'          => 0,
-                'hour_min'          => 0,
-                'minute_min'        => 0,
-                'second_min'        => 0,
-                'hour_max'          => 23,
-                'minute_max'        => 59,
-                'second_max'        => 59,
-                'show_button_panel' => true,
-                'min_date_time'     => null,
-                'max_date_time'     => null,
+                'date_picker'       => true,
+                'time_picker'       => false,
+                'time_picker_first' => false,
+                'button_id'         => null,
+                'open_focus'        => true,
 
                 // override parent type value (merge options for datetime, date, time)
+                'format'            => $format,
                 'empty_value'       => null,
                 'with_minutes'      => true,
-                'with_seconds'      => false,
+                'with_seconds'      => false
         ));
     }
 

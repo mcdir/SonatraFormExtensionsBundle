@@ -30,8 +30,6 @@ Add Sonatra FormExtensionsBundle in your composer.json:
 
 Or tell composer to download the bundle by running the command:
 
-Note: you must specify the package `ivaynberg/select2` in the composer's repositories section.
-
 ``` bash
 $ php composer.phar update sonatra/form-extensions-bundle
 ```
@@ -55,35 +53,20 @@ public function registerBundles()
 }
 ```
 
+Adds stylesheet files in your template or assetic asset (with less filter):
+
+- '%kernel.root_dir%/../vendor/sonatra_ivaynberg/select2/select2.css'
+- '@SonatraFormExtensions/Resources/assetic/less/datetime-picker-build.less'
+
 Adds javascript files in your template or assetic asset:
 
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/themes/base/jquery.ui.core.css'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/themes/base/jquery.ui.datepicker.css'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/themes/base/jquery.ui.resizable.css'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/themes/base/jquery.ui.selectable.css'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/themes/base/jquery.ui.slider.css'
-- '%kernel.root_dir%/../vendor/sonatra_ivaynberg/select2/select2.css'
-- '%kernel.root_dir%/../vendor/sonatra_trentrichardson/jquery-timepicker-addon/src/jquery-ui-timepicker-addon.css'
-
-Adds stylesheet files in your template or assetic asset:
-
 - '%kernel.root_dir%/../vendor/sonatra_jquery/jquery/jquery.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.core.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.widget.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.position.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.mouse.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.draggable.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.droppable.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.sortable.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.resizable.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.selectable.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.datepicker.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.slider.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.effect.js'
-- '%kernel.root_dir%/../vendor/sonatra_jquery/jquery-ui/ui/jquery.ui.effect-slide.js'
 - '%kernel.root_dir%/../vendor/sonatra_ivaynberg/select2/select2.js'
-- '%kernel.root_dir%/../vendor/sonatra_trentrichardson/jquery-timepicker-addon/src/jquery-ui-timepicker-addon.js'
-- '%kernel.root_dir%/../vendor/sonatra_trentrichardson/jquery-timepicker-addon/src/jquery-ui-sliderAccess.js'
+- '%kernel.root_dir%/../vendor/sonatra_eightmedia/hammer-js/hammer.js'
+- '%kernel.root_dir%/../vendor/sonatra_moment/moment/moment.js'
+- '%kernel.root_dir%/../vendor/sonatra_moment/moment/lang/%locale%.js'
+- '@SonatraFormExtensions/Resources/assetic/js/datetime-picker.js'
+- '@SonatraFormExtensionsBundle/Resources/assetic/js/lang/datetime-picker-%locale%.js'
 
 ### Step 3: Configure the bundle (optionnal)
 
