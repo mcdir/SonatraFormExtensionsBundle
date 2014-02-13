@@ -152,7 +152,55 @@
                     '</div>',
                 '</div>',
                 '<div class="dtp-body-time">',
-                    '<p>Content time</p>',
+                    '<div class="dtp-body-time-wrapper">',
+                        '<div class="dtp-body-time-header">',
+                            '<div class="dtp-body-time-title-hours">',
+                                '<span>' + this.langData().hours + '</span>',
+                            '</div>',
+                            '<div class="dtp-body-time-title-minutes">',
+                                '<span>' + this.langData().minutes + '</span>',
+                            '</div>',
+                            '<div class="dtp-body-time-title-seconds">',
+                                '<span>' + this.langData().seconds + '</span>',
+                            '</div>',
+                            '<div class="dtp-body-time-title-meridiem">',
+                            '</div>',
+                        '</div>',
+                        '<div class="dtp-body-time-content">',
+                            '<div class="dtp-body-time-content-hours">',
+                                '<a class="dtp-time-btn dtp-time-hour-btn-next" href="#" role="button" tabindex="-1"></a>',
+                                '<a class="dtp-time-btn dtp-time-hour-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<div class="dtp-body-time-content-seletor">',
+                                    '<div class="dtp-body-time-content-seletor-all">',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                            '<div class="dtp-body-time-content-minutes">',
+                                '<a class="dtp-time-btn dtp-time-minute-btn-next" href="#" role="button" tabindex="-1"></a>',
+                                '<a class="dtp-time-btn dtp-time-minute-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<div class="dtp-body-time-content-seletor">',
+                                    '<div class="dtp-body-time-content-seletor-all">',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                            '<div class="dtp-body-time-content-seconds">',
+                                '<a class="dtp-time-btn dtp-time-second-btn-next" href="#" role="button" tabindex="-1"></a>',
+                                '<a class="dtp-time-btn dtp-time-second-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<div class="dtp-body-time-content-seletor">',
+                                    '<div class="dtp-body-time-content-seletor-all">',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                            '<div class="dtp-body-time-content-meridiem">',
+                                '<a class="dtp-time-btn dtp-time-meridiem-btn-next" href="#" role="button" tabindex="-1"></a>',
+                                '<a class="dtp-time-btn dtp-time-meridiem-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<div class="dtp-body-time-content-seletor">',
+                                    '<div class="dtp-body-time-content-seletor-all">',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                        '</div>',
+                    '</div>',
                 '</div>',
             '</div>',
             '<div class="' + this.options.classFooterPicker + '">',
@@ -177,11 +225,7 @@
         this.currentDate.lang(this.options.locale);
 
         generateWeekdays(this);
-
-        //TODO construct hour picker
-        //TODO construct minute picker
-        //TODO construct second picker
-        //TODO construct meridiem picker
+        generateTimer(this);
 
         this.refreshValue();
         this.position();
@@ -202,6 +246,14 @@
         this.$picker.on(this.eventType, 'a.dtp-choice-month-btn-prev', $.proxy(DatetimePicker.prototype.previousMonth, this));
         this.$picker.on(this.eventType, 'a.dtp-choice-month-btn-next', $.proxy(DatetimePicker.prototype.nextMonth, this));
         this.$picker.on(this.eventType, '.dtp-body-calendar-day > a', $.proxy(DatetimePicker.prototype.setDatetime, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-hour-btn-next', $.proxy(DatetimePicker.prototype.nextHour, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-hour-btn-previous', $.proxy(DatetimePicker.prototype.previousHour, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-minute-btn-next', $.proxy(DatetimePicker.prototype.nextMinute, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-minute-btn-previous', $.proxy(DatetimePicker.prototype.previousMinute, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-second-btn-next', $.proxy(DatetimePicker.prototype.nextSecond, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.on(this.eventType, 'a.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
         $(document).on(this.eventType + '.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
         $(window).on('resize.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
         $(window).on('keyup.st.datetimepicker' + this.guid, $.proxy(keyboardAction, this));
@@ -230,6 +282,14 @@
         this.$picker.off(this.eventType, 'a.dtp-choice-month-btn-prev', $.proxy(DatetimePicker.prototype.previousMonth, this));
         this.$picker.off(this.eventType, 'a.dtp-choice-month-btn-next', $.proxy(DatetimePicker.prototype.nextMonth, this));
         this.$picker.off(this.eventType, '.dtp-body-calendar-day > a', $.proxy(DatetimePicker.prototype.setDatetime, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-hour-btn-next', $.proxy(DatetimePicker.prototype.nextHour, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-hour-btn-previous', $.proxy(DatetimePicker.prototype.previousHour, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-minute-btn-next', $.proxy(DatetimePicker.prototype.nextMinute, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-minute-btn-previous', $.proxy(DatetimePicker.prototype.previousMinute, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-second-btn-next', $.proxy(DatetimePicker.prototype.nextSecond, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.off(this.eventType, 'a.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
         this.$picker.remove();
         this.$picker = null;
         this.destroySwipe();
@@ -312,6 +372,11 @@
     }
 
     DatetimePicker.prototype.refreshPicker = function () {
+        this.refreshDatePicker();
+        this.refreshTimePicker();
+    };
+
+    DatetimePicker.prototype.refreshDatePicker = function () {
         if (null == this.currentDate || null == this.$picker) {
             return;
         }
@@ -351,18 +416,56 @@
         var $calendarWrapper = $('.dtp-body-calendar-wrapper', $body);
         $calendarWrapper.empty();
         $calendarWrapper.append(generateCalendars(this, this.currentDate));
+    };
+
+    DatetimePicker.prototype.refreshTimePicker = function () {
+        if (null == this.currentDate || null == this.$picker) {
+            return;
+        }
+
+        var $header = this.$picker.children('.' + this.options.classHeaderPicker);
+        var $title = $header.children('.' + this.options.classHeaderPicker + '-title');
+        var $body = this.$picker.children('.' + this.options.classBodyPicker);
+
+        // title
+        $title.text(this.currentDate.format(this.options.format));
+
+        // time
+        var $timeWrapper = $('.dtp-body-time-wrapper', $body);
+        var $timeAllWrappers = $('.dtp-body-time-content-seletor-all', $timeWrapper);
+        var $hourAll = $('.dtp-body-time-content-hours .dtp-body-time-content-seletor-all', $timeWrapper);
+        var $minuteAll = $('.dtp-body-time-content-minutes .dtp-body-time-content-seletor-all', $timeWrapper);
+        var $secondAll = $('.dtp-body-time-content-seconds .dtp-body-time-content-seletor-all', $timeWrapper);
+        var $meridiemAll = $('.dtp-body-time-content-meridiem .dtp-body-time-content-seletor-all', $timeWrapper);
+        var itemHeight = - $('span[data-time-type=hour]', $timeWrapper).outerHeight();
+
+        // disabled transition
+        $timeAllWrappers.css('-webkit-transition', 'none');
+        $timeAllWrappers.css('transition', 'none');
 
         // hour list
-        //TODO hour list
+        var hours = this.options.format.indexOf('H') < 0 ? (this.currentDate.hours() % 12 || 0) : this.currentDate.hours();
+
+        $hourAll.css('-webkit-transform', 'translate3d(0px, ' + hours * itemHeight +'px, 0px)');
+        $hourAll.css('transform', 'translate3d(0px, ' + hours * itemHeight +'px, 0px)');
 
         // minute list
-        //TODO minute list
+        $minuteAll.css('-webkit-transform', 'translate3d(0px, ' + this.currentDate.minutes() * itemHeight +'px, 0px)');
+        $minuteAll.css('transform', 'translate3d(0px, ' + this.currentDate.minutes() * itemHeight +'px, 0px)');
 
         // second list
-        //TODO second list
+        $secondAll.css('-webkit-transform', 'translate3d(0px, ' + this.currentDate.seconds() * itemHeight +'px, 0px)');
+        $secondAll.css('transform', 'translate3d(0px, ' + this.currentDate.seconds() * itemHeight +'px, 0px)');
 
         // meridiem list
-        //TODO meridiem list
+        var meridiem = this.currentDate.hours() > 11 ? 1 : 0;
+
+        $meridiemAll.css('-webkit-transform', 'translate3d(0px, ' + meridiem * itemHeight +'px, 0px)');
+        $meridiemAll.css('transform', 'translate3d(0px, ' + meridiem * itemHeight +'px, 0px)');
+
+        // restore transition
+        $timeAllWrappers.css('-webkit-transition', '');
+        $timeAllWrappers.css('transition', '');
     };
 
     DatetimePicker.prototype.cancel = function (event) {
@@ -413,6 +516,7 @@
         }
 
         this.$picker.attr('data-tab-selected', 'date');
+        this.refreshDatePicker();
         this.position();
     };
 
@@ -427,6 +531,7 @@
         }
 
         this.$picker.attr('data-tab-selected', 'time');
+        this.refreshTimePicker();
         this.position();
     };
 
@@ -469,7 +574,7 @@
         }
 
         this.currentDate.year(year);
-        this.refreshPicker();
+        this.refreshDatePicker();
     };
 
     DatetimePicker.prototype.previousYear = function (event) {
@@ -483,7 +588,7 @@
         }
 
         this.currentDate.add('year', -1);
-        this.refreshPicker();
+        this.refreshDatePicker();
     };
 
     DatetimePicker.prototype.nextYear = function (event) {
@@ -497,7 +602,7 @@
         }
 
         this.currentDate.add('year', 1);
-        this.refreshPicker();
+        this.refreshDatePicker();
     };
 
     DatetimePicker.prototype.setMonth = function (month) {
@@ -510,7 +615,7 @@
         }
 
         this.currentDate.month(parseInt(month));
-        this.refreshPicker();
+        this.refreshDatePicker();
     };
 
     DatetimePicker.prototype.previousMonth = function (event) {
@@ -524,7 +629,7 @@
         }
 
         this.currentDate.add('month', -1);
-        this.refreshPicker();
+        this.refreshDatePicker();
     };
 
     DatetimePicker.prototype.nextMonth = function (event) {
@@ -538,7 +643,7 @@
         }
 
         this.currentDate.add('month', 1);
-        this.refreshPicker();
+        this.refreshDatePicker();
     };
 
     DatetimePicker.prototype.setHour = function (hour) {
@@ -550,9 +655,8 @@
             hour = $(event.target).val();
         }
 
-        //TODO
-        //this.currentDate.hour(parsInt(hour));
-        this.refreshPicker();
+        this.currentDate.hour(parsInt(hour));
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.previousHour = function (event) {
@@ -565,8 +669,8 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
+        this.currentDate.add('hour', -1);
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.nextHour = function (event) {
@@ -579,8 +683,8 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
+        this.currentDate.add('hour', 1);
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.setMinute = function (minute) {
@@ -592,9 +696,8 @@
             minute = $(event.target).val();
         }
 
-        //TODO
-        //this.currentDate.minute(parsInt(minute));
-        this.refreshPicker();
+        this.currentDate.minute(parsInt(minute));
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.previousMinute = function (event) {
@@ -607,8 +710,8 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
+        this.currentDate.add('minute', -1);
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.nextMinute = function (event) {
@@ -621,8 +724,8 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
+        this.currentDate.add('minute', 1);
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.setSecond = function (second) {
@@ -634,9 +737,8 @@
             second = $(event.target).val();
         }
 
-        //TODO
-        //this.currentDate.second(parsInt(second));
-        this.refreshPicker();
+        this.currentDate.second(parsInt(second));
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.previousSecond = function (event) {
@@ -649,8 +751,8 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
+        this.currentDate.add('second', -1);
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.nextSecond = function (event) {
@@ -663,27 +765,8 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
-    };
-
-    DatetimePicker.prototype.setMeridiem = function (meridiem) {
-        if (null == this.currentDate || null == this.$picker) {
-            return;
-        }
-
-        if (meridiem instanceof jQuery.Event) {
-            meridiem = $(event.target).val();
-        }
-
-        if (isInt(meridiem)) {
-            meridiem = meridiem ? 'pm' : 'am';
-        }
-
-        meridiem = meridiem.toUpperCase();
-
-        //TODO
-        this.refreshPicker();
+        this.currentDate.add('second', 1);
+        this.refreshTimePicker();
     };
 
     DatetimePicker.prototype.toggleMeridiem = function () {
@@ -691,8 +774,14 @@
             return;
         }
 
-        //TODO
-        this.refreshPicker();
+        if (this.currentDate.hours() > 11) {
+            this.currentDate.add('hour', -12);
+
+        } else {
+            this.currentDate.add('hour', 12);
+        }
+
+        this.refreshTimePicker();
     }
 
     DatetimePicker.prototype.destroy = function () {
@@ -824,7 +913,7 @@
                 return;
             }
 
-            $calendarAll.on('transitionend webkitTransitionEnd oTransitionEnd', null, type, $.proxy(dragEndTransition, this));
+            $calendarAll.on('transitionend webkitTransitionEnd oTransitionEnd', null, type, $.proxy(dragEndCalendarTransition, this));
             $calendarAll.css('-webkit-transition', '');
             $calendarAll.css('transition', '');
             $calendarAll.css('-webkit-transform', 'translate3d(' + horizontal +'px, ' + vertical +'px, 0px)');
@@ -1018,7 +1107,53 @@
         return $calendar;
     };
 
-    function dragEndTransition (event) {
+    function generateTimer (self) {
+        var format = self.options.format;
+        var hourSize = format.indexOf('H') < 0 ? 12 : 24;
+        var hourFormat = format.indexOf('HH') >= 0 ? 'HH' : 'H';
+            hourFormat = format.indexOf('hh') >= 0 ? 'hh' : hourFormat;
+            hourFormat = format.indexOf('h') >= 0 ? 'h' : hourFormat;
+        var minuteFormat = format.indexOf('mm') >= 0 ? 'mm' : 'm';
+        var secondFormat = format.indexOf('ss') >= 0 ? 'ss' : 's';
+        var $wrapper = $('.dtp-body-time-wrapper', self.$picker);
+        var $hours = $('.dtp-body-time-content-hours .dtp-body-time-content-seletor-all', self.$picker);
+        var $minutes = $('.dtp-body-time-content-minutes .dtp-body-time-content-seletor-all', $wrapper);
+        var $seconds = $('.dtp-body-time-content-seconds .dtp-body-time-content-seletor-all', $wrapper);
+        var $meridiem = $('.dtp-body-time-content-meridiem .dtp-body-time-content-seletor-all', $wrapper);
+
+        if (self.options.withMinutes) {
+            $wrapper.addClass('time-has-minutes');
+        }
+
+        if (self.options.withSeconds) {
+            $wrapper.addClass('time-has-seconds');
+        }
+
+        if (format.indexOf('H') < 0) {
+            $wrapper.addClass('time-has-meridiem');
+        }
+
+        // hours
+        for (var i = 0; i < hourSize; i++) {
+            $hours.append('<span data-time-type="hour" data-time-value="' + i + '">' + moment({hour: i}).lang(self.options.locale).format(hourFormat) + '</span>');
+        }
+
+        // minutes
+        for (var i = 0; i < 60; i++) {
+            $minutes.append('<span data-time-type="minute" data-time-value="' + i + '">' + moment({minute: i}).lang(self.options.locale).format(minuteFormat) + '</span>');
+        }
+
+        // seconds
+        for (var i = 0; i < 60; i++) {
+            $seconds.append('<span data-time-type="second" data-time-value="' + i + '">' + moment({second: i}).lang(self.options.locale).format(secondFormat) + '</span>');
+        }
+
+        // meridiem
+        $meridiem.append('<span data-time-type="meridiem" data-time-value="am">' + self.currentDate.lang().meridiem(1, 0, false) + '</span>');
+        $meridiem.append('<span data-time-type="meridiem" data-time-value="pm">' + self.currentDate.lang().meridiem(23, 0, false) + '</span>');
+    };
+
+    function dragEndCalendarTransition (event) {
         var $calendarAll = $('.dtp-body-calendar-all', this.$picker);
 
         $calendarAll.off('transitionend webkitTransitionEnd oTransitionEnd');

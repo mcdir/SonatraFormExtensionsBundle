@@ -34,9 +34,6 @@
     }
 
     .datetime-picker-header-tabs {
-        border-bottom: 1px solid @datetime-picker-fallback-border; // IE8 fallback
-        border-bottom: 1px solid @datetime-picker-border;
-
         background-color: @datetime-picker-tab-bg;
     }
 
@@ -58,9 +55,6 @@
                 text-transform: uppercase;
                 font-size: 0.82em;
                 font-weight: @datetime-picker-title-font-weight;
-
-                border-left: 1px solid @datetime-picker-fallback-border; // IE8 fallback
-                border-left: 1px solid @datetime-picker-border;
             }
 
             &:first-child {
@@ -98,6 +92,10 @@
         .dtp-body-header {
             display: table;
             width: 100%;
+
+            &.dtp-body-header-days {
+                margin-top: 5px;
+            }
 
             .dtp-body-header-choice {
                 display: table-cell;
@@ -163,6 +161,7 @@
                 text-align: center;
                 padding: 0 3px 5px 3px;
                 vertical-align: top;
+                font-size: 0.82em;
                 color: @datetime-picker-header-days-color;
                 border-bottom: 1px solid @datetime-picker-fallback-border; // IE8 fallback
                 border-bottom: 1px solid @datetime-picker-border;
@@ -244,6 +243,120 @@
                 }
             }
         }
+
+        .dtp-body-time {
+            text-align: center;
+        }
+
+        .dtp-body-time-wrapper {
+            display: inline-table;
+            padding-bottom: 10px;
+
+            .dtp-body-time-header,
+            .dtp-body-time-content {
+                display: table-row;
+            }
+
+            .dtp-body-time-header {
+                .dtp-body-time-title-hours,
+                .dtp-body-time-title-minutes,
+                .dtp-body-time-title-seconds,
+                .dtp-body-time-title-meridiem {
+                    display: table-cell;
+                    padding: 5px;
+                    color: @datetime-picker-header-days-color;
+                    font-size: 0.82em;
+                }
+            }
+
+            .dtp-body-time-content {
+                .dtp-body-time-content-hours,
+                .dtp-body-time-content-minutes,
+                .dtp-body-time-content-seconds,
+                .dtp-body-time-content-meridiem {
+                    display: table-cell;
+                    padding: 0 5px;
+
+                    .dtp-body-time-content-seletor {
+                        height: @datetime-picker-time-item-height * 3;
+                        overflow: hidden;
+
+                        .dtp-body-time-content-seletor-all {
+                            > span {
+                                display: block;
+                                line-height: @datetime-picker-time-item-height;
+                                min-width: 46px;
+
+                                &:first-child {
+                                    margin-top: @datetime-picker-time-item-height;
+                                }
+
+                                &:last-child {
+                                    margin-bottom: @datetime-picker-time-item-height;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .dtp-time-btn {
+                    position: absolute;
+                    display: block;
+                    line-height: @datetime-picker-time-item-height;
+                    min-width: 46px;
+                    z-index: 1;
+                    color: @datetime-picker-time-btn-color;
+                    background-color: @datetime-picker-time-btn-bg;
+
+                    &:hover,
+                    :focus {
+                        background-color: @datetime-picker-time-btn-hover-bg;
+                        text-decoration: none;
+                    }
+                }
+
+                .dtp-time-hour-btn-next,
+                .dtp-time-minute-btn-next,
+                .dtp-time-second-btn-next,
+                .dtp-time-meridiem-btn-next {
+                    &:after {
+                        content: "+";
+                    }
+                }
+
+                .dtp-time-hour-btn-previous,
+                .dtp-time-minute-btn-previous,
+                .dtp-time-second-btn-previous,
+                .dtp-time-meridiem-btn-previous {
+                    margin-top: @datetime-picker-time-item-height * 2;
+
+                    &:after {
+                        content: "-";
+                    }
+                }
+            }
+
+            &:not(.time-has-minutes) {
+                .dtp-body-time-title-minutes,
+                .dtp-body-time-content-minutes {
+                    display: none;
+                }
+            }
+
+            &:not(.time-has-seconds) {
+                .dtp-body-time-title-seconds,
+                .dtp-body-time-content-seconds {
+                    display: none;
+                }
+            }
+
+            &:not(.time-has-meridiem) {
+                .dtp-body-time-title-meridiem,
+                .dtp-body-time-content-meridiem {
+                    display: none;
+                }
+            }
+        }
     }
 
     &[data-tab-selected=date] {
@@ -319,6 +432,27 @@
         border-bottom: none;
         box-shadow: 1px -1px 3px rgba(0, 0, 0, 0.14);
     }
+
+    .dtp-body-time-wrapper {
+        .dtp-body-time-content {
+            .dtp-body-time-content-hours,
+            .dtp-body-time-content-minutes,
+            .dtp-body-time-content-seconds,
+            .dtp-body-time-content-meridiem {
+                .dtp-body-time-content-seletor {
+                    .dtp-body-time-content-seletor-all {
+                        > span {
+                            min-width: 70px !important;
+                        }
+                    }
+                }
+            }
+
+            .dtp-time-btn {
+                min-width: 70px !important;
+            }
+        }
+    }
 }
 
 @media (max-width: @screen-xs-max) and (orientation: portrait) {
@@ -356,6 +490,45 @@
             }
         }
 
+        .dtp-body-time-wrapper {
+            .dtp-body-time-content {
+                .dtp-body-time-content-hours,
+                .dtp-body-time-content-minutes,
+                .dtp-body-time-content-seconds,
+                .dtp-body-time-content-meridiem {
+                    .dtp-body-time-content-seletor {
+                        height: @datetime-picker-time-item-height  * 2 * 3 !important;
+
+                        .dtp-body-time-content-seletor-all {
+                            > span {
+                                line-height: @datetime-picker-time-item-height * 2 !important;
+
+                                &:first-child {
+                                    margin-top: @datetime-picker-time-item-height * 2 !important;
+                                }
+
+                                &:last-child {
+                                    margin-bottom: @datetime-picker-time-item-height * 2 !important;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .dtp-time-btn {
+                    min-width: 70px !important;
+                    line-height: @datetime-picker-time-item-height * 2 !important;
+                }
+
+                .dtp-time-hour-btn-previous,
+                .dtp-time-minute-btn-previous,
+                .dtp-time-second-btn-previous,
+                .dtp-time-meridiem-btn-previous {
+                    margin-top: @datetime-picker-time-item-height * 2 * 2 !important;
+                }
+            }
+        }
+
         .datetime-picker-footer-btn {
             > a {
                 padding: 14px 5px;
@@ -364,7 +537,7 @@
     }
 }
 
-@media screen and (max-width: @screen-xs-max) and (orientation: landscape) {
+@media (max-width: @screen-xs-max) and (orientation: landscape) {
     .datetime-picker-wrapper {
         .dtp-body-calendar-day {
             padding: 3px !important;
@@ -385,6 +558,45 @@
                 height: 20px !important;
                 line-height: 20px !important;
                 border-radius: 10px;
+            }
+        }
+
+        .dtp-body-time-wrapper {
+            .dtp-body-time-content {
+                .dtp-body-time-content-hours,
+                .dtp-body-time-content-minutes,
+                .dtp-body-time-content-seconds,
+                .dtp-body-time-content-meridiem {
+                    .dtp-body-time-content-seletor {
+                        height: @datetime-picker-time-item-height  * 1.5 * 3 !important;
+
+                        .dtp-body-time-content-seletor-all {
+                            > span {
+                                line-height: @datetime-picker-time-item-height * 1.5 !important;
+
+                                &:first-child {
+                                    margin-top: @datetime-picker-time-item-height * 1.5 !important;
+                                }
+
+                                &:last-child {
+                                    margin-bottom: @datetime-picker-time-item-height * 1.5 !important;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .dtp-time-btn {
+                    min-width: 70px !important;
+                    line-height: @datetime-picker-time-item-height * 1.5 !important;
+                }
+
+                .dtp-time-hour-btn-previous,
+                .dtp-time-minute-btn-previous,
+                .dtp-time-second-btn-previous,
+                .dtp-time-meridiem-btn-previous {
+                    margin-top: @datetime-picker-time-item-height * 1.5 * 2 !important;
+                }
             }
         }
 
