@@ -266,7 +266,7 @@
         $(window).on('keyup.st.datetimepicker' + this.guid, $.proxy(keyboardAction, this));
         $(window).on('scroll.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
 
-        this.initSwipe();
+        $.proxy(initCalendarSwipe, this)();
     };
 
     DatetimePicker.prototype.close = function () {
@@ -306,7 +306,7 @@
         this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-time-content-meridiem', $.proxy(scrollMeridiem, this));
         this.$picker.remove();
         this.$picker = null;
-        this.destroySwipe();
+        $.proxy(destroyCalendarSwipe, this)();
         this.$element.removeClass(this.options.classOpen);
 
         $(document).off(this.eventType + '.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
@@ -810,7 +810,7 @@
         }
     };
 
-    DatetimePicker.prototype.initSwipe = function () {
+    function initCalendarSwipe () {
         if (!Hammer) {
             return;
         }
@@ -936,7 +936,7 @@
         }, this));
     };
 
-    DatetimePicker.prototype.destroySwipe = function () {
+    function destroyCalendarSwipe () {
         if (!Hammer) {
             return;
         }
