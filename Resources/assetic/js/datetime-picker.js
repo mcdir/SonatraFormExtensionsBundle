@@ -254,6 +254,13 @@
         this.$picker.on(this.eventType, 'a.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
         this.$picker.on(this.eventType, 'a.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
         this.$picker.on(this.eventType, 'a.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-year', $.proxy(scrollYear, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-month', $.proxy(scrollMonth, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-calendar-wrapper', $.proxy(scrollMonth, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-time-content-hours', $.proxy(scrollHour, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-time-content-minutes', $.proxy(scrollMinute, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-time-content-seconds', $.proxy(scrollSecond, this));
+        this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-time-content-meridiem', $.proxy(scrollMeridiem, this));
         $(document).on(this.eventType + '.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
         $(window).on('resize.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
         $(window).on('keyup.st.datetimepicker' + this.guid, $.proxy(keyboardAction, this));
@@ -290,6 +297,13 @@
         this.$picker.off(this.eventType, 'a.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
         this.$picker.off(this.eventType, 'a.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
         this.$picker.off(this.eventType, 'a.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-year', $.proxy(scrollYear, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-month', $.proxy(scrollMonth, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-calendar-wrapper', $.proxy(scrollMonth, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-time-content-hours', $.proxy(scrollHour, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-time-content-minutes', $.proxy(scrollMinute, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-time-content-seconds', $.proxy(scrollSecond, this));
+        this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-time-content-meridiem', $.proxy(scrollMeridiem, this));
         this.$picker.remove();
         this.$picker = null;
         this.destroySwipe();
@@ -1011,6 +1025,51 @@
 
             return false;
         }
+    };
+
+    function scrollAction (event, type) {
+        var delta = (event.type == 'DOMMouseScroll' ?
+                event.originalEvent.detail * -40 :
+                event.originalEvent.wheelDelta);
+
+        type = type.charAt(0).toUpperCase() + type.slice(1);
+
+        if (delta > 0) {
+            this['previous' + type]();
+
+        } else {
+            this['next' + type]();
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    function scrollYear (event) {
+        $.proxy(scrollAction, this, event, 'year')();
+    };
+
+    function scrollMonth (event) {
+        $.proxy(scrollAction, this, event, 'month')();
+    };
+
+    function scrollHour (event) {
+        $.proxy(scrollAction, this, event, 'hour')();
+    };
+
+    function scrollMinute (event) {
+        $.proxy(scrollAction, this, event, 'minute')();
+    };
+
+    function scrollSecond (event) {
+        $.proxy(scrollAction, this, event, 'second')();
+    };
+
+    function scrollMeridiem (event) {
+        this.toggleMeridiem();
+
+        event.stopPropagation();
+        event.preventDefault();
     };
 
     function generateWeekdays (self) {
