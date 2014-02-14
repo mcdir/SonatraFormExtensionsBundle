@@ -1072,7 +1072,7 @@
             switch (type) {
                 case 'hour':
                     if (this.currentDate.hours() > 11 && this.options.format.indexOf('H') < 0) {
-                        this.setHour(value + 12);
+                        this.setHour(parseInt(value) + 12);
 
                     } else {
                         this.setHour(parseInt(value));
