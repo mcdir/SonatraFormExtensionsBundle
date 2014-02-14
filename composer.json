@@ -23,7 +23,7 @@
         "sonatra_jquery/jquery" : "1.11.*",
         "sonatra_ivaynberg/select2" : "~3.4",
         "sonatra/bootstrap-bundle": "~1.0",
-        "sonatra_moment/moment": "dev-master",
+        "sonatra_moment/moment": "~2.5",
         "sonatra_eightmedia/hammer-js": "dev-master"
     },
     "require-dev" : {
