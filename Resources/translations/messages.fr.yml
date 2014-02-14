@@ -1,7 +1,0 @@
-select2:
-    placeholder: '""'
-    format_no_matches: '"Aucune correspondance trouvée"'
-    format_input_too_short: '"Entrer au moins " + (min - input.length) + " caractère" + ((min - input.length) == 1 ? "" : "s")'
-    format_selection_too_big: '"Vous ne pouvez pas sélectionner " + limit + " ligne" + (limit == 1 ? "" : "s")'
-    format_load_more: '"Chargement suivant..."'
-    format_searching: '"Recherche..."'

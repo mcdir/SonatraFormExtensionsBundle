@@ -17,7 +17,6 @@
         {% if minimum_input_length is not null %}minimumInputLength: {{ minimum_input_length }},{% endif %}
         {% if minimum_results_for_search is not null %}minimumResultsForSearch: {{ minimum_results_for_search }},{% endif %}
         {% if maximum_selection_size is not null %}maximumSelectionSize: {{ maximum_selection_size }},{% endif %}
-        placeholder: {{ placeholder|default('select2.placeholder')|trans({}, translation_domain)|raw }},
         {% if select_separator is not null %}separator: {{ select_separator|raw }},{% endif %}
         allowClear: {{ allow_clear|raw }},
         {% if ajax or tags is defined %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
@@ -27,11 +26,6 @@
         {% if matcher is not null %}matcher: {{ matcher|raw }},{% endif %}
         {% if format_result is not null %}formatResult: {{ format_result|raw }},{% endif %}
         {% if format_result_css_class is not null %}formatResultCssClass: {{ format_result_css_class|raw }},{% endif %}
-        formatNoMatches: {% if format_no_matches is not null %}{{ format_no_matches|raw }}{% else %}function () { return {{ 'select2.format_no_matches'|trans({}, translation_domain)|raw }}; }{% endif %},
-        formatSearching: {% if format_searching is not null %}{{ format_searching|raw }}{% else %}function () { return {{ 'select2.format_searching'|trans({}, translation_domain)|raw }}; }{% endif %},
-        formatInputTooShort: {% if format_input_too_short is not null %}{{ format_input_too_short|raw }}{% else %}function (input, min) { return {{ 'select2.format_input_too_short'|trans({}, translation_domain)|raw }}; }{% endif %},
-        formatSelectionTooBig: {% if format_selection_too_big is not null %}{{ format_selection_too_big|raw }}{% else %}function (limit) { return {{ 'select2.format_selection_too_big'|trans({}, translation_domain)|raw }}; }{% endif %},
-        formatLoadMore: {% if format_load_more is not null %}{{ format_load_more|raw }}{% else %}function (pageNumber) { return {{ 'select2.format_load_more'|trans({}, translation_domain)|raw }}; }{% endif %},
         {% if format_selection is not null %}formatSelection: {{ format_selection|raw }},{% endif %}
         {% if create_search_choice is not null %}createSearchChoice: {{ create_search_choice|raw }},{% elseif tags is defined %}createSearchChoice: function(term, data) {
             if ($(data).filter(function() {
