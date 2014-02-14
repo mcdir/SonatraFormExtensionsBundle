@@ -227,8 +227,18 @@
         generateWeekdays(this);
         generateTimer(this);
 
+        var $timeAllWrappers = $('.dtp-body-time-content-seletor-all', this.$picker);
+
+        // disabled transition
+        $timeAllWrappers.css('-webkit-transition', 'none');
+        $timeAllWrappers.css('transition', 'none');
+
         this.refreshValue();
         this.position();
+
+        // restore transition
+        $timeAllWrappers.css('-webkit-transition', '');
+        $timeAllWrappers.css('transition', '');
 
         this.$element.addClass(this.options.classOpen);
 
@@ -267,6 +277,7 @@
         $(window).on('scroll.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
 
         $.proxy(initCalendarSwipe, this)();
+        $.proxy(initTimerSwipe, this)();
     };
 
     DatetimePicker.prototype.close = function () {
@@ -307,6 +318,7 @@
         this.$picker.remove();
         this.$picker = null;
         $.proxy(destroyCalendarSwipe, this)();
+        $.proxy(destroyTimerSwipe, this)();
         this.$element.removeClass(this.options.classOpen);
 
         $(document).off(this.eventType + '.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
@@ -453,10 +465,6 @@
         var $meridiemAll = $('.dtp-body-time-content-meridiem .dtp-body-time-content-seletor-all', $timeWrapper);
         var itemHeight = - $('span[data-time-type=hour]', $timeWrapper).outerHeight();
 
-        // disabled transition
-        $timeAllWrappers.css('-webkit-transition', 'none');
-        $timeAllWrappers.css('transition', 'none');
-
         // hour list
         var hours = this.options.format.indexOf('H') < 0 ? (this.currentDate.hours() % 12 || 0) : this.currentDate.hours();
 
@@ -476,10 +484,6 @@
 
         $meridiemAll.css('-webkit-transform', 'translate3d(0px, ' + meridiem * itemHeight +'px, 0px)');
         $meridiemAll.css('transform', 'translate3d(0px, ' + meridiem * itemHeight +'px, 0px)');
-
-        // restore transition
-        $timeAllWrappers.css('-webkit-transition', '');
-        $timeAllWrappers.css('transition', '');
     };
 
     DatetimePicker.prototype.cancel = function (event) {
@@ -544,9 +548,19 @@
             return;
         }
 
+        var $timeAllWrappers = $('.dtp-body-time-content-seletor-all', this.$picker);
+
+        // disabled transition
+        $timeAllWrappers.css('-webkit-transition', 'none');
+        $timeAllWrappers.css('transition', 'none');
+
         this.$picker.attr('data-tab-selected', 'time');
         this.refreshTimePicker();
         this.position();
+
+        // restore transition
+        $timeAllWrappers.css('-webkit-transition', '');
+        $timeAllWrappers.css('transition', '');
     };
 
     DatetimePicker.prototype.setDatetime = function (datetime) {
@@ -665,11 +679,7 @@
             return;
         }
 
-        if (hour instanceof jQuery.Event) {
-            hour = $(event.target).val();
-        }
-
-        this.currentDate.hour(parsInt(hour));
+        this.currentDate.hour(hour);
         this.refreshTimePicker();
     };
 
@@ -706,11 +716,7 @@
             return;
         }
 
-        if (minute instanceof jQuery.Event) {
-            minute = $(event.target).val();
-        }
-
-        this.currentDate.minute(parsInt(minute));
+        this.currentDate.minute(minute);
         this.refreshTimePicker();
     };
 
@@ -747,11 +753,7 @@
             return;
         }
 
-        if (second instanceof jQuery.Event) {
-            second = $(event.target).val();
-        }
-
-        this.currentDate.second(parsInt(second));
+        this.currentDate.second(second);
         this.refreshTimePicker();
     };
 
@@ -780,6 +782,26 @@
         }
 
         this.currentDate.add('second', 1);
+        this.refreshTimePicker();
+    };
+
+    DatetimePicker.prototype.setMeridiem = function (meridiem) {
+        if (null == this.currentDate || null == this.$picker) {
+            return;
+        }
+
+        meridiem = meridiem.toLowerCase();
+
+        if (this.currentDate.hours() >= 12 && 'am' == meridiem) {
+            this.currentDate.add('hour', 12);
+
+        } else if (this.currentDate.hours() < 12 && 'pm' == meridiem) {
+            this.currentDate.add('hour', -12);
+
+        } else {
+            return;
+        }
+
         this.refreshTimePicker();
     };
 
@@ -871,29 +893,7 @@
         .on('dragend', $.proxy(function (event) {
             var $calendarAll = $('.dtp-body-calendar-all', this.$picker);
             var $calendar = $('.dtp-body-calendar[data-calendar-name=current]', $calendarAll);
-            var transform = {e: 0, f: 0};
-
-            if ($calendarAll.css('transform')) {
-                if ('function' === typeof CSSMatrix) {
-                    transform = new CSSMatrix($calendarAll.css('transform'));
-
-                } else if ('function' === typeof WebKitCSSMatrix) {
-                    transform = new WebKitCSSMatrix($calendarAll.css('transform'));
-
-                } else if ('function' === typeof MSCSSMatrix) {
-                    transform = new MSCSSMatrix($calendarAll.css('transform'));
-
-                } else {
-                    var reMatrix = /matrix\(\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*\,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/;
-                    var match = $calendarAll.css('transform').match(reMatrix);
-
-                    if (match) {
-                        transform.e = parseInt(match[1]);
-                        transform.f = parseInt(match[2]);
-                    }
-                }
-            }
-
+            var transform = getTransformMatrix($calendarAll);
             var horizontal = transform.e;
             var vertical = transform.f;
             var type = null;
@@ -942,6 +942,182 @@
         }
 
         delete this.hammerCalendar;
+    };
+
+    function dragEndCalendarTransition (event) {
+        var $calendarAll = $('.dtp-body-calendar-all', this.$picker);
+
+        $calendarAll.off('transitionend webkitTransitionEnd oTransitionEnd');
+        $calendarAll.css('-webkit-transition', 'none');
+        $calendarAll.css('transition', 'none');
+        $calendarAll.css('-webkit-transform', '');
+        $calendarAll.css('transform', '');
+
+        switch (event.data) {
+            case 'nextYear':
+                this.nextYear(event);
+                break;
+            case 'previousYear':
+                this.previousYear(event);
+                break;
+            case 'nextMonth':
+                this.nextMonth(event);
+                break;
+            case 'previousMonth':
+                this.previousMonth(event);
+                break;
+            default:
+                break;
+        }
+    };
+
+    function initTimerSwipe () {
+        $.proxy(dragTimerAction, this, 'hours')();
+        $.proxy(dragTimerAction, this, 'minutes')();
+        $.proxy(dragTimerAction, this, 'seconds')();
+        $.proxy(dragTimerAction, this, 'meridiem')();
+    };
+
+    function destroyTimerSwipe () {
+        if (!Hammer) {
+            return;
+        }
+
+        delete this['hammerTimerHours'];
+        delete this['hammerTimerMinutes'];
+        delete this['hammerTimerSeconds'];
+        delete this['hammerTimerMeridiem'];
+    };
+
+    function dragTimerAction (type) {
+        if (!Hammer) {
+            return;
+        }
+
+        var name = 'hammerTimer' + type.charAt(0).toUpperCase() + type.slice(1);
+        var startPositionName = 'hammerStartPosition' + type.charAt(0).toUpperCase() + type.slice(1);
+
+        this[name] = new Hammer($('.dtp-body-time-content-' + type, this.$picker).get(0), {
+            swipe: false,
+            transform: false,
+            prevent_default: true,
+            drag_lock_to_axis: true
+        })
+
+        .on('dragstart', $.proxy(function (startPositionName, event) {
+            var $timerSelector = $(event.currentTarget);
+            var $timerAll = $('.dtp-body-time-content-seletor-all', $timerSelector);
+            var name = type.charAt(0).toUpperCase() + type.slice(1);
+
+            $timerSelector.addClass('dtp-timer-on-drag');
+            this[startPositionName] = getTransformMatrix($timerAll);
+        }, this, startPositionName))
+
+        .on('drag', $.proxy(function (startPositionName, event) {
+            var $timerAll = $('.dtp-body-time-content-seletor-all', event.currentTarget);
+            var vertical = 0;
+            var itemHeight = Math.round($timerAll.outerHeight() / $timerAll.children().size());
+
+            switch (event.gesture.direction) {
+                case 'up':
+                case 'down':
+                    vertical = Math.round(event.gesture.deltaY + this[startPositionName].f);
+                    break;
+                default:
+                    break;
+            }
+
+            if (vertical > itemHeight) {
+                vertical = itemHeight;
+
+            } else if (vertical < -$timerAll.outerHeight()) {
+                vertical = -$timerAll.outerHeight();
+            }
+
+            $timerAll.css('-webkit-transition', 'none');
+            $timerAll.css('transition', 'none');
+            $timerAll.css('-webkit-transform', 'translate3d(0px, ' + vertical +'px, 0px)');
+            $timerAll.css('transform', 'translate3d(0px, ' + vertical +'px, 0px)');
+        }, this, startPositionName))
+
+        .on('dragend', $.proxy(function (startPositionName, event) {
+            var $timerAll = $('.dtp-body-time-content-seletor-all', event.currentTarget);
+            var transform = getTransformMatrix($timerAll);
+            var vertical = transform.f;
+            var itemHeight = Math.round($timerAll.outerHeight() / $timerAll.children().size());
+            var count = Math.round(vertical / itemHeight);
+            var data = {target: event.currentTarget};
+
+            if (count > 0) {
+                count = 0;
+
+            } else if (count < (-$timerAll.children().size() + 1)) {
+                count = -$timerAll.children().size() + 1;
+            }
+
+            vertical = itemHeight * count;
+
+            $timerAll.css('-webkit-transition', '');
+            $timerAll.css('transition', '');
+            $timerAll.css('-webkit-transform', 'translate3d(0px, ' + vertical +'px, 0px)');
+            $timerAll.css('transform', 'translate3d(0px, ' + vertical +'px, 0px)');
+
+            delete this[startPositionName];
+            $(event.currentTarget).removeClass('dtp-timer-on-drag');
+
+            var $item = $($timerAll.children().get(-count));
+            var type = $item.attr('data-time-type');
+            var value = $item.attr('data-time-value');
+
+            switch (type) {
+                case 'hour':
+                    if (this.currentDate.hours() > 11 && this.options.format.indexOf('H') < 0) {
+                        this.setHour(value + 12);
+
+                    } else {
+                        this.setHour(parseInt(value));
+                    }
+                    break;
+                case 'minute':
+                    this.setMinute(parseInt(value));
+                    break;
+                case 'second':
+                    this.setSecond(parseInt(value));
+                    break;
+                case 'meridiem':
+                    this.setMeridiem(value);
+                    break;
+                default:
+                    break;
+            }
+        }, this, startPositionName));
+    };
+
+    function getTransformMatrix ($dragger) {
+        var transform = {e: 0, f: 0};
+
+        if ($dragger.css('transform')) {
+            if ('function' === typeof CSSMatrix) {
+                transform = new CSSMatrix($dragger.css('transform'));
+
+            } else if ('function' === typeof WebKitCSSMatrix) {
+                transform = new WebKitCSSMatrix($dragger.css('transform'));
+
+            } else if ('function' === typeof MSCSSMatrix) {
+                transform = new MSCSSMatrix($dragger.css('transform'));
+
+            } else {
+                var reMatrix = /matrix\(\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*\,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/;
+                var match = $dragger.css('transform').match(reMatrix);
+
+                if (match) {
+                    transform.e = parseInt(match[1]);
+                    transform.f = parseInt(match[2]);
+                }
+            }
+        }
+
+        return transform;
     };
 
     function mobileCheck () {
@@ -1211,33 +1387,6 @@
         $meridiem.append('<span data-time-type="meridiem" data-time-value="am">' + self.currentDate.lang().meridiem(1, 0, false) + '</span>');
         $meridiem.append('<span data-time-type="meridiem" data-time-value="pm">' + self.currentDate.lang().meridiem(23, 0, false) + '</span>');
     };
-
-    function dragEndCalendarTransition (event) {
-        var $calendarAll = $('.dtp-body-calendar-all', this.$picker);
-
-        $calendarAll.off('transitionend webkitTransitionEnd oTransitionEnd');
-        $calendarAll.css('-webkit-transition', 'none');
-        $calendarAll.css('transition', 'none');
-        $calendarAll.css('-webkit-transform', '');
-        $calendarAll.css('transform', '');
-
-        switch (event.data) {
-            case 'nextYear':
-                this.nextYear(event);
-                break;
-            case 'previousYear':
-                this.previousYear(event);
-                break;
-            case 'nextMonth':
-                this.nextMonth(event);
-                break;
-            case 'previousMonth':
-                this.previousMonth(event);
-                break;
-            default:
-                break;
-        }
-    }
 
 
     // DATETIME PICKER PLUGIN DEFINITION

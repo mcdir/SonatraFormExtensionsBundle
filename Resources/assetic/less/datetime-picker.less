@@ -277,11 +277,20 @@
                     display: table-cell;
                     padding: 0 5px;
 
+                    &.dtp-timer-on-drag {
+                        .dtp-time-btn {
+                            display: none;
+                        }
+                    }
+
                     .dtp-body-time-content-seletor {
                         height: @datetime-picker-time-item-height * 3;
                         overflow: hidden;
 
                         .dtp-body-time-content-seletor-all {
+                            -webkit-transition: -webkit-transform 0.2s;
+                            transition: transform 0.2s;
+
                             > span {
                                 display: block;
                                 line-height: @datetime-picker-time-item-height;
@@ -289,10 +298,6 @@
 
                                 &:first-child {
                                     margin-top: @datetime-picker-time-item-height;
-                                }
-
-                                &:last-child {
-                                    margin-bottom: @datetime-picker-time-item-height;
                                 }
                             }
                         }
@@ -506,10 +511,6 @@
                                 &:first-child {
                                     margin-top: @datetime-picker-time-item-height * 2 !important;
                                 }
-
-                                &:last-child {
-                                    margin-bottom: @datetime-picker-time-item-height * 2 !important;
-                                }
                             }
                         }
                     }
@@ -576,10 +577,6 @@
 
                                 &:first-child {
                                     margin-top: @datetime-picker-time-item-height * 1.5 !important;
-                                }
-
-                                &:last-child {
-                                    margin-bottom: @datetime-picker-time-item-height * 1.5 !important;
                                 }
                             }
                         }
