@@ -56,7 +56,7 @@ public function registerBundles()
 Adds stylesheet files in your template or assetic asset (with less filter):
 
 - '%kernel.root_dir%/../vendor/sonatra_ivaynberg/select2/select2.css'
-- '@SonatraFormExtensions/Resources/assetic/less/datetime-picker-build.less'
+- '@SonatraFormExtensionsBundle/Resources/assetic/less/datetime-picker-build.less'
 
 Adds javascript files in your template or assetic asset:
 
@@ -65,7 +65,7 @@ Adds javascript files in your template or assetic asset:
 - '%kernel.root_dir%/../vendor/sonatra_eightmedia/hammer-js/hammer.js'
 - '%kernel.root_dir%/../vendor/sonatra_moment/moment/moment.js'
 - '%kernel.root_dir%/../vendor/sonatra_moment/moment/lang/%locale%.js'
-- '@SonatraFormExtensions/Resources/assetic/js/datetime-picker.js'
+- '@SonatraFormExtensionsBundle/Resources/assetic/js/datetime-picker.js'
 - '@SonatraFormExtensionsBundle/Resources/assetic/js/lang/datetime-picker-%locale%.js'
 
 ### Step 3: Configure the bundle (optionnal)
