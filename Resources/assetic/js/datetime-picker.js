@@ -211,7 +211,7 @@
             '</div>'
         ].join(''));
 
-        this.$element.after(this.$picker);
+        $('body').append(this.$picker);
 
         var value = this.getValue();
         var format = this.options.format;
@@ -337,13 +337,16 @@
         this.$picker.css('width', this.$element.width());
         this.$picker.css('left', this.$element.offset()['left']);
 
-        if ((this.$picker.outerHeight() + top) > $(window).height()) {
+        if ((this.$picker.outerHeight() + top - $(window).scrollTop()) > $(window).height()) {
             top = this.$element.offset()['top'] - this.$picker.outerHeight();
         }
 
         if (top - $(window).scrollTop() < 0) {
             top = this.$element.offset()['top'] + this.$element.outerHeight();
-            top += $(window).height() - (top + this.$picker.outerHeight() - $(window).scrollTop());
+
+            if (top + this.$picker.outerHeight() > $(window).height()) {
+                top += $(window).height() - (top + this.$picker.outerHeight() - $(window).scrollTop());
+            }
         }
 
         this.$picker.css('top', top);
