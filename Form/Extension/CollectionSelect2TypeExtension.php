@@ -9,13 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Sonatra\Bundle\FormExtensionsBundle\Form\Type;
+namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
@@ -24,13 +26,37 @@ use Sonatra\Bundle\AjaxBundle\AjaxEvents;
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class CollectionSelect2Type extends AbstractSelect2Type
+class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
 {
+    /**
+     * @var FormFactory
+     */
+    protected $factory;
+
+    /**
+     * Constructor.
+     *
+     * @param FormFactory        $factory
+     * @param ContainerInterface $container
+     * @param string             $type
+     * @param integer            $defaultPageSize
+     */
+    public function __construct(FormFactory $factory, ContainerInterface $container, $type, $defaultPageSize = 10)
+    {
+        parent::__construct($container, $type, $defaultPageSize);
+
+        $this->factory = $factory;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$options['select2']['enabled']) {
+            return;
+        }
+
         $builder->addEventSubscriber(new FixStringInputListener());
     }
 
@@ -41,13 +67,17 @@ class CollectionSelect2Type extends AbstractSelect2Type
     {
         parent::buildView($view, $form, $options);
 
+        if (!$options['select2']['enabled']) {
+            return;
+        }
+
         $choiceList = $form->getConfig()->getAttribute('prototype')->getConfig()->getOption('choice_list');
 
         if (null === $choiceList) {
-            $choiceList = new AjaxSimpleChoiceList($options['tags']);
+            $choiceList = new AjaxSimpleChoiceList($options['select2']['tags']);
             $choiceList->setAllowAdd($options['allow_add']);
-            $choiceList->setAjax($options['ajax']);
-            $choiceList->setPageSize($options['page_size']);
+            $choiceList->setAjax($options['select2']['ajax']);
+            $choiceList->setPageSize($options['select2']['page_size']);
             $choiceList->setPageNumber(1);
             $choiceList->setSearch('');
             $choiceList->setIds(array());
@@ -55,13 +85,15 @@ class CollectionSelect2Type extends AbstractSelect2Type
 
         $view->vars = array_replace($view->vars, array(
             'multiple'         => $options['multiple'],
-            'tags'             => $choiceList->getDataChoices(),
             'choice_list'      => $choiceList,
             'choices_selected' => $choiceList->getLabelChoicesForValues((array) $view->vars['value']),
+            'select2'          => array_merge($view->vars['select2'], array(
+                'tags' => $choiceList->getDataChoices(),
+            )),
         ));
 
-        if ($options['ajax']) {
-            $ajaxId = null !== $options['ajax_id'] ? $options['ajax_id'] : $view->vars['id'];
+        if ($options['select2']['ajax']) {
+            $ajaxId = null !== $options['select2']['ajax_id'] ? $options['select2']['ajax_id'] : $view->vars['id'];
             $event = new GetAjaxChoiceListEvent($ajaxId, $this->request, $choiceList);
 
             $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
@@ -73,6 +105,10 @@ class CollectionSelect2Type extends AbstractSelect2Type
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        if (!$options['select2']['enabled']) {
+            return;
+        }
+
         $view->vars['form']->vars['no_label_for'] = true;
 
         // convert array to string
@@ -89,17 +125,19 @@ class CollectionSelect2Type extends AbstractSelect2Type
         parent::setDefaultOptions($resolver);
 
         $resolver->setDefaults(array(
-            'allow_add'         => true,
-            'allow_delete'      => true,
-            'prototype'         => true,
-            'error_bubbling'    => false,
-            'multiple'          => true,
-            'tags'              => array(),
+            'allow_add'      => true,
+            'allow_delete'   => true,
+            'prototype'      => true,
+            'error_bubbling' => false,
+            'multiple'       => true,
+            'select2'        => array(
+                'enabled' => false,
+                'tags'    => array(),
+            ),
         ));
 
         $resolver->setAllowedTypes(array(
             'multiple' => 'bool',
-            'tags'     => 'array',
         ));
 
         $resolver->setNormalizers(array(
@@ -113,23 +151,26 @@ class CollectionSelect2Type extends AbstractSelect2Type
                 return true;
             },
             'type'      => function (Options $options, $value) {
-                if (in_array($value, array('choice', 'language', 'country', 'timezone', 'locale'))) {
-                    return $value . '_select2';
-                }
-
                 return $value;
             },
-            'options' => function (Options $options, $value) {
-                if (false !== strrpos($options['type'], '_select2')) {
-                    $value = array_merge($value, array(
-                        'ajax'      => $options['ajax'],
-                        'page_size' => $options['page_size'],
-                        'multiple'  => false,
-                        'allow_add' => true,
-                    ));
-                }
+            'options'   => function (Options $options, $value) {
+                if ($options['select2']['enabled']) {
+                    $dOptions = $this->factory->createBuilder($options['type'], null, $value)->getOptions();
 
-                $value['error_bubbling'] = true;
+                    if (isset($dOptions['select2'])) {
+                        $value = array_merge($value, array(
+                            'multiple'  => false,
+                            'select2'   => array_merge(array_key_exists('select2', $value) ? $value['select2'] : array(), array(
+                                'enabled'   => true,
+                                'ajax'      => $options['select2']['ajax'],
+                                'page_size' => $options['select2']['page_size'],
+                                'allow_add' => true,
+                            )),
+                        ));
+                    }
+
+                    $value['error_bubbling'] = true;
+                }
 
                 return $value;
             },

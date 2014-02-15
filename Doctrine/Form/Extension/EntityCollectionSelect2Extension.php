@@ -14,11 +14,8 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
@@ -41,12 +38,10 @@ class EntityCollectionSelect2Extension extends AbstractTypeExtension
     /**
      * Constructor.
      *
-     * @param ContainerInterface        $container
      * @param ManagerRegistry           $registry
      * @param PropertyAccessorInterface $propertyAccessor
-     * @param integer                   $defaultPageSize
      */
-    public function __construct(ContainerInterface $container, ManagerRegistry $registry, PropertyAccessorInterface $propertyAccessor = null, $defaultPageSize = 10)
+    public function __construct(ManagerRegistry $registry, PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->registry = $registry;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::getPropertyAccessor();
@@ -57,7 +52,7 @@ class EntityCollectionSelect2Extension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ('entity_select2' !== $options['type']) {
+        if (!$options['select2']['enabled'] || 'entity' !== $options['type']) {
             return;
         }
 
@@ -82,35 +77,8 @@ class EntityCollectionSelect2Extension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $ref = new \ReflectionClass($resolver);
-        $prop = $ref->getProperty('defaultOptions');
-        $prop->setAccessible(true);
-        $old = $prop->getValue($resolver);
-        $ref = new \ReflectionClass($old);
-        $prop = $ref->getProperty('normalizers');
-        $prop->setAccessible(true);
-        $parentNormaliserType = $prop->getValue($old)['type'];
-
-        $resolver->setNormalizers(array(
-            'type' => function (Options $options, $value) use ($parentNormaliserType) {
-                $value = $parentNormaliserType($options, $value);
-
-                if ('entity' === $value) {
-                    return 'entity_select2';
-                }
-
-                return $value;
-            },
-        ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getExtendedType()
     {
-        return 'collection_select2';
+        return 'collection';
     }
 }

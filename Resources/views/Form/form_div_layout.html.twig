@@ -1,145 +1,138 @@
 {% use 'form_div_layout.html.twig' with datetime_widget as base_datetime_widget,
-                                        date_widget as base_date_widget,
-                                        time_widget as base_time_widget %}
+                                        choice_widget as base_choice_widget,
+                                        collection_widget as base_collection_widget %}
 
 {#} Widget {#}
-{% block select2_widget %}
+{% block select2_widget_content %}
 {% spaceless %}
-<div class="select2-wrapper">
-{% if ajax or tags is defined %}
-<input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value }}" />
-<input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
-{% else %}
-{{ block('choice_widget') }}
-{% endif %}
-</div>
-{% asset_javascript %}
-    <script type="text/javascript">
-    $( '#{{ id }}' ).select2( {
-        {% if minimum_input_length is not null %}minimumInputLength: {{ minimum_input_length }},{% endif %}
-        {% if minimum_results_for_search is not null %}minimumResultsForSearch: {{ minimum_results_for_search }},{% endif %}
-        {% if maximum_selection_size is not null %}maximumSelectionSize: {{ maximum_selection_size }},{% endif %}
-        {% if select_separator is not null %}separator: {{ select_separator|raw }},{% endif %}
-        allowClear: {{ allow_clear|raw }},
-        {% if ajax or tags is defined %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
-        {% if close_on_select is not null %}closeOnSelect: {% if close_on_select %}true{% else %}false{% endif %},{% endif %}
-        {% if open_on_enter is not null %}openOnEnter: {% if open_on_enter %}true{% else %}false{% endif %},{% endif %}
-        {% if select_id is not null %}id: {{ select_id|raw }},{% endif %}
-        {% if matcher is not null %}matcher: {{ matcher|raw }},{% endif %}
-        {% if format_result is not null %}formatResult: {{ format_result|raw }},{% endif %}
-        {% if format_result_css_class is not null %}formatResultCssClass: {{ format_result_css_class|raw }},{% endif %}
-        {% if format_selection is not null %}formatSelection: {{ format_selection|raw }},{% endif %}
-        {% if create_search_choice is not null %}createSearchChoice: {{ create_search_choice|raw }},{% elseif tags is defined %}createSearchChoice: function(term, data) {
-            if ($(data).filter(function() {
-                return this.text.localeCompare(term) === 0;
-                }).length === 0) {
-                return {
-                    id: term,
-                    text: term
-                };
-            }
-        },{% endif %}
-        {% if ajax or tags is defined %}{% if init_selection is not null %}initSelection: {{ init_selection|raw }},{% else %}initSelection: function (element, callback) {
-            var selected = $.parseJSON($( '#{{ id }}__label' ).val());
-            {% if multiple %}
-            var items = [];
-            var values = element.val().split(',');
-            $(selected).each(function() {
-                if (-1 < $.inArray(this.id+'', values)) {
-                    items.push(this);
+    <div class="select2-wrapper">
+    {% if select2.ajax or select2.tags is defined %}
+        <input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value }}" />
+        <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
+    {% else %}
+        {{ block('base_choice_widget') }}
+    {% endif %}
+    </div>
+    {% asset_javascript %}
+        <script type="text/javascript">
+        $( '#{{ id }}' ).select2( {
+            {% if select2.minimum_input_length is not null %}minimumInputLength: {{ select2.minimum_input_length }},{% endif %}
+            {% if select2.minimum_results_for_search is not null %}minimumResultsForSearch: {{ select2.minimum_results_for_search }},{% endif %}
+            {% if select2.maximum_selection_size is not null %}maximumSelectionSize: {{ select2.maximum_selection_size }},{% endif %}
+            {% if select2.select_separator is not null %}separator: {{ select2.select_separator|raw }},{% endif %}
+            allowClear: {{ select2.allow_clear|raw }},
+            {% if select2.ajax or select2.tags is defined %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
+            {% if select2.close_on_select is not null %}closeOnSelect: {% if select2.close_on_select %}true{% else %}false{% endif %},{% endif %}
+            {% if select2.open_on_enter is not null %}openOnEnter: {% if select2.open_on_enter %}true{% else %}false{% endif %},{% endif %}
+            {% if select2.select_id is not null %}id: {{ select2.select_id|raw }},{% endif %}
+            {% if select2.matcher is not null %}matcher: {{ select2.matcher|raw }},{% endif %}
+            {% if select2.format_result is not null %}formatResult: {{ select2.format_result|raw }},{% endif %}
+            {% if select2.format_result_css_class is not null %}formatResultCssClass: {{ select2.format_result_css_class|raw }},{% endif %}
+            {% if select2.format_selection is not null %}formatSelection: {{ select2.format_selection|raw }},{% endif %}
+            {% if select2.create_search_choice is not null %}createSearchChoice: {{ select2.create_search_choice|raw }},{% elseif select2.tags is defined %}createSearchChoice: function(term, data) {
+                if ($(data).filter(function() {
+                    return this.text.localeCompare(term) === 0;
+                    }).length === 0) {
+                    return {
+                        id: term,
+                        text: term
+                    };
                 }
-            });
-            callback(items);
-            {% else %}
-            $(selected).each(function() {
-                if (this.id == element.val()) {
-                    callback(this);
-                    return;
-                }
-            });
+            },{% endif %}
+            {% if select2.ajax or select2.tags is defined %}{% if select2.init_selection is not null %}initSelection: {{ select2.init_selection|raw }},{% else %}initSelection: function (element, callback) {
+                var selected = $.parseJSON($( '#{{ id }}__label' ).val());
+                {% if multiple %}
+                var items = [];
+                var values = element.val().split(',');
+                $(selected).each(function() {
+                    if (-1 < $.inArray(this.id+'', values)) {
+                        items.push(this);
+                    }
+                });
+                callback(items);
+                {% else %}
+                $(selected).each(function() {
+                    if (this.id == element.val()) {
+                        callback(this);
+                        return;
+                    }
+                });
+                {% endif %}
+            },{% endif %}
             {% endif %}
-        },{% endif %}
-        {% endif %}
-        {% if tokenizer is not null %}tokenizer: {{ tokenizer|raw }},{% endif %}
-        {% if token_separators is not null %}tokenSeparators: {{ token_separators|raw }},{% endif %}
-        {% if select_query is not null %}query: {{ select_query|raw }},{% endif %}
-        {% if select_ajax is not null %}ajax: {{ select_ajax|raw }}{% elseif ajax %}ajax: {
-            url: "{{ ajax_url|raw }}",
-            dataType: 'json',
-            quietMillis: {{ quiet_millis }},
-            data: function (search, pageNumber) {
-                var value = $( '#{{ id }}' ).prop( 'value' );
-                return {
-                    s: search,
-                    pn: pageNumber,
-                    ps: {{ page_size }},
-                    ids : value,
-                    ajax_id: "{% if ajax_id is defined and ajax_id != '' %}{{ ajax_id }}{% else %}{{ id }}"{% endif %}
-                };
-            },
-            results: function (data, pageNumber) {
-                var more = (pageNumber * {{ page_size }}) < data.length;
-                return {results: data.results, more: more};
+            {% if select2.tokenizer is not null %}tokenizer: {{ select2.tokenizer|raw }},{% endif %}
+            {% if select2.token_separators is not null %}tokenSeparators: {{ select2.token_separators|raw }},{% endif %}
+            {% if select2.select_query is not null %}query: {{ select2.select_query|raw }},{% endif %}
+            {% if select2.select_ajax is not null %}ajax: {{ select2.select_ajax|raw }}{% elseif select2.ajax %}ajax: {
+                url: "{{ select2.ajax_url|raw }}",
+                dataType: 'json',
+                quietMillis: {{ select2.quiet_millis }},
+                data: function (search, pageNumber) {
+                    var value = $( '#{{ id }}' ).prop( 'value' );
+                    return {
+                        s: search,
+                        pn: pageNumber,
+                        ps: {{ select2.page_size }},
+                        ids : value,
+                        ajax_id: "{% if select2.ajax_id is defined and select2.ajax_id != '' %}{{ select2.ajax_id }}{% else %}{{ id }}"{% endif %}
+                    };
+                },
+                results: function (data, pageNumber) {
+                    var more = (pageNumber * {{ select2.page_size }}) < data.length;
+                    return {results: data.results, more: more};
+                }
+            },{% endif %}
+            {% if select2.select_data is not null %}data: {{ select2.select_data|json_encode|raw }},{% endif %}
+            {% if select2.tags is defined %}tags: {{ select2.tags|json_encode|raw }},{% endif %}
+            {% if select2.container_css is not null %}containerCss: {{ select2.container_css|raw }},{% endif %}
+            {% if select2.container_css_class is not null %}containerCssClass: {{ select2.container_css_class|raw }},{% endif %}
+            {% if select2.dropdown_css is not null %}dropdownCss: {{ select2.dropdown_css|raw }},{% endif %}
+            {% if select2.dropdown_css_class is not null %}dropdownCssClass: {{ select2.dropdown_css_class|raw }},{% endif %}
+            {% if select2.escape_markup is not null %}escapeMarkup: {{ select2.escape_markup|raw }},{% endif %}
+            width: '{{ select2.width }}'
+        } ){% if select2.ajax or select2.tags is defined %}.change(function(event) {
+            var $label = $( '#{{ id }}__label' );
+            var lData = $.parseJSON($label.val());
+            {% if multiple %}
+            if (event.added) {
+                lData.push(event.added);
+            } else if (event.removed) {
+                for (var i=0; i < lData.length;i++) {
+                    if ( lData[i].id == event.removed.id ) {
+                         lData.splice(i, 1);
+                     }
+                }
             }
-        },{% endif %}
-        {% if select_data is not null %}data: {{ select_data|json_encode|raw }},{% endif %}
-        {% if tags is defined %}tags: {{ tags|json_encode|raw }},{% endif %}
-        {% if container_css is not null %}containerCss: {{ container_css|raw }},{% endif %}
-        {% if container_css_class is not null %}containerCssClass: {{ container_css_class|raw }},{% endif %}
-        {% if dropdown_css is not null %}dropdownCss: {{ dropdown_css|raw }},{% endif %}
-        {% if dropdown_css_class is not null %}dropdownCssClass: {{ dropdown_css_class|raw }},{% endif %}
-        {% if escape_markup is not null %}escapeMarkup: {{ escape_markup|raw }},{% endif %}
-        width: '{{ width }}'
-    } ){% if ajax or tags is defined %}.change(function(event) {
-        var $label = $( '#{{ id }}__label' );
-        var lData = $.parseJSON($label.val());
-        {% if multiple %}
-        if (event.added) {
-            lData.push(event.added);
-        } else if (event.removed) {
-            for (var i=0; i < lData.length;i++) {
-                if ( lData[i].id == event.removed.id ) {
-                     lData.splice(i, 1);
-                 }
-            }
-        }
-        {% else %}
-        lData = [$(this).select2('data')];
-        {% endif %}
-        $label.val(JSON.stringify(lData));
-    }){% endif %};
-    </script>
-{% endasset %}
+            {% else %}
+            lData = [$(this).select2('data')];
+            {% endif %}
+            $label.val(JSON.stringify(lData));
+        }){% endif %};
+        </script>
+    {% endasset %}
 {% endspaceless %}
-{% endblock select2_widget %}
+{% endblock select2_widget_content %}
 
-{% block choice_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock choice_select2_widget %}
 
-{% block language_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock language_select2_widget %}
+{% block choice_widget %}
+{% spaceless %}
+    {% if select2 is defined %}
+        {{ block('select2_widget_content') }}
+    {% else %}
+        {{ block('base_choice_widget') }}
+    {% endif %}
+{% endspaceless %}
+{% endblock choice_widget %}
 
-{% block country_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock country_select2_widget %}
-
-{% block timezone_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock timezone_select2_widget %}
-
-{% block locale_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock locale_select2_widget %}
-
-{% block entity_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock entity_select2_widget %}
-
-{% block collection_select2_widget %}
-{{ block('select2_widget') }}
-{% endblock collection_select2_widget %}
+{% block collection_widget %}
+{% spaceless %}
+    {% if select2 is defined %}
+        {{ block('select2_widget_content') }}
+    {% else %}
+        {{ block('base_collection_widget') }}
+    {% endif %}
+{% endspaceless %}
+{% endblock collection_widget %}
 
 
 {% block datetime_widget %}

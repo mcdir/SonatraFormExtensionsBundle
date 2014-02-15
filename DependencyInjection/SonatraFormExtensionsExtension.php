@@ -12,7 +12,6 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -35,43 +34,22 @@ class SonatraFormExtensionsExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('form.xml');
 
-        foreach (array('select2') as $type) {
-            if (isset($config[$type]) && !empty($config[$type]['enabled'])) {
-                $method = 'register' . ucfirst($type) . 'Configuration';
-
-                $this->$method($config[$type], $container);
-            }
+        if (!$config['select2']['enabled']) {
+            $container->removeDefinition('form.type_extension.sonatra.choice_select2');
+            $container->removeDefinition('form.type_extension.sonatra.collection_select2');
+            $container->removeDefinition('form.type_extension.sonatra.entity_select2');
+            $container->removeDefinition('form.type_extension.sonatra.entity_collection_select2');
         }
-    }
 
-    /**
-     * Register Select2 configuration.
-     *
-     * @param array            $configs
-     * @param ContainerBuilder $container
-     */
-    private function registerSelect2Configuration(array $configs, ContainerBuilder $container)
-    {
-        $serviceId = 'form.type.sonatra.select2';
-
-        foreach ($this->getChoiceTypeNames() as $type) {
-            $typeDef = new DefinitionDecorator($serviceId);
-            $typeDef
-                ->addArgument($type)
-                ->addTag('form.type', array('alias' => $type.'_select2'))
-            ;
-
-            $container->setDefinition($serviceId.'.'.$type, $typeDef);
+        if (!$config['datetime_picker']['enabled']) {
+            $container->removeDefinition('form.type_extension.sonatra.datetime_jquery');
+            $container->removeDefinition('form.type_extension.sonatra.date_jquery');
+            $container->removeDefinition('form.type_extension.sonatra.time_jquery');
+            $container->removeDefinition('form.type_extension.sonatra.birthday_jquery');
         }
-    }
 
-    /**
-     * Get the names of the standard form choice type.
-     *
-     * @return array
-     */
-    private function getChoiceTypeNames()
-    {
-        return array('choice', 'language', 'country', 'timezone', 'locale');
+        if (!$config['currency']['enabled']) {
+            $container->removeDefinition('form.type.sonatra.currency');
+        }
     }
 }

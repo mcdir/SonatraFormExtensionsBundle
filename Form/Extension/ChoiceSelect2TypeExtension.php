@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Sonatra\Bundle\FormExtensionsBundle\Form\Type;
+namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class Select2Type extends AbstractSelect2Type
+class ChoiceSelect2TypeExtension extends AbstractSelect2TypeExtension
 {
 }
