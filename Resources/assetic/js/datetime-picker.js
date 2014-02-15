@@ -30,6 +30,7 @@
         }
 
         this.$element.on( 'keyup.st.datetimepicker', $.proxy(keyboardAction, this));
+        this.$element.attr('data-datetime-picker', 'true');
         this.$element.attr('autocomplete', 'off');
     };
 
@@ -100,6 +101,9 @@
         if (this.isOpen() || this.isDisabled()) {
             return;
         }
+
+        // closes all other pickers
+        $('[data-datetime-picker=true]').datetimepicker('close');
 
         var tabSelected = this.options.datePicker ? 'date' : 'time';
 
