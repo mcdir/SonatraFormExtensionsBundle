@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -18,6 +20,24 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class TimeJqueryTypeExtension extends DateTimeJqueryTypeExtension
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $time_format = $options['with_seconds'] ? \IntlDateFormatter::MEDIUM : \IntlDateFormatter::SHORT;
+
+        $builder->resetViewTransformers();
+        $builder->addViewTransformer(new DateTimeToLocalizedStringTransformer(
+            $options['model_timezone'],
+            $options['view_timezone'],
+            \IntlDateFormatter::NONE,
+            $time_format,
+            null,
+            null
+        ));
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -1,4 +1,6 @@
-{% use 'form_div_layout.html.twig' %}
+{% use 'form_div_layout.html.twig' with datetime_widget as base_datetime_widget,
+                                        date_widget as base_date_widget,
+                                        time_widget as base_time_widget %}
 
 {#} Widget {#}
 {% block select2_widget %}
@@ -138,3 +140,23 @@
 {% block collection_select2_widget %}
 {{ block('select2_widget') }}
 {% endblock collection_select2_widget %}
+
+
+{% block datetime_widget %}
+{% spaceless %}
+    {{ block('base_datetime_widget') }}
+{% endspaceless %}
+{% endblock datetime_widget %}
+
+{% block date_widget %}
+{% spaceless %}
+    {{ block('datetime_widget') }}
+{% endspaceless %}
+{% endblock date_widget %}
+
+{% block time_widget %}
+{% spaceless %}
+    {% set type= 'text' %}
+    {{ block('datetime_widget') }}
+{% endspaceless %}
+{% endblock time_widget %}
