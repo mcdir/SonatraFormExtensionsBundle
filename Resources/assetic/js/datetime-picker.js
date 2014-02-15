@@ -108,7 +108,7 @@
         }
 
         this.$picker = $([
-            '<div class="' + this.options.classWrapper + '" data-target="' + this.$element.attr('id') + '" data-tab-selected="' + tabSelected + '">',
+            '<div class="' + this.options.classWrapper + '" data-target="' + this.$element.attr('id') + '" data-tab-selected="' + tabSelected + '" data-date-picker="' + this.options.datePicker + '" data-time-picker="' + this.options.timePicker + '">',
             '<div class="' + this.options.classHeaderPicker + '">',
                 '<a class="' + this.options.classHeaderPicker + '-title" href="#"></a>',
                 '<div class="' + this.options.classHeaderPicker + '-tabs">',

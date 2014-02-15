@@ -40,6 +40,8 @@
     .datetime-picker-header-nav-tabs {
         display: table;
         width: 100%;
+        padding: 0;
+        margin: 0;
 
         .datetime-picker-header-nav-tab {
             display: table-cell;
@@ -112,6 +114,7 @@
                         width: 14px;
                         vertical-align: middle;
                         padding: 5px;
+                        text-decoration: none;
                         font-weight: @datetime-picker-title-font-weight;
                         color: @datetime-picker-choice-btn-color;
 
@@ -310,6 +313,7 @@
                     line-height: @datetime-picker-time-item-height;
                     min-width: 46px;
                     z-index: 1;
+                    text-decoration: none;
                     color: @datetime-picker-time-btn-color;
                     background-color: @datetime-picker-time-btn-bg;
 
@@ -413,11 +417,9 @@
             }
         }
     }
-}
 
-&[data-date-picker=false],
-&[data-time-picker=false] {
-    + .datetime-picker-wrapper {
+    &[data-date-picker=false],
+    &[data-time-picker=false] {
         .datetime-picker-header-tabs {
             display: none;
         }
