@@ -44,5 +44,9 @@
         <service id="form.type_extension.sonatra.time_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\TimeJqueryTypeExtension">
             <tag name="form.type_extension" alias="time" />
         </service>
+
+        <service id="form.type_extension.sonatra.birthday_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BirthdayJqueryTypeExtension">
+            <tag name="form.type_extension" alias="birthday" />
+        </service>
     </services>
 </container>
