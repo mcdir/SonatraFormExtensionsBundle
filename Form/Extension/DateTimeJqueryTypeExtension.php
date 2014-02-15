@@ -116,7 +116,7 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
                 'locale'            => \Locale::getDefault(),
                 'user_timezone'     => null,
                 'date_picker'       => true,
-                'time_picker'       => false,
+                'time_picker'       => true,
                 'time_picker_first' => false,
                 'button_id'         => null,
                 'open_focus'        => true,
