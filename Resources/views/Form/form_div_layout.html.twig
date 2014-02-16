@@ -5,14 +5,15 @@
 {#} Widget {#}
 {% block select2_widget_content %}
 {% spaceless %}
-    <div class="select2-wrapper">
     {% if select2.ajax or select2.tags is defined %}
-        <input type="hidden" id="{{ id }}" name="{{ full_name }}" value="{{ value }}" />
-        <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
+        <div class="select2-wrapper">
+            {% set attr = attr|merge({'name': full_name}) %}
+	        <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+	        <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
+        </div>
     {% else %}
         {{ block('base_choice_widget') }}
     {% endif %}
-    </div>
     {% asset_javascript %}
         <script type="text/javascript">
         $( '#{{ id }}' ).select2( {
