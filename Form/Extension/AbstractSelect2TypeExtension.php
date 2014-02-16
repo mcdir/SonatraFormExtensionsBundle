@@ -185,9 +185,13 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         $normalizers = array(
             'select2' => function (Options $options, $value) {
                 $select2Resolver = new OptionsResolver();
+                $pDefault = $options;
+                $enabled = function (Options $options, $value) use ($pDefault) {
+                    return !$pDefault['expanded'];
+                };
 
                 $select2Resolver->setDefaults(array(
-                    'enabled'                    => true,
+                    'enabled'                    => $enabled,
                     'allow_add'                  => false,
                     'ajax'                       => false,
                     'ajax_url'                   => null,
@@ -252,10 +256,9 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
         if ($resolver->isKnown('expanded')) {
             $normalizers['expanded'] = function (Options $options, $value) {
-                if ($options['select2']['enabled']) {
-                    return false;
-                }
-
+                //if ($options['select2']['enabled']) {
+                //    return false;
+                //}
                 return $value;
             };
         }
