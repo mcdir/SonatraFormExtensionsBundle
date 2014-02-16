@@ -242,32 +242,38 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 return $select2Resolver->resolve($value);
             },
             'compound' => function (Options $options, $value) {
-                if ($options['select2']['enabled'] || $options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface) {
+                if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
                     return false;
                 }
 
-                return $value;
+                return $options['expanded'];
             },
         );
 
         if ($resolver->isKnown('expanded')) {
             $normalizers['expanded'] = function (Options $options, $value) {
-                return false;
+                if ($options['select2']['enabled']) {
+                    return false;
+                }
+
+                return $value;
             };
         }
 
         if ($resolver->isKnown('choice_list')) {
             $normalizers['choice_list'] = function (Options $options, $value) {
-                if (!$value instanceof AjaxChoiceListInterface) {
-                    $value = new AjaxSimpleChoiceList($options['choices'], $options['preferred_choices']);
-                }
+                if ($options['select2']['enabled']) {
+                    if (!$value instanceof AjaxChoiceListInterface) {
+                        $value = new AjaxSimpleChoiceList($options['choices'], $options['preferred_choices']);
+                    }
 
-                $value->setAllowAdd($options['select2']['allow_add']);
-                $value->setAjax($options['select2']['ajax']);
-                $value->setPageSize($options['select2']['page_size']);
-                $value->setPageNumber(1);
-                $value->setSearch('');
-                $value->setIds(array());
+                    $value->setAllowAdd($options['select2']['allow_add']);
+                    $value->setAjax($options['select2']['ajax']);
+                    $value->setPageSize($options['select2']['page_size']);
+                    $value->setPageNumber(1);
+                    $value->setSearch('');
+                    $value->setIds(array());
+                }
 
                 return $value;
             };
