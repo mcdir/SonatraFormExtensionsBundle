@@ -257,9 +257,6 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
         if ($resolver->isKnown('expanded')) {
             $normalizers['expanded'] = function (Options $options, $value) {
-                //if ($options['select2']['enabled']) {
-                //    return false;
-                //}
                 return $value;
             };
         }
