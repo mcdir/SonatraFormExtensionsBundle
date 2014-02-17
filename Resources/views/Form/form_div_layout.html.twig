@@ -5,7 +5,8 @@
 {#} Widget {#}
 {% block select2_widget_content %}
 {% spaceless %}
-    <div class="select2-wrapper">
+    {% set select2 = select2|merge({'wrapper_attr': select2.wrapper_attr|merge({'class': ('select2-wrapper ' ~ select2.wrapper_attr.class|default(''))|trim})}) %}
+    <div{% for attrname, attrvalue in select2.wrapper_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
         {% if select2.ajax or select2.tags is defined %}
             <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}"{% endif %}/>
             <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />

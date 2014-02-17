@@ -102,6 +102,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
         $view->vars = array_replace($view->vars, array(
             'select2'  => array(
+                'wrapper_attr'               => $options['select2']['wrapper_attr'],
                 'allow_clear'                => $options['required'] ? 'false' : 'true',
                 'ajax'                       => $options['select2']['ajax'],
                 'ajax_url'                   => $options['select2']['ajax_url'],
@@ -207,6 +208,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
                 $select2Resolver->setDefaults(array(
                     'enabled'                    => $enabled,
+                    'wrapper_attr'               => array(),
                     'allow_add'                  => false,
                     'ajax'                       => false,
                     'ajax_url'                   => null,
@@ -242,10 +244,11 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 ));
 
                 $select2Resolver->setAllowedTypes(array(
-                    'enabled'   => 'bool',
-                    'allow_add' => 'bool',
-                    'ajax'      => 'bool',
-                    'tags'      => array('null', 'array'),
+                    'enabled'      => 'bool',
+                    'wrapper_attr' => 'array',
+                    'allow_add'    => 'bool',
+                    'ajax'         => 'bool',
+                    'tags'         => array('null', 'array'),
                 ));
 
                 $select2Resolver->setNormalizers(array(
