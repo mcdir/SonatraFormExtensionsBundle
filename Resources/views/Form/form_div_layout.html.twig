@@ -7,9 +7,8 @@
 {% spaceless %}
     {% if select2.ajax or select2.tags is defined %}
         <div class="select2-wrapper">
-            {% set attr = attr|merge({'name': full_name}) %}
-	        <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-	        <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
+            <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}"{% endif %}/>
+            <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
         </div>
     {% else %}
         {{ block('base_choice_widget') }}
@@ -53,6 +52,9 @@
                 callback(items);
                 {% else %}
                 $(selected).each(function() {
+                    if ('' == element.val()) {
+                        element.attr('value', this.id);
+                    }
                     if (this.id == element.val()) {
                         callback(this);
                         return;

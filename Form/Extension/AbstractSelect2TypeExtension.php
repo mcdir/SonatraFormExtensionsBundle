@@ -137,6 +137,10 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             'required' => $options['select2']['ajax'] ? false : $options['required'],
         ));
 
+        if ($options['select2']['ajax'] && !$options['multiple'] && !$options['required']) {
+            $view->vars['attr']['placeholder'] = ' ';
+        }
+
         if (is_array($options['select2']['tags'])) {
             $view->vars['select2']['tags'] = $options['select2']['tags'];
         }
@@ -161,7 +165,17 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         $view->vars['form']->vars['no_label_for'] = true;
 
         if ($options['select2']['ajax'] && isset($options['choice_list'])) {
-            $view->vars['choices_selected'] = $options['choice_list']->getLabelChoicesForValues((array) $view->vars['value']);
+            $values = (array) $view->vars['value'];
+
+            if ($options['required'] && null === $view->vars['data']) {
+                $choices = $options['choice_list']->getChoices();
+
+                if (isset($choices[0]['id'])) {
+                    $values = (array) $choices[0]['id'];
+                }
+            }
+
+            $view->vars['choices_selected'] = $options['choice_list']->getLabelChoicesForValues($values);
         }
 
         // convert array to string
