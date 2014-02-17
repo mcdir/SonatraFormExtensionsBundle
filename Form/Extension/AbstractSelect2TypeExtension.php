@@ -101,7 +101,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         }
 
         $view->vars = array_replace($view->vars, array(
-            'select2' => array(
+            'select2'  => array(
                 'allow_clear'                => $options['required'] ? 'false' : 'true',
                 'ajax'                       => $options['select2']['ajax'],
                 'ajax_url'                   => $options['select2']['ajax_url'],
@@ -134,6 +134,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 'select_data'                => $options['select2']['select_data'],
                 'width'                      => $options['select2']['width'],
             ),
+            'required' => $options['select2']['ajax'] ? false : $options['required'],
         ));
 
         if (is_array($options['select2']['tags'])) {
