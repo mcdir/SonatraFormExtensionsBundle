@@ -112,6 +112,7 @@
             {% endif %}
             $label.val(JSON.stringify(lData));
         }){% endif %};
+        $('input.select2-focusser', $( '#{{ id }}' ).data('select2').container).attr('readonly', 'readonly');
         </script>
     {% endasset %}
 {% endspaceless %}
