@@ -246,6 +246,7 @@
 
         this.$element.addClass(this.options.classOpen);
 
+        this.$picker.on('touchmove', $.proxy(blockEvent, this));
         this.$picker.on('DOMMouseScroll mousewheel', $.proxy(preventScroll, this));
         this.$picker.on(this.eventType, 'a.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
         this.$picker.on(this.eventType, '.dtp-btn-cancel', $.proxy(DatetimePicker.prototype.cancel, this));
@@ -290,6 +291,7 @@
         }
 
         this.currentDate = null;
+        this.$picker.off('touchmove', $.proxy(blockEvent, this));
         this.$picker.off('DOMMouseScroll mousewheel', $.proxy(preventScroll, this));
         this.$picker.off(this.eventType, 'a.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
         this.$picker.off(this.eventType, '.dtp-btn-cancel', $.proxy(DatetimePicker.prototype.cancel, this));
@@ -1180,6 +1182,10 @@
 
         this.close();
     };
+
+    function blockEvent (event) {
+        event.preventDefault();
+    }
 
     function preventScroll (event) {
         var scrollTop = this.$picker.get(0).scrollTop;
