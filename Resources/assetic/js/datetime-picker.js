@@ -51,7 +51,8 @@
         withSeconds:       false,
         buttonId:          null,
         openFocus:         true,
-        dragDistance:      70
+        dragDistance:      70,
+        inertiaVelocity:   0.07
     };
 
     DatetimePicker.LANGUAGES = {
@@ -1056,6 +1057,9 @@
             var itemHeight = Math.round($timerAll.outerHeight() / $timerAll.children().size());
             var count = Math.round(vertical / itemHeight);
             var data = {target: event.currentTarget};
+            var inertia = event.gesture.velocityY * ('up' == event.gesture.direction ? 1 : -1);
+
+            count = Math.round(count + (count * inertia * this.options.inertiaVelocity));
 
             if (count > 0) {
                 count = 0;
