@@ -1230,7 +1230,7 @@
             $calendarAll.css('transform', 'translate3d(' + horizontal +'px, ' + vertical +'px, 0px)');
             
         }, this));
-    };
+    }
 
     /**
      * Destroy the calendar hammer instance.
@@ -1244,7 +1244,7 @@
         }
 
         delete this.hammerCalendar;
-    };
+    }
 
     /**
      * Action on drag end transition of calendar picker.
@@ -1279,7 +1279,7 @@
             default:
                 break;
         }
-    };
+    }
 
     /**
      * Init the timer hammer instance.
@@ -1292,7 +1292,7 @@
         $.proxy(dragTimerAction, this, 'minutes')();
         $.proxy(dragTimerAction, this, 'seconds')();
         $.proxy(dragTimerAction, this, 'meridiem')();
-    };
+    }
 
     /**
      * Destroy the timmer hammer instance.
@@ -1309,7 +1309,7 @@
         delete this['hammerTimerMinutes'];
         delete this['hammerTimerSeconds'];
         delete this['hammerTimerMeridiem'];
-    };
+    }
 
     /**
      * Action on drag of timer picker.
@@ -1424,7 +1424,7 @@
                     break;
             }
         }, this, startPositionName));
-    };
+    }
 
     /**
      * Get the transform matrix of target.
@@ -1461,7 +1461,7 @@
         }
 
         return transform;
-    };
+    }
 
     /**
      * Check if is a mobile device.
@@ -1482,7 +1482,7 @@
         })(navigator.userAgent || navigator.vendor || window.opera);
 
         return check;
-    };
+    }
 
     /**
      * Binding actions of keyboard.
@@ -1517,7 +1517,7 @@
                 this.open();
             }
         }
-    };
+    }
 
     /**
      * Close the sidebar since external action.
@@ -1538,7 +1538,7 @@
         event.stopPropagation();
 
         this.close();
-    };
+    }
 
     /**
      * Prevents the default event.
@@ -1587,7 +1587,7 @@
 
             return false;
         }
-    };
+    }
 
     /**
      * Action on scroll event.
@@ -1626,7 +1626,7 @@
      */
     function scrollYear (event) {
         $.proxy(scrollAction, this, event, 'year')();
-    };
+    }
 
     /**
      * Action on scroll event for month picker.
@@ -1638,7 +1638,7 @@
      */
     function scrollMonth (event) {
         $.proxy(scrollAction, this, event, 'month')();
-    };
+    }
 
     /**
      * Action on scroll event for hour picker.
@@ -1650,7 +1650,7 @@
      */
     function scrollHour (event) {
         $.proxy(scrollAction, this, event, 'hour')();
-    };
+    }
 
     /**
      * Action on scroll event for minute picker.
@@ -1662,7 +1662,7 @@
      */
     function scrollMinute (event) {
         $.proxy(scrollAction, this, event, 'minute')();
-    };
+    }
 
     /**
      * Action on scroll event for second picker.
@@ -1674,7 +1674,7 @@
      */
     function scrollSecond (event) {
         $.proxy(scrollAction, this, event, 'second')();
-    };
+    }
 
     /**
      * Action on scroll event for meridiem picker.
@@ -1689,7 +1689,7 @@
 
         event.stopPropagation();
         event.preventDefault();
-    };
+    }
 
     /**
      * Generate the week days.
@@ -1711,7 +1711,7 @@
         for (var i = 0; i < days.length; i++) {
             $days.append('<div class="dtp-body-header-day" data-day-id="' + i + '">' + days[i] + '</div>');
         }
-    };
+    }
 
     /**
      * Generate the calendar pickers (current, previous month, next month,
@@ -1752,7 +1752,7 @@
         $calendars.append($calendarNextYear);
 
         return $calendars;
-    };
+    }
 
     /**
      * Generate the calendar picker.
@@ -1815,7 +1815,7 @@
         }
 
         return $calendar;
-    };
+    }
 
     /**
      * Generate the timer picker.
@@ -1869,7 +1869,7 @@
         // meridiem
         $meridiem.append('<span data-time-type="meridiem" data-time-value="am">' + self.currentDate.lang().meridiem(1, 0, false) + '</span>');
         $meridiem.append('<span data-time-type="meridiem" data-time-value="pm">' + self.currentDate.lang().meridiem(23, 0, false) + '</span>');
-    };
+    }
 
 
     // DATETIME PICKER PLUGIN DEFINITION
