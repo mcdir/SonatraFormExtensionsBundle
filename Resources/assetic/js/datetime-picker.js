@@ -1120,6 +1120,8 @@
         if (this.options.openFocus) {
             this.$element.off(this.eventType + '.st.datetimepicker', $.proxy(DatetimePicker.prototype.toggle, this));
         }
+
+        jQuery.removeData(this.$element, 'st.datetimepicker');
     };
 
     /**
