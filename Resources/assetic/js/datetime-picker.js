@@ -13,6 +13,14 @@
     // DATETIME PICKER CLASS DEFINITION
     // ================================
 
+    /**
+     * @constructor
+     *
+     * @param htmlString|Element|Array|jQuery element
+     * @param Array                           options
+     *
+     * @this
+     */
     var DatetimePicker = function (element, options) {
         this.guid        = jQuery.guid;
         this.options     = $.extend({}, DatetimePicker.DEFAULTS, options);
@@ -34,6 +42,11 @@
         this.$element.attr('autocomplete', 'off');
     };
 
+    /**
+     * Defaults options.
+     *
+     * @type Array
+     */
     DatetimePicker.DEFAULTS = {
         classWrapper:      'datetime-picker-wrapper',
         classOpen:         'datetime-picker-open',
@@ -55,6 +68,11 @@
         inertiaVelocity:   0.07
     };
 
+    /**
+     * Defaults languages.
+     *
+     * @type Array
+     */
     DatetimePicker.LANGUAGES = {
         en: {
             date:    'Date',
@@ -68,22 +86,51 @@
         }
     };
 
+    /**
+     * Enables the picker.
+     *
+     * @this
+     */
     DatetimePicker.prototype.enabled = function () {
         this.$element.attr('disabled', 'disabled');
     };
 
+    /**
+     * Disables the picker.
+     *
+     * @this
+     */
     DatetimePicker.prototype.disabled = function () {
         this.$element.removeAttr('disabled');
     };
 
+    /**
+     * Check is the picker is disabled.
+     *
+     * @return Boolean
+     *
+     * @this
+     */
     DatetimePicker.prototype.isDisabled = function () {
         return null != this.$element.attr('disabled');
     };
 
+    /**
+     * Check if the picker is opened.
+     *
+     * @return Boolean
+     *
+     * @this
+     */
     DatetimePicker.prototype.isOpen = function () {
         return this.$element.hasClass(this.options.classOpen);
     };
 
+    /**
+     * Toggle the picker (open or close).
+     *
+     * @this
+     */
     DatetimePicker.prototype.toggle = function (event) {
         if (event) {
             event.preventDefault();
@@ -98,6 +145,11 @@
         }
     };
 
+    /**
+     * Opens the picker.
+     *
+     * @this
+     */
     DatetimePicker.prototype.open = function () {
         if (this.isOpen() || this.isDisabled()) {
             return;
@@ -286,6 +338,11 @@
         $.proxy(initTimerSwipe, this)();
     };
 
+    /**
+     * Closes the picker.
+     *
+     * @this
+     */
     DatetimePicker.prototype.close = function () {
         if (!this.isOpen() || null == this.$picker) {
             return;
@@ -334,6 +391,11 @@
         $(window).off('scroll.st.datetimepicker' + this.guid, $.proxy(closeExternal, this));
     };
 
+    /**
+     * Refreshs the picker position.
+     *
+     * @this
+     */
     DatetimePicker.prototype.position = function () {
         if (null == this.$picker) {
             return;
@@ -359,6 +421,15 @@
         this.$picker.css('top', top);
     }
 
+    /**
+     * Get the language configuration.
+     *
+     * @param String locale The ISO code of language
+     *
+     * @return Array The language configuration
+     *
+     * @this
+     */
     DatetimePicker.prototype.langData = function (locale) {
         if (undefined == locale) {
             locale = this.options.locale;
@@ -371,6 +442,14 @@
         return DatetimePicker.LANGUAGES[locale];
     };
 
+    /**
+     * Set value.
+     *
+     * @param String value The full datetime value formatted with the default
+     *                     option format.
+     *
+     * @this
+     */
     DatetimePicker.prototype.setValue = function (date) {
         if (typeof date == 'string') {
             date = moment(date, this.options.format);
@@ -384,10 +463,23 @@
         this.$element.val(date);
     };
 
+    /**
+     * Get value.
+     *
+     * @return String The full datetime value formatted with the default option
+     *                format.
+     *
+     * @this
+     */
     DatetimePicker.prototype.getValue = function () {
         return this.$element.val();
     };
 
+    /**
+     * Refresh the temporary value defined in picker (note element).
+     *
+     * @this
+     */
     DatetimePicker.prototype.refreshValue = function () {
         if (null == this.currentDate) {
             return;
@@ -407,11 +499,22 @@
         this.refreshPicker();
     }
 
+    /**
+     * Refreshs the date and time picker blocks with the value defined in the
+     * element.
+     *
+     * @this
+     */
     DatetimePicker.prototype.refreshPicker = function () {
         this.refreshDatePicker();
         this.refreshTimePicker();
     };
 
+    /**
+     * Refreshs the date picker blocks with the value defined in the element.
+     *
+     * @this
+     */
     DatetimePicker.prototype.refreshDatePicker = function () {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -454,6 +557,11 @@
         $calendarWrapper.append(generateCalendars(this, this.currentDate));
     };
 
+    /**
+     * Refreshs the time picker blocks with the value defined in the element.
+     *
+     * @this
+     */
     DatetimePicker.prototype.refreshTimePicker = function () {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -496,6 +604,13 @@
         $meridiemAll.css('transform', 'translate3d(0px, ' + meridiem * itemHeight +'px, 0px)');
     };
 
+    /**
+     * Close the picker without changes the value of the element.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.cancel = function (event) {
         if (event) {
             event.preventDefault();
@@ -505,6 +620,13 @@
         this.close();
     };
 
+    /**
+     * Removes value of the element.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.clearValue = function (event) {
         if (event) {
             event.preventDefault();
@@ -519,6 +641,13 @@
         this.close();
     };
 
+    /**
+     * Close the picker with changes the value of the element.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.defineValue = function (event) {
         if (event) {
             event.preventDefault();
@@ -533,6 +662,13 @@
         this.close();
     };
 
+    /**
+     * Show the date picker tab.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.showDate = function (event) {
         if (event) {
             event.preventDefault();
@@ -548,6 +684,13 @@
         this.position();
     };
 
+    /**
+     * Show the time picker tab.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.showTime = function (event) {
         if (event) {
             event.preventDefault();
@@ -573,6 +716,14 @@
         $timeAllWrappers.css('transition', '');
     };
 
+    /**
+     * Set the full datetime value in temporary picker value.
+     *
+     * @param String datetime The full datetime value formatted with the default
+     *                        option format.
+     *
+     * @this
+     */
     DatetimePicker.prototype.setDatetime = function (datetime) {
         if (datetime instanceof jQuery.Event) {
             event.preventDefault();
@@ -593,6 +744,13 @@
         this.refreshPicker();
     }
 
+    /**
+     * Set the full today datetime value in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.setToday = function (event) {
         if (event) {
             event.preventDefault();
@@ -602,6 +760,13 @@
         this.setDatetime(moment());
     }
 
+    /**
+     * Set the year in temporary picker value.
+     *
+     * @param Integer|jQuery.Event year
+     *
+     * @this
+     */
     DatetimePicker.prototype.setYear = function (year) {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -615,6 +780,13 @@
         this.refreshDatePicker();
     };
 
+    /**
+     * Set the previous year in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.previousYear = function (event) {
         if (event) {
             event.preventDefault();
@@ -629,6 +801,13 @@
         this.refreshDatePicker();
     };
 
+    /**
+     * Set the next year in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.nextYear = function (event) {
         if (event) {
             event.preventDefault();
@@ -643,6 +822,13 @@
         this.refreshDatePicker();
     };
 
+    /**
+     * Set the month in temporary picker value.
+     *
+     * @param Integer|jQuery.Event month
+     *
+     * @this
+     */
     DatetimePicker.prototype.setMonth = function (month) {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -656,6 +842,13 @@
         this.refreshDatePicker();
     };
 
+    /**
+     * Set the previous month in temporary picker value.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     */
     DatetimePicker.prototype.previousMonth = function (event) {
         if (event) {
             event.preventDefault();
@@ -670,6 +863,13 @@
         this.refreshDatePicker();
     };
 
+    /**
+     * Set the next month in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.nextMonth = function (event) {
         if (event) {
             event.preventDefault();
@@ -684,6 +884,13 @@
         this.refreshDatePicker();
     };
 
+    /**
+     * Set the hour in temporary picker value.
+     *
+     * @param Integer hour
+     *
+     * @this
+     */
     DatetimePicker.prototype.setHour = function (hour) {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -693,6 +900,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the previous hour in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.previousHour = function (event) {
         if (event) {
             event.preventDefault();
@@ -707,6 +921,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the next hour in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.nextHour = function (event) {
         if (event) {
             event.preventDefault();
@@ -721,6 +942,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the minute in temporary picker value.
+     *
+     * @param Integer minute
+     *
+     * @this
+     */
     DatetimePicker.prototype.setMinute = function (minute) {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -730,6 +958,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the previous minute in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.previousMinute = function (event) {
         if (event) {
             event.preventDefault();
@@ -744,6 +979,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the next minute in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.nextMinute = function (event) {
         if (event) {
             event.preventDefault();
@@ -758,6 +1000,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the second in temporary picker value.
+     *
+     * @param Integer second
+     *
+     * @this
+     */
     DatetimePicker.prototype.setSecond = function (second) {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -767,6 +1016,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the previous second in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.previousSecond = function (event) {
         if (event) {
             event.preventDefault();
@@ -781,6 +1037,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the next second in temporary picker value.
+     *
+     * @param jQuery.Event [event]
+     *
+     * @this
+     */
     DatetimePicker.prototype.nextSecond = function (event) {
         if (event) {
             event.preventDefault();
@@ -795,6 +1058,13 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Set the meridiem in temporary picker value.
+     *
+     * @param String meridiem The meridiem am/pm
+     *
+     * @this
+     */
     DatetimePicker.prototype.setMeridiem = function (meridiem) {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -815,6 +1085,11 @@
         this.refreshTimePicker();
     };
 
+    /**
+     * Toggles the meridiem in temporary picker value.
+     *
+     * @this
+     */
     DatetimePicker.prototype.toggleMeridiem = function () {
         if (null == this.currentDate || null == this.$picker) {
             return;
@@ -830,6 +1105,11 @@
         this.refreshTimePicker();
     }
 
+    /**
+     * Destroy instance.
+     *
+     * @this
+     */
     DatetimePicker.prototype.destroy = function () {
         this.close();
 
@@ -842,6 +1122,12 @@
         }
     };
 
+    /**
+     * Init the calendar hammer instance.
+     *
+     * @this
+     * @private
+     */
     function initCalendarSwipe () {
         if (!Hammer) {
             return;
@@ -946,6 +1232,12 @@
         }, this));
     };
 
+    /**
+     * Destroy the calendar hammer instance.
+     *
+     * @this
+     * @private
+     */
     function destroyCalendarSwipe () {
         if (!Hammer) {
             return;
@@ -954,6 +1246,14 @@
         delete this.hammerCalendar;
     };
 
+    /**
+     * Action on drag end transition of calendar picker.
+     *
+     * @param Event event The hammer event
+     *
+     * @this
+     * @private
+     */
     function dragEndCalendarTransition (event) {
         var $calendarAll = $('.dtp-body-calendar-all', this.$picker);
 
@@ -981,6 +1281,12 @@
         }
     };
 
+    /**
+     * Init the timer hammer instance.
+     *
+     * @this
+     * @private
+     */
     function initTimerSwipe () {
         $.proxy(dragTimerAction, this, 'hours')();
         $.proxy(dragTimerAction, this, 'minutes')();
@@ -988,6 +1294,12 @@
         $.proxy(dragTimerAction, this, 'meridiem')();
     };
 
+    /**
+     * Destroy the timmer hammer instance.
+     *
+     * @this
+     * @private
+     */
     function destroyTimerSwipe () {
         if (!Hammer) {
             return;
@@ -999,6 +1311,14 @@
         delete this['hammerTimerMeridiem'];
     };
 
+    /**
+     * Action on drag of timer picker.
+     *
+     * @param String type The timer type (hour, minute second)
+     *
+     * @this
+     * @private
+     */
     function dragTimerAction (type) {
         if (!Hammer) {
             return;
@@ -1106,22 +1426,32 @@
         }, this, startPositionName));
     };
 
-    function getTransformMatrix ($dragger) {
+    /**
+     * Get the transform matrix of target.
+     *
+     * @param jQuery target
+     *
+     * @return CSSMatrix|WebKitCSSMatrix|MSCSSMatrix|Array
+     *
+     * @this
+     * @private
+     */
+    function getTransformMatrix ($target) {
         var transform = {e: 0, f: 0};
 
-        if ($dragger.css('transform')) {
+        if ($target.css('transform')) {
             if ('function' === typeof CSSMatrix) {
-                transform = new CSSMatrix($dragger.css('transform'));
+                transform = new CSSMatrix($target.css('transform'));
 
             } else if ('function' === typeof WebKitCSSMatrix) {
-                transform = new WebKitCSSMatrix($dragger.css('transform'));
+                transform = new WebKitCSSMatrix($target.css('transform'));
 
             } else if ('function' === typeof MSCSSMatrix) {
-                transform = new MSCSSMatrix($dragger.css('transform'));
+                transform = new MSCSSMatrix($target.css('transform'));
 
             } else {
                 var reMatrix = /matrix\(\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*\,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/;
-                var match = $dragger.css('transform').match(reMatrix);
+                var match = $target.css('transform').match(reMatrix);
 
                 if (match) {
                     transform.e = parseInt(match[1]);
@@ -1133,6 +1463,14 @@
         return transform;
     };
 
+    /**
+     * Check if is a mobile device.
+     *
+     * @return Boolean
+     *
+     * @this
+     * @private
+     */
     function mobileCheck () {
         var check = false;
 
@@ -1146,6 +1484,13 @@
         return check;
     };
 
+    /**
+     * Binding actions of keyboard.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     */
     function keyboardAction (event) {
         if (!event instanceof jQuery.Event) {
             return;
@@ -1174,6 +1519,14 @@
         }
     };
 
+    /**
+     * Close the sidebar since external action.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function closeExternal (event) {
         var $target = $(event.currentTarget.activeElement);
 
@@ -1187,10 +1540,26 @@
         this.close();
     };
 
+    /**
+     * Prevents the default event.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function blockEvent (event) {
         event.preventDefault();
     }
 
+    /**
+     * Prevents the scroll event.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function preventScroll (event) {
         var scrollTop = this.$picker.get(0).scrollTop;
         var scrollHeight = this.$picker.get(0).scrollHeight;
@@ -1220,6 +1589,15 @@
         }
     };
 
+    /**
+     * Action on scroll event.
+     *
+     * @param jQuery.Event event
+     * @param String       type  The timer type (hour, minute, second)
+     *
+     * @this
+     * @private
+     */
     function scrollAction (event, type) {
         var delta = (event.type == 'DOMMouseScroll' ?
                 event.originalEvent.detail * -40 :
@@ -1238,26 +1616,74 @@
         event.preventDefault();
     }
 
+    /**
+     * Action on scroll event for year picker.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function scrollYear (event) {
         $.proxy(scrollAction, this, event, 'year')();
     };
 
+    /**
+     * Action on scroll event for month picker.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function scrollMonth (event) {
         $.proxy(scrollAction, this, event, 'month')();
     };
 
+    /**
+     * Action on scroll event for hour picker.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function scrollHour (event) {
         $.proxy(scrollAction, this, event, 'hour')();
     };
 
+    /**
+     * Action on scroll event for minute picker.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function scrollMinute (event) {
         $.proxy(scrollAction, this, event, 'minute')();
     };
 
+    /**
+     * Action on scroll event for second picker.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function scrollSecond (event) {
         $.proxy(scrollAction, this, event, 'second')();
     };
 
+    /**
+     * Action on scroll event for meridiem picker.
+     *
+     * @param jQuery.Event event
+     *
+     * @this
+     * @private
+     */
     function scrollMeridiem (event) {
         this.toggleMeridiem();
 
@@ -1265,6 +1691,14 @@
         event.preventDefault();
     };
 
+    /**
+     * Generate the week days.
+     *
+     * @param DatetimePicker self
+     *
+     * @this
+     * @private
+     */
     function generateWeekdays (self) {
         var days = moment.langData(self.options.locale)._weekdaysMin.slice();
         var startDay = moment.langData(self.options.locale)._week.dow;
@@ -1279,6 +1713,18 @@
         }
     };
 
+    /**
+     * Generate the calendar pickers (current, previous month, next month,
+     * previous year and next year).
+     *
+     * @param DatetimePicker self
+     * @param Moment         date
+     *
+     * @return Array The list of calendar
+     *
+     * @this
+     * @private
+     */
     function generateCalendars (self, date) {
         var $calendars = $('<div class="dtp-body-calendar-all"></div');
 
@@ -1308,6 +1754,18 @@
         return $calendars;
     };
 
+    /**
+     * Generate the calendar picker.
+     *
+     * @param DatetimePicker self
+     * @param String         name
+     * @param Moment         date
+     *
+     * @return jQuery The calendar element
+     *
+     * @this
+     * @private
+     */
     function generateCalendar (self, name, date) {
         var today = moment();
             today.lang(self.options.locale);
@@ -1359,6 +1817,14 @@
         return $calendar;
     };
 
+    /**
+     * Generate the timer picker.
+     *
+     * @param DatetimePicker self
+     *
+     * @this
+     * @private
+     */
     function generateTimer (self) {
         var format = self.options.format;
         var hourSize = format.indexOf('H') < 0 ? 12 : 24;
