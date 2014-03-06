@@ -26,6 +26,7 @@
         margin: 0;
         display: block;
         text-decoration: none !important;
+        cursor: pointer;
         border-bottom: 2px solid @datetime-picker-title-border-color;
         text-align: center;
         font-family: @datetime-picker-title-font-familly;
@@ -49,8 +50,9 @@
             width: 50%;
             text-align: center;
 
-            > a {
+            > .dtp-show-tab {
                 text-decoration: none;
+                cursor: pointer;
                 color: @datetime-picker-tab-color;
                 padding: 5px;
                 display: block;
@@ -60,7 +62,7 @@
             }
 
             &:first-child {
-                > a {
+                > .dtp-show-tab {
                     border-left: none;
                 }
             }
@@ -69,7 +71,7 @@
 
     &[data-tab-selected=date] {
         .datetime-picker-header-nav-tab {
-            &.dtp-tab-date > a {
+            &.dtp-tab-date > .dtp-show-tab {
                 color: @datetime-picker-tab-selected-color;
                 background-color: @datetime-picker-bg;
             }
@@ -78,7 +80,7 @@
 
     &[data-tab-selected=time] {
         .datetime-picker-header-nav-tab {
-            &.dtp-tab-time > a {
+            &.dtp-tab-time > .dtp-show-tab {
                 color: @datetime-picker-tab-selected-color;
                 background-color: @datetime-picker-bg;
             }
@@ -115,6 +117,7 @@
                         vertical-align: middle;
                         padding: 5px;
                         text-decoration: none;
+                        cursor: pointer;
                         font-weight: @datetime-picker-title-font-weight;
                         color: @datetime-picker-choice-btn-color;
 
@@ -142,6 +145,7 @@
                     }
 
                     .dtp-choice-value-select {
+                        cursor: pointer;
                         border: none;
                         outline: none;
                         -webkit-appearance: none;
@@ -314,6 +318,7 @@
                     min-width: 46px;
                     z-index: 1;
                     text-decoration: none;
+                    cursor: pointer;
                     color: @datetime-picker-time-btn-color;
                     background-color: @datetime-picker-time-btn-bg;
 
@@ -396,8 +401,9 @@
         display: table-cell;
         text-align: center;
 
-        > a {
+        > span {
             text-decoration: none;
+            cursor: pointer;
             color: @datetime-picker-color;
             padding: 5px;
             display: block;
@@ -412,7 +418,7 @@
         }
 
         &:first-child {
-            > a {
+            > span {
                 border-left: none;
             }
         }
@@ -470,7 +476,7 @@
 
         .datetime-picker-header-nav-tabs {
             .datetime-picker-header-nav-tab {
-                > a {
+                > .dtp-show-tab {
                     padding: 14px 5px;
                 }
             }
@@ -533,7 +539,7 @@
         }
 
         .datetime-picker-footer-btn {
-            > a {
+            > span {
                 padding: 14px 5px;
             }
         }
@@ -600,7 +606,7 @@
         }
 
         .datetime-picker-footer-btn {
-            > a {
+            > span {
                 padding: 5px;
             }
         }
@@ -616,7 +622,7 @@
 
         .datetime-picker-header-nav-tabs {
             .datetime-picker-header-nav-tab {
-                > a {
+                > .dtp-show-tab {
                     font-weight: inherit;
                 }
             }
@@ -627,7 +633,7 @@
                 display: none;
 
                 + .datetime-picker-footer-btn {
-                    > a {
+                    > span {
                         border-left: none;
                     }
                 }

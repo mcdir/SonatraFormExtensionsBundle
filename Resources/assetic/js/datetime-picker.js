@@ -167,14 +167,14 @@
         this.$picker = $([
             '<div class="' + this.options.classWrapper + '" data-target="' + this.$element.attr('id') + '" data-tab-selected="' + tabSelected + '" data-date-picker="' + this.options.datePicker + '" data-time-picker="' + this.options.timePicker + '">',
             '<div class="' + this.options.classHeaderPicker + '">',
-                '<a class="' + this.options.classHeaderPicker + '-title" href="#"></a>',
+                '<span class="' + this.options.classHeaderPicker + '-title"></span>',
                 '<div class="' + this.options.classHeaderPicker + '-tabs">',
                     '<ul class="' + this.options.classHeaderPicker + '-nav-tabs">',
                         '<li role="tab" class="' + this.options.classHeaderPicker + '-nav-tab dtp-tab-date">',
-                            '<a href="#" role="button" tabindex="-1">' + this.langData().date + '</a>',
+                            '<span class="dtp-show-tab">' + this.langData().date + '</span>',
                         '</li>',
                         '<li role="tab" class="' + this.options.classHeaderPicker + '-nav-tab dtp-tab-time">',
-                            '<a href="#" role="button" tabindex="-1">' + this.langData().time + '</a>',
+                            '<span class="dtp-show-tab">' + this.langData().time + '</span>',
                         '</li>',
                     '</ul>',
                 '</div>',
@@ -184,22 +184,22 @@
                     '<div class="dtp-body-header">',
                         '<div class="dtp-body-header-choice dtp-choice-month">',
                             '<div class="dtp-body-header-choice-content">',
-                                '<a class="dtp-choice-btn dtp-choice-month-btn-prev" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-choice-btn dtp-choice-month-btn-prev"></span>',
                                 '<div class="dtp-choice-value">',
                                     '<select class="dtp-choice-value-select dtp-choice-month-value">',
                                     '</select>',
                                 '</div>',
-                                '<a class="dtp-choice-btn dtp-choice-month-btn-next" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-choice-btn dtp-choice-month-btn-next"></span>',
                             '</div>',
                         '</div>',
                         '<div class="dtp-body-header-choice dtp-choice-year">',
                             '<div class="dtp-body-header-choice-content">',
-                                '<a class="dtp-choice-btn dtp-choice-year-btn-prev" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-choice-btn dtp-choice-year-btn-prev"></span>',
                                 '<div class="dtp-choice-value">',
                                     '<select class="dtp-choice-value-select dtp-choice-year-value">',
                                     '</select>',
                                 '</div>',
-                                '<a class="dtp-choice-btn dtp-choice-year-btn-next" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-choice-btn dtp-choice-year-btn-next"></span>',
                             '</div>',
                         '</div>',
                     '</div>',
@@ -225,32 +225,32 @@
                         '</div>',
                         '<div class="dtp-body-time-content">',
                             '<div class="dtp-body-time-content-hours">',
-                                '<a class="dtp-time-btn dtp-time-hour-btn-next" href="#" role="button" tabindex="-1"></a>',
-                                '<a class="dtp-time-btn dtp-time-hour-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-time-btn dtp-time-hour-btn-next"></span>',
+                                '<span class="dtp-time-btn dtp-time-hour-btn-previous"></span>',
                                 '<div class="dtp-body-time-content-seletor">',
                                     '<div class="dtp-body-time-content-seletor-all">',
                                     '</div>',
                                 '</div>',
                             '</div>',
                             '<div class="dtp-body-time-content-minutes">',
-                                '<a class="dtp-time-btn dtp-time-minute-btn-next" href="#" role="button" tabindex="-1"></a>',
-                                '<a class="dtp-time-btn dtp-time-minute-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-time-btn dtp-time-minute-btn-next"></span>',
+                                '<span class="dtp-time-btn dtp-time-minute-btn-previous"></span>',
                                 '<div class="dtp-body-time-content-seletor">',
                                     '<div class="dtp-body-time-content-seletor-all">',
                                     '</div>',
                                 '</div>',
                             '</div>',
                             '<div class="dtp-body-time-content-seconds">',
-                                '<a class="dtp-time-btn dtp-time-second-btn-next" href="#" role="button" tabindex="-1"></a>',
-                                '<a class="dtp-time-btn dtp-time-second-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-time-btn dtp-time-second-btn-next"></span>',
+                                '<span class="dtp-time-btn dtp-time-second-btn-previous"></span>',
                                 '<div class="dtp-body-time-content-seletor">',
                                     '<div class="dtp-body-time-content-seletor-all">',
                                     '</div>',
                                 '</div>',
                             '</div>',
                             '<div class="dtp-body-time-content-meridiem">',
-                                '<a class="dtp-time-btn dtp-time-meridiem-btn-next" href="#" role="button" tabindex="-1"></a>',
-                                '<a class="dtp-time-btn dtp-time-meridiem-btn-previous" href="#" role="button" tabindex="-1"></a>',
+                                '<span class="dtp-time-btn dtp-time-meridiem-btn-next"></span>',
+                                '<span class="dtp-time-btn dtp-time-meridiem-btn-previous"></span>',
                                 '<div class="dtp-body-time-content-seletor">',
                                     '<div class="dtp-body-time-content-seletor-all">',
                                     '</div>',
@@ -261,9 +261,9 @@
                 '</div>',
             '</div>',
             '<div class="' + this.options.classFooterPicker + '">',
-                '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-cancel"><a href="#" role="button" tabindex="-1">' + this.langData().cancel + '</a></span>',
-                '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-clear"><a href="#" role="button" tabindex="-1">' + this.langData().clear + '</a></span>',
-                '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-define"><a href="#" role="button" tabindex="-1">' + this.langData().define + '</a></span>',
+                '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-cancel"><span>' + this.langData().cancel + '</span></span>',
+                '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-clear"><span>' + this.langData().clear + '</span></span>',
+                '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-define"><span>' + this.langData().define + '</span></span>',
             '</div>',
             '</div>'
         ].join(''));
@@ -301,27 +301,27 @@
 
         this.$picker.on('touchmove', $.proxy(blockEvent, this));
         this.$picker.on('DOMMouseScroll mousewheel', $.proxy(preventScroll, this));
-        this.$picker.on(this.eventType, 'a.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
+        this.$picker.on(this.eventType, 'span.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
         this.$picker.on(this.eventType, '.dtp-btn-cancel', $.proxy(DatetimePicker.prototype.cancel, this));
         this.$picker.on(this.eventType, '.dtp-btn-clear', $.proxy(DatetimePicker.prototype.clearValue, this));
         this.$picker.on(this.eventType, '.dtp-btn-define', $.proxy(DatetimePicker.prototype.defineValue, this));
-        this.$picker.on(this.eventType, '.dtp-tab-date > a', $.proxy(DatetimePicker.prototype.showDate, this));
-        this.$picker.on(this.eventType, '.dtp-tab-time > a', $.proxy(DatetimePicker.prototype.showTime, this));
+        this.$picker.on(this.eventType, '.dtp-tab-date > span.dtp-show-tab', $.proxy(DatetimePicker.prototype.showDate, this));
+        this.$picker.on(this.eventType, '.dtp-tab-time > span.dtp-show-tab', $.proxy(DatetimePicker.prototype.showTime, this));
         this.$picker.on('change',       'select.dtp-choice-year-value', $.proxy(DatetimePicker.prototype.setYear, this));
-        this.$picker.on(this.eventType, 'a.dtp-choice-year-btn-prev', $.proxy(DatetimePicker.prototype.previousYear, this));
-        this.$picker.on(this.eventType, 'a.dtp-choice-year-btn-next', $.proxy(DatetimePicker.prototype.nextYear, this));
+        this.$picker.on(this.eventType, 'span.dtp-choice-year-btn-prev', $.proxy(DatetimePicker.prototype.previousYear, this));
+        this.$picker.on(this.eventType, 'span.dtp-choice-year-btn-next', $.proxy(DatetimePicker.prototype.nextYear, this));
         this.$picker.on('change',       'select.dtp-choice-month-value', $.proxy(DatetimePicker.prototype.setMonth, this));
-        this.$picker.on(this.eventType, 'a.dtp-choice-month-btn-prev', $.proxy(DatetimePicker.prototype.previousMonth, this));
-        this.$picker.on(this.eventType, 'a.dtp-choice-month-btn-next', $.proxy(DatetimePicker.prototype.nextMonth, this));
+        this.$picker.on(this.eventType, 'span.dtp-choice-month-btn-prev', $.proxy(DatetimePicker.prototype.previousMonth, this));
+        this.$picker.on(this.eventType, 'span.dtp-choice-month-btn-next', $.proxy(DatetimePicker.prototype.nextMonth, this));
         this.$picker.on(this.eventType, '.dtp-body-calendar-day > a', $.proxy(DatetimePicker.prototype.setDatetime, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-hour-btn-next', $.proxy(DatetimePicker.prototype.nextHour, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-hour-btn-previous', $.proxy(DatetimePicker.prototype.previousHour, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-minute-btn-next', $.proxy(DatetimePicker.prototype.nextMinute, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-minute-btn-previous', $.proxy(DatetimePicker.prototype.previousMinute, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-second-btn-next', $.proxy(DatetimePicker.prototype.nextSecond, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
-        this.$picker.on(this.eventType, 'a.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-hour-btn-next', $.proxy(DatetimePicker.prototype.nextHour, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-hour-btn-previous', $.proxy(DatetimePicker.prototype.previousHour, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-minute-btn-next', $.proxy(DatetimePicker.prototype.nextMinute, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-minute-btn-previous', $.proxy(DatetimePicker.prototype.previousMinute, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-second-btn-next', $.proxy(DatetimePicker.prototype.nextSecond, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.on(this.eventType, 'span.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
         this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-year', $.proxy(scrollYear, this));
         this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-month', $.proxy(scrollMonth, this));
         this.$picker.on('DOMMouseScroll mousewheel', '.dtp-body-calendar-wrapper', $.proxy(scrollMonth, this));
@@ -351,27 +351,27 @@
         this.currentDate = null;
         this.$picker.off('touchmove', $.proxy(blockEvent, this));
         this.$picker.off('DOMMouseScroll mousewheel', $.proxy(preventScroll, this));
-        this.$picker.off(this.eventType, 'a.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
+        this.$picker.off(this.eventType, 'span.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
         this.$picker.off(this.eventType, '.dtp-btn-cancel', $.proxy(DatetimePicker.prototype.cancel, this));
         this.$picker.off(this.eventType, '.dtp-btn-clear', $.proxy(DatetimePicker.prototype.clearValue, this));
         this.$picker.off(this.eventType, '.dtp-btn-define', $.proxy(DatetimePicker.prototype.defineValue, this));
-        this.$picker.off(this.eventType, '.dtp-tab-date > a', $.proxy(DatetimePicker.prototype.showDate, this));
-        this.$picker.off(this.eventType, '.dtp-tab-time > a', $.proxy(DatetimePicker.prototype.showTime, this));
+        this.$picker.off(this.eventType, '.dtp-tab-date > span.dtp-show-tab', $.proxy(DatetimePicker.prototype.showDate, this));
+        this.$picker.off(this.eventType, '.dtp-tab-time > span.dtp-show-tab', $.proxy(DatetimePicker.prototype.showTime, this));
         this.$picker.off('change',       'select.dtp-choice-year-value', $.proxy(DatetimePicker.prototype.setYear, this));
-        this.$picker.off(this.eventType, 'a.dtp-choice-year-btn-prev', $.proxy(DatetimePicker.prototype.previousYear, this));
-        this.$picker.off(this.eventType, 'a.dtp-choice-year-btn-next', $.proxy(DatetimePicker.prototype.nextYear, this));
+        this.$picker.off(this.eventType, 'span.dtp-choice-year-btn-prev', $.proxy(DatetimePicker.prototype.previousYear, this));
+        this.$picker.off(this.eventType, 'span.dtp-choice-year-btn-next', $.proxy(DatetimePicker.prototype.nextYear, this));
         this.$picker.off('change',       'select.dtp-choice-month-value', $.proxy(DatetimePicker.prototype.setMonth, this));
-        this.$picker.off(this.eventType, 'a.dtp-choice-month-btn-prev', $.proxy(DatetimePicker.prototype.previousMonth, this));
-        this.$picker.off(this.eventType, 'a.dtp-choice-month-btn-next', $.proxy(DatetimePicker.prototype.nextMonth, this));
+        this.$picker.off(this.eventType, 'span.dtp-choice-month-btn-prev', $.proxy(DatetimePicker.prototype.previousMonth, this));
+        this.$picker.off(this.eventType, 'span.dtp-choice-month-btn-next', $.proxy(DatetimePicker.prototype.nextMonth, this));
         this.$picker.off(this.eventType, '.dtp-body-calendar-day > a', $.proxy(DatetimePicker.prototype.setDatetime, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-hour-btn-next', $.proxy(DatetimePicker.prototype.nextHour, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-hour-btn-previous', $.proxy(DatetimePicker.prototype.previousHour, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-minute-btn-next', $.proxy(DatetimePicker.prototype.nextMinute, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-minute-btn-previous', $.proxy(DatetimePicker.prototype.previousMinute, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-second-btn-next', $.proxy(DatetimePicker.prototype.nextSecond, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
-        this.$picker.off(this.eventType, 'a.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-hour-btn-next', $.proxy(DatetimePicker.prototype.nextHour, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-hour-btn-previous', $.proxy(DatetimePicker.prototype.previousHour, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-minute-btn-next', $.proxy(DatetimePicker.prototype.nextMinute, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-minute-btn-previous', $.proxy(DatetimePicker.prototype.previousMinute, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-second-btn-next', $.proxy(DatetimePicker.prototype.nextSecond, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-second-btn-previous', $.proxy(DatetimePicker.prototype.previousSecond, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-meridiem-btn-next', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
+        this.$picker.off(this.eventType, 'span.dtp-time-meridiem-btn-previous', $.proxy(DatetimePicker.prototype.toggleMeridiem, this));
         this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-year', $.proxy(scrollYear, this));
         this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-header-choice.dtp-choice-month', $.proxy(scrollMonth, this));
         this.$picker.off('DOMMouseScroll mousewheel', '.dtp-body-calendar-wrapper', $.proxy(scrollMonth, this));
