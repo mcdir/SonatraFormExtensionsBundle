@@ -675,7 +675,7 @@
             event.stopPropagation();
         }
 
-        if (!this.options.datePicker || null == this.currentDate || null == this.$picker) {
+        if (!this.options.datePicker || null == this.currentDate || null == this.$picker || 'date' == this.$picker.attr('data-tab-selected')) {
             return;
         }
 
@@ -697,7 +697,7 @@
             event.stopPropagation();
         }
 
-        if (!this.options.timePicker || null == this.$picker) {
+        if (!this.options.timePicker || null == this.$picker || 'time' == this.$picker.attr('data-tab-selected')) {
             return;
         }
 
@@ -1576,7 +1576,6 @@
 
             event.stopPropagation();
             event.preventDefault();
-            event.returnValue = false;
 
             return false;
 
@@ -1585,7 +1584,6 @@
 
             event.stopPropagation();
             event.preventDefault();
-            event.returnValue = false;
 
             return false;
         }
