@@ -25,16 +25,22 @@
         this.guid        = jQuery.guid;
         this.options     = $.extend({}, DatetimePicker.DEFAULTS, options);
         this.$element    = $(element);
-        this.eventType   = mobileCheck() ? 'touchstart' : 'click';
-        this.currentDate = null;
-        this.$picker     = null;
+        this.eventType   = 'click';
+        this.focusEventType = 'click.st.datetimepicker';
+        this.currentDate    = null;
+        this.$picker        = null;
+
+        if (mobileCheck()) {
+            this.eventType = 'touchstart';
+            this.focusEventType = 'touchend.st.datetimepicker';
+        }
 
         if (null != this.options.buttonId) {
             $('#' + this.options.buttonId).on('click' + '.st.datetimepicker', $.proxy(DatetimePicker.prototype.toggle, this));
         }
 
         if (this.options.openFocus) {
-            this.$element.on(this.eventType + '.st.datetimepicker', $.proxy(DatetimePicker.prototype.toggle, this));
+            this.$element.on(this.focusEventType, $.proxy(DatetimePicker.prototype.toggle, this));
         }
 
         this.$element.on( 'keyup.st.datetimepicker', $.proxy(keyboardAction, this));
@@ -1118,7 +1124,7 @@
         }
 
         if (this.options.openFocus) {
-            this.$element.off(this.eventType + '.st.datetimepicker', $.proxy(DatetimePicker.prototype.toggle, this));
+            this.$element.on(this.focusEventType, $.proxy(DatetimePicker.prototype.toggle, this));
         }
 
         this.$element.removeData('st.datetimepicker');
