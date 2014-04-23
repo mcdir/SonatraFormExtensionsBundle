@@ -7,13 +7,14 @@
  * file that was distributed with this source code.
  */
 
-+function ($) {
+/*global jQuery*/
+(function ($) {
     'use strict';
 
     // DATETIME PICKER CLASS DEFINITION
     // ================================
 
-    $.fn.datetimepicker.Constructor.LANGUAGES = $.extend({}, $.fn.datetimepicker.Constructor.LANGUAGES, {
+    $.fn.datetimePicker.Constructor.LANGUAGES = $.extend({}, $.fn.datetimePicker.Constructor.LANGUAGES, {
         fr: {
             date:    'Date',
             time:    'Heure',
@@ -26,4 +27,4 @@
         }
     });
 
-}(jQuery);
+}(jQuery));
