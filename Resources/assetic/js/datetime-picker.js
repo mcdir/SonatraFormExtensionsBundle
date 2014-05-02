@@ -1138,11 +1138,11 @@
         format = this.options.format;
 
         if ('' === value) {
-            value = null;
-            format = null;
+            this.currentDate = moment();
+        } else {
+            this.currentDate = moment(value, format);
         }
 
-        this.currentDate = moment(value, format);
         this.currentDate.lang(this.options.locale);
 
         generateWeekdays(this);
@@ -1356,11 +1356,11 @@
             format = this.options.format;
 
         if ('' === value) {
-            value = null;
-            format = null;
+            this.currentDate = moment();
+        } else {
+            this.currentDate = moment(value, format);
         }
 
-        this.currentDate = moment(value, format);
         this.currentDate.lang(this.options.locale);
 
         this.refreshPicker();
