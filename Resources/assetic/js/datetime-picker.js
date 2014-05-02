@@ -22,6 +22,9 @@
  * @param {jQuery} $
  *
  * @typedef {DatetimePicker} DatetimePicker
+ * @typedef {function} moment.clone
+ * @typedef {function} moment.lang
+ * @typedef {function} moment.format
  */
 (function ($) {
     'use strict';
