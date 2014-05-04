@@ -1177,7 +1177,7 @@
 
         this.currentDate = null;
         this.$picker.off('touchmove', blockEvent);
-        this.$picker.off('DOMMouseScroll mousewheel', null, this, preventScroll);
+        this.$picker.off('DOMMouseScroll mousewheel', preventScroll);
         this.$picker.off(this.eventType, 'span.' + this.options.classHeaderPicker + '-title', $.proxy(DatetimePicker.prototype.setToday, this));
         this.$picker.off(this.eventType, '.dtp-btn-cancel', $.proxy(DatetimePicker.prototype.cancel, this));
         this.$picker.off(this.eventType, '.dtp-btn-clear', $.proxy(DatetimePicker.prototype.clearValue, this));
@@ -1207,10 +1207,10 @@
         destroyCalendarSwipe(this);
         this.$element.removeClass(this.options.classOpen);
 
-        $(document).off(this.eventType + '.st.datetimepicker' + this.guid, null, this, closeExternal);
-        $(window).off('resize.st.datetimepicker' + this.guid, null, this, closeExternal);
-        $(window).off('keyup.st.datetimepicker' + this.guid, null, this, keyboardAction);
-        $(window).off('scroll.st.datetimepicker' + this.guid, null, this, closeExternal);
+        $(document).off(this.eventType + '.st.datetimepicker' + this.guid, closeExternal);
+        $(window).off('resize.st.datetimepicker' + this.guid, closeExternal);
+        $(window).off('keyup.st.datetimepicker' + this.guid, keyboardAction);
+        $(window).off('scroll.st.datetimepicker' + this.guid, closeExternal);
     };
 
     /**
