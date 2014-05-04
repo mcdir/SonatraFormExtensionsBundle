@@ -1604,7 +1604,11 @@
             return;
         }
 
-        selectTimeAction(this, 'hour');
+        if ($('.dtp-body-time-wrapper', this.$picker).hasClass('time-hours-selected')) {
+            this.toggleMeridiem();
+        } else {
+            selectTimeAction(this, 'hour');
+        }
     };
 
     /**
