@@ -715,9 +715,7 @@
             $seconds,
             knobChangeHour,
             knobChangeMinute,
-            knobChangeSecond,
-            centerPositionTop,
-            centerPositionLeft;
+            knobChangeSecond;
 
         $wrapper = $('.dtp-body-time-wrapper', self.$picker);
         $display = $('.dtp-body-time-display', $wrapper);
@@ -726,8 +724,6 @@
         $minutes = $('.dtp-body-time-content-value-minutes', $wrapper);
         $seconds = $('.dtp-body-time-content-value-seconds', $wrapper);
         knobSize = $wrapper.innerHeight() - parseInt($wrapper.css('padding-top'), 10) - parseInt($wrapper.css('padding-bottom'), 10);
-        centerPositionTop = Math.round($wrapper.position().top + $wrapper.outerHeight() / 2);
-        centerPositionLeft = Math.round($wrapper.position().left + $wrapper.outerWidth() / 2);
 
         if (self.options.withMinutes) {
             $wrapper.addClass('time-has-minutes');
@@ -737,9 +733,7 @@
             $wrapper.addClass('time-has-seconds');
         }
 
-        if (self.options.format.indexOf('H') < 0) {
-            $wrapper.addClass('time-has-meridiem');
-        }
+        $wrapper.addClass('time-has-meridiem');
 
         if (!$wrapper.hasClass('time-hours-selected')
                 && !$wrapper.hasClass('time-minutes-selected')
@@ -829,12 +823,8 @@
         }));
 
         // time and meridiem display position
-        $display
-            .css('top', centerPositionTop)
-            .css('left', centerPositionLeft - Math.round($display.outerWidth() / 2));
-        $displayMeridiem
-            .css('top', centerPositionTop + $display.outerHeight())
-            .css('left', centerPositionLeft - Math.round($displayMeridiem.outerWidth() / 2));
+        $display.css('top', 0).css('left', 0);
+        $displayMeridiem.css('top', 0).css('left', 0);
     }
 
     // DATETIME PICKER CLASS DEFINITION
@@ -1431,6 +1421,9 @@
             $contentHours = $('.dtp-body-time-content-value-hours', $wrapper),
             $contentMinutes = $('.dtp-body-time-content-value-minutes', $wrapper),
             $contentSeconds = $('.dtp-body-time-content-value-seconds', $wrapper),
+            $pickerHeader,
+            centerPositionTop,
+            centerPositionLeft,
             bg,
             hex = function (x) {
                 return ("0" + parseInt(x, 10).toString(16)).slice(-2);
@@ -1475,6 +1468,20 @@
             $contentSeconds.trigger('configure', {
                 "fgColor": "#" + hex(bg[1]) + hex(bg[2]) + hex(bg[3])
             });
+        }
+
+        // time and meridiem display position
+        if (parseInt($display.css('top'), 10) === 0 && $wrapper.outerWidth() > 0) {
+            $pickerHeader = $('.datetime-picker-header', this.$picker);
+            centerPositionTop = Math.round($pickerHeader.outerHeight() + $wrapper.outerHeight() / 2);
+            centerPositionLeft = Math.round($wrapper.outerWidth() / 2);
+
+            $display
+                .css('top', Math.round(centerPositionTop - $display.outerHeight() / 2))
+                .css('left', Math.round(centerPositionLeft - $display.outerWidth() / 2));
+            $displayMeridiem.parent()
+                .css('top', Math.round(centerPositionTop + $display.outerHeight() - $displayMeridiem.outerHeight() / 2))
+                .css('left', Math.round(centerPositionLeft - $displayMeridiem.outerWidth() / 2));
         }
     };
 
