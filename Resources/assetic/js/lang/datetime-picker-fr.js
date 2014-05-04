@@ -15,16 +15,13 @@
     // ================================
 
     $.fn.datetimePicker.Constructor.LANGUAGES = $.extend({}, $.fn.datetimePicker.Constructor.LANGUAGES, {
-        fr: {
+        fr: $.extend($.fn.datetimePicker.Constructor.LANGUAGES.en, {
             date:    'Date',
             time:    'Heure',
-            hours:   'Heures',
-            minutes: 'Minutes',
-            seconds: 'Secondes',
             cancel:  'Annuler',
             clear:   'Effacer',
             define:  'Definir'
-        }
+        })
     });
 
 }(jQuery));

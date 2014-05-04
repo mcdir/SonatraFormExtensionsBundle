@@ -24,7 +24,8 @@
         "sonatra_ivaynberg/select2" : "dev-master",
         "sonatra/bootstrap-bundle": "~1.0",
         "sonatra_moment/moment": "~2.5",
-        "sonatra_eightmedia/hammer-js": "dev-master"
+        "sonatra_eightmedia/hammer-js": "dev-master",
+        "sonatra_aterrien/jquery-knob": "1.2.*"
     },
     "require-dev" : {
         "symfony/console" : "~2.3",

@@ -64,6 +64,7 @@ Adds javascript files in your template or assetic asset:
 - '%kernel.root_dir%/../vendor/sonatra_ivaynberg/select2/select2.js'
 - '%kernel.root_dir%/../vendor/sonatra_ivaynberg/select2/select2_locale_%locale%.js'
 - '%kernel.root_dir%/../vendor/sonatra_eightmedia/hammer-js/hammer.js'
+- '%kernel.root_dir%/../vendor/sonatra_aterrien/jquery-knob/js/jquery.knob.js'
 - '%kernel.root_dir%/../vendor/sonatra_moment/moment/moment.js'
 - '%kernel.root_dir%/../vendor/sonatra_moment/moment/lang/%locale%.js'
 - '@SonatraFormExtensionsBundle/Resources/assetic/js/datetime-picker.js'

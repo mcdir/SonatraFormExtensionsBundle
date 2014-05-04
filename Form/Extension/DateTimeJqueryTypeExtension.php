@@ -38,6 +38,15 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
             'format',
             'with_minutes',
             'with_seconds',
+            'hour_min',
+            'hour_max',
+            'hour_step',
+            'minute_min',
+            'minute_max',
+            'minute_step',
+            'second_min',
+            'second_max',
+            'second_step'
         );
 
         foreach ($dataAttributes as $dataAttr) {
@@ -112,20 +121,29 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
         };
 
         $resolver->setDefaults(array(
-                'widget'            => 'single_text',
-                'locale'            => \Locale::getDefault(),
-                'user_timezone'     => null,
-                'date_picker'       => true,
-                'time_picker'       => true,
-                'time_picker_first' => false,
-                'button_id'         => null,
-                'open_focus'        => true,
+            'widget'            => 'single_text',
+            'locale'            => \Locale::getDefault(),
+            'user_timezone'     => null,
+            'date_picker'       => true,
+            'time_picker'       => true,
+            'time_picker_first' => false,
+            'button_id'         => null,
+            'open_focus'        => true,
+            'hour_min'          => null,
+            'hour_max'          => null,
+            'hour_step'         => null,
+            'minute_min'        => null,
+            'minute_max'        => null,
+            'minute_step'       => null,
+            'second_min'        => null,
+            'second_max'        => null,
+            'second_step'       => null,
 
-                // override parent type value (merge options for datetime, date, time)
-                'format'            => $format,
-                'empty_value'       => null,
-                'with_minutes'      => true,
-                'with_seconds'      => false
+            // override parent type value (merge options for datetime, date, time)
+            'format'            => $format,
+            'empty_value'       => null,
+            'with_minutes'      => true,
+            'with_seconds'      => false,
         ));
     }
 
