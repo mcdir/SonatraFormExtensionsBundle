@@ -2081,21 +2081,15 @@
     // DATETIME PICKER PLUGIN DEFINITION
     // =================================
 
-    old = $.fn.datetimePicker;
-
     /**
-     * @class datetimePicker
-     *
      * @param {string|object} option
      * @param {*}             [value]
      *
      * @returns {jQuery}
      * @this jQuery
-     *
-     * @memberOf jQuery.fn
      */
-    $.fn.datetimePicker = function (option, value) {
-        return $(this).each(function () {
+    function Plugin(option, value) {
+        return this.each(function () {
             var $this   = $(this),
                 data    = $this.data('st.datetimepicker'),
                 options = typeof option === 'object' && option;
@@ -2112,8 +2106,11 @@
                 data[option](value);
             }
         });
-    };
+    }
 
+    old = $.fn.datetimePicker;
+
+    $.fn.datetimePicker             = Plugin;
     $.fn.datetimePicker.Constructor = DatetimePicker;
 
 
@@ -2133,7 +2130,7 @@
     $(window).on('load', function () {
         $('[data-datetime-picker="true"]').each(function () {
             var $this = $(this);
-            $this.datetimePicker($this.data());
+            Plugin.call($this, $this.data());
         });
     });
 
