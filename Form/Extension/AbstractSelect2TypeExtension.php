@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -166,17 +167,19 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         $view->vars['form']->vars['no_label_for'] = true;
 
         if ($options['select2']['ajax'] && isset($options['choice_list'])) {
+            /* @var AjaxChoiceListInterface $choiceList */
+            $choiceList = $options['choice_list'];
             $values = (array) $view->vars['value'];
 
             if ($options['required'] && null === $view->vars['data']) {
-                $choices = $options['choice_list']->getChoices();
+                $choices = $choiceList->getChoices();
 
                 if (isset($choices[0]['id'])) {
                     $values = (array) $choices[0]['id'];
                 }
             }
 
-            $view->vars['choices_selected'] = $options['choice_list']->getLabelChoicesForValues($values);
+            $view->vars['choices_selected'] = $choiceList->getLabelChoicesForValues($values);
         }
 
         // convert array to string
@@ -202,7 +205,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             'select2' => function (Options $options, $value) {
                 $select2Resolver = new OptionsResolver();
                 $pDefault = $options;
-                $enabled = function (Options $options, $value) use ($pDefault) {
+                $enabled = function () use ($pDefault) {
                     return !$pDefault['expanded'];
                 };
 
@@ -263,7 +266,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
                 return $select2Resolver->resolve($value);
             },
-            'compound' => function (Options $options, $value) {
+            'compound' => function (Options $options) {
                 if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
                     return false;
                 }

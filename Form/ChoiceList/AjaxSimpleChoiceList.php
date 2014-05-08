@@ -199,7 +199,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         $items = parent::getChoicesForValues($values);
         $choices = array();
 
-        foreach ($values as $index => $value) {
+        foreach ($values as $value) {
             $pos = array_search($value, $items);
 
             if (false !== $pos) {
@@ -225,6 +225,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         $choices = $this->getRemainingViews();
         $data = array();
 
+        /* @var ChoiceView $choice */
         foreach ($choices as $index => $choice) {
             // group choice
             if (is_array($choice)) {
@@ -296,6 +297,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
 
         $size = 0;
 
+        /* @var ChoiceView[] $choices */
         foreach ($filteredChoices as $choices) {
             $size += count($choices);
         }

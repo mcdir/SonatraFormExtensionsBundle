@@ -141,13 +141,13 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
         ));
 
         $resolver->setNormalizers(array(
-            'prototype' => function (Options $options, $value) {
+            'prototype' => function () {
                 return true;
             },
-            'compound'  => function (Options $options, $value) {
+            'compound'  => function () {
                 return true;
             },
-            'multiple'  => function (Options $options, $value) {
+            'multiple'  => function () {
                 return true;
             },
             'type'      => function (Options $options, $value) {
