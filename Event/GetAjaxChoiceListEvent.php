@@ -33,9 +33,10 @@ class GetAjaxChoiceListEvent extends GetAjaxEvent
     /**
      * Constructor.
      *
-     * @param string  $id
-     * @param Request $request
-     * @param string  $format
+     * @param string                  $id
+     * @param Request                 $request
+     * @param AjaxChoiceListInterface $choiceList
+     * @param string                  $format
      */
     public function __construct($id, Request $request, AjaxChoiceListInterface $choiceList, $format = 'json')
     {
