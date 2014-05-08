@@ -12,7 +12,7 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Locale\Stub\StubLocale;
+use Symfony\Component\Intl\Intl;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -26,7 +26,7 @@ class CurrencyType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'choices' => StubLocale::getDisplayCurrencies('en'),
+            'choices' => Intl::getCurrencyBundle()->getCurrencyNames('en'),
         ));
     }
 

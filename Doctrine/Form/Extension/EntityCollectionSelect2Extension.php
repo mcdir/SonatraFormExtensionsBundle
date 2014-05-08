@@ -44,7 +44,7 @@ class EntityCollectionSelect2Extension extends AbstractTypeExtension
     public function __construct(ManagerRegistry $registry, PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->registry = $registry;
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::getPropertyAccessor();
+        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
     /**

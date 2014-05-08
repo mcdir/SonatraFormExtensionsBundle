@@ -13,7 +13,6 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
@@ -510,7 +509,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     {
         $qb = $this->entityLoader->getQueryBuilder();
 
-        $entityAlias = $qb->getRootAlias();
+        $entityAlias = $qb->getRootAliases()[0];
 
         // hide selected value
         if (count($this->getIds()) > 0) {
@@ -549,8 +548,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * Exctract entity labels.
      *
-     * @param object $choices
-     * @param array  $labels
+     * @param array|\Iterator $choices
+     * @param array           $labels
      *
      * @throws StringCastException
      */

@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -22,7 +23,6 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader;
-use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -48,7 +48,7 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
     public function __construct(ContainerInterface $container, PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->request = $container->get('request');
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::getPropertyAccessor();
+        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -60,16 +60,19 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
         $type = $this;
 
         $loader = function (Options $options) use ($type) {
+            /* @var EntityManager $em */
+            $em = $options['em'];
+
             if (null !== $options['query_builder']) {
-                return $type->getLoader($options['em'], $options['query_builder'], $options['class']);
+                return $type->getLoader($em, $options['query_builder'], $options['class']);
             }
 
-            $qb = $options['em']->createQueryBuilder()
+            $qb = $em->createQueryBuilder()
                 ->select('e')
                 ->from($options['class'], 'e')
             ;
 
-            return $type->getLoader($options['em'], $qb, $options['class']);
+            return $type->getLoader($em, $qb, $options['class']);
         };
 
         $choiceList = function (Options $options, $value) use ($propertyAccessor) {
@@ -111,13 +114,13 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
     /**
      * Return the default loader object.
      *
-     * @param ObjectManager $manager
+     * @param EntityManager $manager
      * @param mixed         $queryBuilder
      * @param string        $class
      *
      * @return ORMQueryBuilderLoader
      */
-    public function getLoader(ObjectManager $manager, $queryBuilder, $class)
+    public function getLoader(EntityManager $manager, $queryBuilder, $class)
     {
         return new AjaxORMQueryBuilderLoader(
             $queryBuilder,
