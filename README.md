@@ -5,8 +5,10 @@ The Sonatra FormExtensionsBundle add form types.
 
 Features include:
 
-- Select2 Type
-- Currency Type
+- Select2 Form Extension for ChoiceList Form Type
+- Datetime Picker Form Extension for Datetime Type, Date Type and Time Type
+- Currency Form Type
+- Responsive datetime picker jquery plugin (compatible with Twitter Bootstrap 3)
 
 Documentation
 -------------
