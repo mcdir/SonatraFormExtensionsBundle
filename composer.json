@@ -32,11 +32,10 @@
         "symfony/finder" : "~2.4"
     },
     "autoload" : {
-        "psr-0" : {
-            "Sonatra\\Bundle\\FormExtensionsBundle" : ""
+        "psr-4" : {
+            "Sonatra\\Bundle\\FormExtensionsBundle\\" : ""
         }
     },
-    "target-dir" : "Sonatra/Bundle/FormExtensionsBundle",
     "minimum-stability" : "dev",
     "repositories" : [{
             "type" : "composer",
