@@ -9,7 +9,10 @@
     ],
     "keywords" : [
         "Init form-extensions",
-        "PDO"
+        "PDO",
+        "Currency form type",
+        "Datetime picker",
+        "Select2 form"
     ],
     "homepage" : "http://sonatra.com",
     "license" : [
