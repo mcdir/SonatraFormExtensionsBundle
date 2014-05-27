@@ -17,11 +17,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
-use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
-use Sonatra\Bundle\AjaxBundle\AjaxEvents;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -36,14 +34,14 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
     /**
      * Constructor.
      *
-     * @param FormFactory        $factory
-     * @param ContainerInterface $container
-     * @param string             $type
-     * @param integer            $defaultPageSize
+     * @param FormFactory     $factory
+     * @param RouterInterface $router
+     * @param string          $type
+     * @param integer         $defaultPageSize
      */
-    public function __construct(FormFactory $factory, ContainerInterface $container, $type, $defaultPageSize = 10)
+    public function __construct(FormFactory $factory, RouterInterface $router, $type, $defaultPageSize = 10)
     {
-        parent::__construct($container, $type, $defaultPageSize);
+        parent::__construct($router, $type, $defaultPageSize);
 
         $this->factory = $factory;
     }
@@ -58,6 +56,24 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
         }
 
         $builder->addEventSubscriber(new FixStringInputListener());
+
+        $choiceList = $builder->getAttribute('prototype')->getConfig()->getOption('choice_list');
+
+        if (null === $choiceList) {
+            $choiceList = new AjaxSimpleChoiceList($options['select2']['tags']);
+            $choiceList->setAllowAdd($options['allow_add']);
+            $choiceList->setAjax($options['select2']['ajax']);
+            $choiceList->setPageSize($options['select2']['page_size']);
+            $choiceList->setPageNumber(1);
+            $choiceList->setSearch('');
+            $choiceList->setIds(array());
+        }
+
+        $builder->setAttribute('choice_list', $choiceList);
+
+        if (null === $options['select2']['ajax_route'] && $options['select2']['ajax'] && null !== $options['type']) {
+            $builder->setAttribute('select2_ajax_route', 'sonatra_form_extensions_ajax_'.$options['type']);
+        }
     }
 
     /**
@@ -71,17 +87,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
             return;
         }
 
-        $choiceList = $form->getConfig()->getAttribute('prototype')->getConfig()->getOption('choice_list');
-
-        if (null === $choiceList) {
-            $choiceList = new AjaxSimpleChoiceList($options['select2']['tags']);
-            $choiceList->setAllowAdd($options['allow_add']);
-            $choiceList->setAjax($options['select2']['ajax']);
-            $choiceList->setPageSize($options['select2']['page_size']);
-            $choiceList->setPageNumber(1);
-            $choiceList->setSearch('');
-            $choiceList->setIds(array());
-        }
+        $choiceList = $form->getConfig()->getAttribute('choice_list');
 
         $view->vars = array_replace($view->vars, array(
             'multiple'         => $options['multiple'],
@@ -91,13 +97,6 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
                 'tags' => $choiceList->getDataChoices(),
             )),
         ));
-
-        if ($options['select2']['ajax']) {
-            $ajaxId = null !== $options['select2']['ajax_id'] ? $options['select2']['ajax_id'] : $view->vars['id'];
-            $event = new GetAjaxChoiceListEvent($ajaxId, $this->request, $choiceList);
-
-            $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
-        }
     }
 
     /**
@@ -161,10 +160,11 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
                         $value = array_merge($value, array(
                             'multiple'  => false,
                             'select2'   => array_merge(array_key_exists('select2', $value) ? $value['select2'] : array(), array(
-                                'enabled'   => true,
-                                'ajax'      => $options['select2']['ajax'],
-                                'page_size' => $options['select2']['page_size'],
-                                'allow_add' => true,
+                                'enabled'    => true,
+                                'ajax'       => $options['select2']['ajax'],
+                                'ajax_route' => $options['select2']['ajax_route'],
+                                'page_size'  => $options['select2']['page_size'],
+                                'allow_add'  => true,
                             )),
                         ));
                     }

@@ -22,7 +22,7 @@
         "php" : ">=5.3.2",
         "symfony/framework-bundle" : "~2.4",
         "sonatra/twig-extensions-bundle" : "~1.0",
-        "sonatra/ajax-bundle" : "~1.0",
+        "symfony/serializer": "~2.4",
         "oyejorge/less.php": "~1.7",
         "sonatra_jquery/jquery" : "1.11.*",
         "sonatra_ivaynberg/select2" : "~3.4",

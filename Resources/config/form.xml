@@ -13,20 +13,44 @@
         <!-- Extensions -->
         <service id="form.type_extension.sonatra.choice_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension">
             <tag name="form.type_extension" alias="choice" />
-            <argument type="service" id="service_container" />
+            <argument type="service" id="router" />
             <argument>choice</argument>
+        </service>
+
+        <service id="form.type_extension.sonatra.country_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
+            <tag name="form.type_extension" alias="country" />
+            <argument>country</argument>
+        </service>
+
+        <service id="form.type_extension.sonatra.currency_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
+            <tag name="form.type_extension" alias="currency" />
+            <argument>currency</argument>
+        </service>
+
+        <service id="form.type_extension.sonatra.language_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
+            <tag name="form.type_extension" alias="language" />
+            <argument>language</argument>
+        </service>
+
+        <service id="form.type_extension.sonatra.locale_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
+            <tag name="form.type_extension" alias="locale" />
+            <argument>locale</argument>
+        </service>
+
+        <service id="form.type_extension.sonatra.timezone_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
+            <tag name="form.type_extension" alias="timezone" />
+            <argument>timezone</argument>
         </service>
 
         <service id="form.type_extension.sonatra.collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExtension">
             <tag name="form.type_extension" alias="collection" />
             <argument type="service" id="form.factory" />
-            <argument type="service" id="service_container" />
+            <argument type="service" id="router" />
             <argument>collection</argument>
         </service>
 
         <service id="form.type_extension.sonatra.entity_select2" class="Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension\EntitySelect2TypeExtension">
             <tag name="form.type_extension" alias="entity" />
-            <argument type="service" id="service_container" />
         </service>
 
         <service id="form.type_extension.sonatra.entity_collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension\EntityCollectionSelect2Extension">

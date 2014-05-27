@@ -11,7 +11,13 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
+use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -19,15 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Sonatra\Bundle\AjaxBundle\AjaxEvents;
-use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -35,19 +33,14 @@ use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransf
 abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 {
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
      * @var string
      */
     protected $type;
-
-    /**
-     * @var EventDispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var Request
-     */
-    protected $request;
 
     /**
      * @var integer
@@ -57,15 +50,14 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     /**
      * Constructor.
      *
-     * @param ContainerInterface $container
-     * @param string             $type
-     * @param integer            $defaultPageSize
+     * @param RouterInterface $router
+     * @param string          $type
+     * @param integer         $defaultPageSize
      */
-    public function __construct(ContainerInterface $container, $type, $defaultPageSize = 10)
+    public function __construct(RouterInterface $router, $type, $defaultPageSize = 10)
     {
+        $this->router = $router;
         $this->type = $type;
-        $this->dispatcher = $container->get('event_dispatcher');
-        $this->request = $container->get('request');
         $this->ajaxPageSize = $defaultPageSize;
     }
 
@@ -101,13 +93,26 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             return;
         }
 
+        $ajaxUrl = null;
+
+        if ($options['select2']['ajax']) {
+            $routeName = $form->getConfig()->getAttribute('select2_ajax_route', $options['select2']['ajax_route']);
+
+            if (null === $routeName) {
+                throw new InvalidConfigurationException('The "ajax_route" option of "select2" option must be present if the form use the ajax request');
+            }
+
+            $routeParams = $options['select2']['ajax_parameters'];
+            $routeReferenceType = $options['select2']['ajax_reference_type'];
+            $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
+        }
+
         $view->vars = array_replace($view->vars, array(
             'select2'  => array(
                 'wrapper_attr'               => $options['select2']['wrapper_attr'],
                 'allow_clear'                => $options['required'] ? 'false' : 'true',
                 'ajax'                       => $options['select2']['ajax'],
-                'ajax_url'                   => $options['select2']['ajax_url'],
-                'ajax_id'                    => $options['select2']['ajax_id'],
+                'ajax_url'                   => $ajaxUrl,
                 'quiet_millis'               => $options['select2']['quiet_millis'],
                 'page_size'                  => $options['select2']['page_size'],
                 'close_on_select'            => $options['select2']['close_on_select'],
@@ -145,13 +150,6 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
         if (is_array($options['select2']['tags'])) {
             $view->vars['select2']['tags'] = $options['select2']['tags'];
-        }
-
-        if ($view->vars['select2']['ajax'] && isset($options['choice_list'])) {
-            $ajaxId = null !== $options['select2']['ajax_id'] ? $options['select2']['ajax_id'] : $view->vars['id'];
-            $event = new GetAjaxChoiceListEvent($ajaxId, $this->request, $options['choice_list']);
-
-            $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
         }
     }
 
@@ -214,8 +212,9 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                     'wrapper_attr'               => array(),
                     'allow_add'                  => false,
                     'ajax'                       => false,
-                    'ajax_url'                   => null,
-                    'ajax_id'                    => null,
+                    'ajax_route'                 => null,
+                    'ajax_parameters'            => array(),
+                    'ajax_reference_type'        => RouterInterface::ABSOLUTE_PATH,
                     'quiet_millis'               => 200,
                     'page_size'                  => $this->ajaxPageSize,
                     'width'                      => 'resolve',
@@ -247,15 +246,18 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 ));
 
                 $select2Resolver->setAllowedTypes(array(
-                    'enabled'      => 'bool',
-                    'wrapper_attr' => 'array',
-                    'allow_add'    => 'bool',
-                    'ajax'         => 'bool',
-                    'tags'         => array('null', 'array'),
+                    'enabled'             => 'bool',
+                    'wrapper_attr'        => 'array',
+                    'allow_add'           => 'bool',
+                    'ajax'                => 'bool',
+                    'ajax_route'          => array('null', 'string'),
+                    'ajax_parameters'     => 'array',
+                    'ajax_reference_type' => 'bool',
+                    'tags'                => array('null', 'array'),
                 ));
 
                 $select2Resolver->setNormalizers(array(
-                    'allow_add' => function (Options $options, $value) {
+                    'allow_add'  => function (Options $options, $value) {
                         if (null !== $options['tags']) {
                             return true;
                         }

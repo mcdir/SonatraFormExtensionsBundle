@@ -36,6 +36,11 @@ class SonatraFormExtensionsExtension extends Extension
 
         if (!$config['select2']['enabled']) {
             $container->removeDefinition('form.type_extension.sonatra.choice_select2');
+            $container->removeDefinition('form.type_extension.sonatra.country_select2');
+            $container->removeDefinition('form.type_extension.sonatra.currency_select2');
+            $container->removeDefinition('form.type_extension.sonatra.language_select2');
+            $container->removeDefinition('form.type_extension.sonatra.locale_select2');
+            $container->removeDefinition('form.type_extension.sonatra.timezone_select2');
             $container->removeDefinition('form.type_extension.sonatra.collection_select2');
             $container->removeDefinition('form.type_extension.sonatra.entity_select2');
             $container->removeDefinition('form.type_extension.sonatra.entity_collection_select2');

@@ -63,6 +63,13 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
     public function getAjax();
 
     /**
+     * Indicates if the get values can be returned the data or empty array.
+     *
+     * @param bool $extractValues
+     */
+    public function setExtractValues($extractValues);
+
+    /**
      * Get the size of all.
      *
      * @return integer

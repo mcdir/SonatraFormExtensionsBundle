@@ -287,6 +287,13 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
+    public function setExtractValues($extractValues)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSize()
     {
         $filteredChoices = $this->getFilteredChoices();

@@ -16,7 +16,6 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
@@ -24,11 +23,6 @@ use Doctrine\Common\Persistence\ObjectManager;
  */
 class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInterface
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
     /**
      * @var boolean
      */
@@ -38,6 +32,11 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      * @var boolean
      */
     private $ajax;
+
+    /**
+     * @var bool
+     */
+    private $extractValues;
 
     /**
      * @var int
@@ -104,7 +103,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      *
      * @param ObjectManager             $manager           An EntityManager instance
      * @param string                    $class             The class name
-     * @param Request                   $request           The request
      * @param string                    $labelPath         The property path used for the label
      * @param AjaxORMQueryBuilderLoader $entityLoader      An optional query builder
      * @param array                     $entities          An array of choices
@@ -114,11 +112,11 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      *                                                     the choices are given as flat array.
      * @param PropertyAccessorInterface $propertyAccessor  The reflection graph for reading property paths.
      */
-    public function __construct(ObjectManager $manager, $class, Request $request, $labelPath = null, AjaxORMQueryBuilderLoader $entityLoader = null, $entities = null,  array $preferredEntities = array(), $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(ObjectManager $manager, $class, $labelPath = null, AjaxORMQueryBuilderLoader $entityLoader = null, $entities = null,  array $preferredEntities = array(), $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
     {
-        $this->request = $request;
         $this->allowAdd = false;
         $this->ajax = false;
+        $this->extractValues = false;
         $this->pageSize = 10;
         $this->pageNumber = 1;
         $this->search = '';
@@ -166,7 +164,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getValues()
     {
-        if ($this->ajax && !$this->request->isXmlHttpRequest()) {
+        if ($this->ajax && !$this->extractValues) {
             return array();
         }
 
@@ -182,7 +180,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getPreferredViews()
     {
-        if ($this->ajax && !$this->request->isXmlHttpRequest()) {
+        if ($this->ajax && !$this->extractValues) {
             return array();
         }
 
@@ -198,7 +196,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getRemainingViews()
     {
-        if ($this->ajax && !$this->request->isXmlHttpRequest()) {
+        if ($this->ajax && !$this->extractValues) {
             return array();
         }
 
@@ -401,6 +399,14 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     public function getAjax()
     {
         return $this->ajax;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtractValues($extractValues)
+    {
+        $this->extractValues = (bool) $extractValues;
     }
 
     /**

@@ -77,8 +77,7 @@
                         s: search,
                         pn: pageNumber,
                         ps: {{ select2.page_size }},
-                        ids : value,
-                        ajax_id: "{% if select2.ajax_id is defined and select2.ajax_id != '' %}{{ select2.ajax_id }}{% else %}{{ id }}"{% endif %}
+                        ids : value
                     };
                 },
                 results: function (data, pageNumber) {

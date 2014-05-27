@@ -17,8 +17,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceList;
@@ -30,11 +28,6 @@ use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBui
 class EntitySelect2TypeExtension extends AbstractTypeExtension
 {
     /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
      * @var PropertyAccessorInterface
      */
     protected $propertyAccessor;
@@ -42,12 +35,10 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
     /**
      * Constructor.
      *
-     * @param ContainerInterface        $container
      * @param PropertyAccessorInterface $propertyAccessor
      */
-    public function __construct(ContainerInterface $container, PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(PropertyAccessorInterface $propertyAccessor = null)
     {
-        $this->request = $container->get('request');
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
@@ -80,7 +71,6 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
                 $value = new AjaxEntityChoiceList(
                     $options['em'],
                     $options['class'],
-                    $this->request,
                     $options['property'],
                     $options['loader'],
                     $options['choices'],
