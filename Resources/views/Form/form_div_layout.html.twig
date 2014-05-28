@@ -73,12 +73,18 @@
                 quietMillis: {{ select2.quiet_millis }},
                 data: function (search, pageNumber) {
                     var value = $( '#{{ id }}' ).prop( 'value' );
-                    return {
-                        s: search,
-                        pn: pageNumber,
-                        ps: {{ select2.page_size }},
-                        ids : value
-                    };
+                    var data = {};
+                    {% set prefix = '' %}
+                    {% if select2.ajax_id is not empty %}
+                    {% set prefix = id ~ '_' %}
+                    data.ajax_id = "{{ select2.ajax_id }}";
+                    {% endif %}
+                    data['{{ prefix }}s'] = search;
+                    data['{{ prefix }}pn'] = pageNumber;
+                    data['{{ prefix }}ps'] = {{ select2.page_size }};
+                    data['{{ prefix }}ids'] = value;
+
+                    return data;
                 },
                 results: function (data, pageNumber) {
                     var more = (pageNumber * {{ select2.page_size }}) < data.length;

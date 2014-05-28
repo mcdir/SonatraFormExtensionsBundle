@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -19,7 +20,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -34,14 +34,14 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
     /**
      * Constructor.
      *
-     * @param FormFactory     $factory
-     * @param RouterInterface $router
-     * @param string          $type
-     * @param integer         $defaultPageSize
+     * @param FormFactory        $factory
+     * @param ContainerInterface $container
+     * @param string             $type
+     * @param integer            $defaultPageSize
      */
-    public function __construct(FormFactory $factory, RouterInterface $router, $type, $defaultPageSize = 10)
+    public function __construct(FormFactory $factory, ContainerInterface $container, $type, $defaultPageSize = 10)
     {
-        parent::__construct($router, $type, $defaultPageSize);
+        parent::__construct($container, $type, $defaultPageSize);
 
         $this->factory = $factory;
     }
@@ -58,6 +58,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
         $builder->addEventSubscriber(new FixStringInputListener());
 
         $choiceList = $builder->getAttribute('prototype')->getConfig()->getOption('choice_list');
+        $routeName = $builder->getAttribute('prototype')->getConfig()->getAttribute('select2_ajax_route');
 
         if (null === $choiceList) {
             $choiceList = new AjaxSimpleChoiceList($options['select2']['tags']);
@@ -71,8 +72,9 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
 
         $builder->setAttribute('choice_list', $choiceList);
 
-        if (null === $options['select2']['ajax_route'] && $options['select2']['ajax'] && null !== $options['type']) {
-            $builder->setAttribute('select2_ajax_route', 'sonatra_form_extensions_ajax_'.$options['type']);
+        if (null === $options['select2']['ajax_route']&& $options['select2']['ajax']
+                && null !== $options['type'] && null !== $routeName) {
+            $builder->setAttribute('select2_ajax_route', $routeName);
         }
     }
 

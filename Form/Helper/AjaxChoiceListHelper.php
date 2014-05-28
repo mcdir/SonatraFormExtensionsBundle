@@ -80,12 +80,13 @@ class AjaxChoiceListHelper
      *
      * @param Request                 $request
      * @param AjaxChoiceListInterface $choiceList
+     * @param string                  $prefix
      *
      * @return array
      */
-    protected static function getData(Request $request, AjaxChoiceListInterface $choiceList)
+    public static function getData(Request $request, AjaxChoiceListInterface $choiceList, $prefix = '')
     {
-        $ajaxIds = $request->get('ids', '');
+        $ajaxIds = $request->get($prefix.'ids', '');
 
         if (in_array($ajaxIds, array(null, ''))) {
             $ajaxIds = array();
@@ -96,9 +97,9 @@ class AjaxChoiceListHelper
 
         $choiceList->setAjax(true);
         $choiceList->setExtractValues(true);
-        $choiceList->setPageSize($request->get('ps', $choiceList->getPageSize()));
-        $choiceList->setPageNumber($request->get('pn', $choiceList->getPageNumber()));
-        $choiceList->setSearch($request->get('s', ''));
+        $choiceList->setPageSize($request->get($prefix.'ps', $choiceList->getPageSize()));
+        $choiceList->setPageNumber($request->get($prefix.'pn', $choiceList->getPageNumber()));
+        $choiceList->setSearch($request->get($prefix.'s', ''));
         $choiceList->setIds($ajaxIds);
 
         return array(

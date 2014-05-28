@@ -11,11 +11,15 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Sonatra\Bundle\AjaxBundle\AjaxEvents;
+use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +36,16 @@ use Symfony\Component\Routing\RouterInterface;
  */
 abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 {
+    /**
+     * @var EventDispatcher
+     */
+    protected $dispatcher;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
     /**
      * @var RouterInterface
      */
@@ -50,13 +64,15 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     /**
      * Constructor.
      *
-     * @param RouterInterface $router
-     * @param string          $type
-     * @param integer         $defaultPageSize
+     * @param ContainerInterface $container
+     * @param string             $type
+     * @param integer            $defaultPageSize
      */
-    public function __construct(RouterInterface $router, $type, $defaultPageSize = 10)
+    public function __construct(ContainerInterface $container, $type, $defaultPageSize = 10)
     {
-        $this->router = $router;
+        $this->dispatcher = $container->get('event_dispatcher');
+        $this->request = $container->get('request');
+        $this->router = $container->get('router');
         $this->type = $type;
         $this->ajaxPageSize = $defaultPageSize;
     }
@@ -93,18 +109,29 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $ajaxUrl = null;
+        $ajaxUrl = $this->request->getRequestUri();
+        $routeName = null;
+        $choiceList = $form->getConfig()->getAttribute('choice_list');
+
+        if (isset($options['choice_list'])) {
+            $choiceList = $options['choice_list'];
+        }
 
         if ($options['select2']['ajax']) {
             $routeName = $form->getConfig()->getAttribute('select2_ajax_route', $options['select2']['ajax_route']);
 
-            if (null === $routeName) {
+            if (null !== $routeName) {
+                $routeParams = $options['select2']['ajax_parameters'];
+                $routeReferenceType = $options['select2']['ajax_reference_type'];
+                $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
+
+            } elseif (isset($choiceList)) {
+                $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->request, $choiceList);
+                $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
+
+            } else {
                 throw new InvalidConfigurationException('The "ajax_route" option of "select2" option must be present if the form use the ajax request');
             }
-
-            $routeParams = $options['select2']['ajax_parameters'];
-            $routeReferenceType = $options['select2']['ajax_reference_type'];
-            $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
         }
 
         $view->vars = array_replace($view->vars, array(
@@ -113,6 +140,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 'allow_clear'                => $options['required'] ? 'false' : 'true',
                 'ajax'                       => $options['select2']['ajax'],
                 'ajax_url'                   => $ajaxUrl,
+                'ajax_id'                    => (null === $routeName && isset($choiceList)) ? $view->vars['id'] : null,
                 'quiet_millis'               => $options['select2']['quiet_millis'],
                 'page_size'                  => $options['select2']['page_size'],
                 'close_on_select'            => $options['select2']['close_on_select'],
