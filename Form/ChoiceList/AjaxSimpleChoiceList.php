@@ -224,7 +224,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
                 $children = array();
 
                 foreach ($choice as $subChoice) {
-                    $this->extractLabel($children, $subChoice, array($choice->value));
+                    $this->extractLabel($children, $subChoice, array($subChoice->value));
                 }
 
                 $data[] = array(
