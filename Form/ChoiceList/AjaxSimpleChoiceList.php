@@ -127,20 +127,12 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
             );
 
             foreach ($subChoices as $choice) {
-                if ($index < $startTo) {
-                    $index++;
-                    continue;
+                if ($index >= $startTo && $index <= $endTo) {
+                    $group['children'][] = array(
+                        'id'   => (string) $choice->value,
+                        'text' => $choice->label,
+                    );
                 }
-
-                if ($index > $endTo) {
-                    $index++;
-                    continue;
-                }
-
-                $group['children'][] = array(
-                    'id'   => (string) $choice->value,
-                    'text' => $choice->label,
-                );
 
                 $index++;
             }
