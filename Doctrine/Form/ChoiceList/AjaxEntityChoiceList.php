@@ -145,7 +145,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         }
 
         // get choices
-        $choices = $this->getRemainingViews();
+        $choices = $this->getChoiceViews();
 
         $this->cacheChoices = array();
 
@@ -274,7 +274,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             return array();
         }
 
-        $choices = $this->getRemainingViews();
+        $choices = $this->getChoiceViews();
 
         $data = array();
 
@@ -415,7 +415,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     public function getSize()
     {
         if (null === $this->size) {
-            $this->getRemainingViews();
+            $this->getChoiceViews();
         }
 
         return $this->size;
@@ -579,5 +579,23 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
                 throw new StringCastException(sprintf('A "__toString()" method was not found on the objects of type "%s" passed to the choice field. To read a custom getter instead, set the argument $labelPath to the desired property path.', get_class($choice)));
             }
         }
+    }
+
+    /**
+     * Gets all choice views, including preferred and remaining views.
+     *
+     * @return array<int, ChoiceView>|array<string, ChoiceView[]>
+     */
+    protected function getChoiceViews()
+    {
+        $choices = array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
+
+        if (count($choices) > 0 && !is_int(array_keys($choices)[0])) {
+            foreach ($choices as $group => $subChoices) {
+                $choices[$group] = array_values($subChoices);
+            }
+        }
+
+        return $choices;
     }
 }
