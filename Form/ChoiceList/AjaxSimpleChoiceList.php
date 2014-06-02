@@ -153,7 +153,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         $choices = array();
         $data = array();
 
-        foreach ($this->getRemainingViews() as $choice) {
+        foreach ($this->getChoiceViews() as $choice) {
             // group choice
             if (is_array($choice)) {
                 foreach ($choice as $subChoice) {
@@ -214,7 +214,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
             return array();
         }
 
-        $choices = $this->getRemainingViews();
+        $choices = $this->getChoiceViews();
         $data = array();
 
         /* @var ChoiceView $choice */
