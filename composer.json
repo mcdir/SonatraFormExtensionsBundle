@@ -32,6 +32,10 @@
         "sonatra_eightmedia/hammer-js": "~1.1",
         "sonatra_aterrien/jquery-knob": "1.2.*"
     },
+    "require-dev" : {
+        "symfony/doctrine-bridge" : "~2.4",
+        "doctrine/orm" : "~2.5"
+    },
     "autoload" : {
         "psr-4" : {
             "Sonatra\\Bundle\\FormExtensionsBundle\\" : ""
