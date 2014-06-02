@@ -395,7 +395,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     protected function getFilteredChoices()
     {
         if (null === $this->search || '' === $this->search) {
-            return $this->getRemainingViews();
+            return $this->getChoiceViews();
         }
 
         if (null !== $this->cacheFilteredChoices) {
@@ -403,7 +403,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         }
 
         $this->cacheFilteredChoices = array();
-        $choices = $this->getRemainingViews();
+        $choices = $this->getChoiceViews();
 
         if (count($choices) > 0 && is_int(array_keys($choices)[0])) {
             foreach ($choices as $choice) {
@@ -447,5 +447,23 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
                 'text' => $choice->label
             );
         }
+    }
+
+    /**
+     * Gets all choice views, including preferred and remaining views.
+     *
+     * @return array<int, ChoiceView>|array<string, ChoiceView[]>
+     */
+    protected function getChoiceViews()
+    {
+        $choices = array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
+
+        if (count($choices) > 0 && !is_int(array_keys($choices)[0])) {
+            foreach ($choices as $group => $subChoices) {
+                $choices[$group] = array_values($subChoices);
+            }
+        }
+
+        return $choices;
     }
 }
