@@ -204,7 +204,22 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             $this->filterQuery();
         }
 
-        return parent::getRemainingViews();
+        $choices = parent::getRemainingViews();
+
+        if (!$this->ajax) {
+            $this->size = count($choices);
+
+            // groupable
+            if ($this->size > 0 && is_string(array_keys($choices)[0])) {
+                $this->size = 0;
+
+                foreach ($choices as $subChoices) {
+                    $this->size += count($subChoices);
+                }
+            }
+        }
+
+        return $choices;
     }
 
     /**
