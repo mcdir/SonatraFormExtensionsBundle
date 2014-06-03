@@ -13,7 +13,6 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\ChoiceList;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\Form\Tests\Extension\Core\ChoiceList\AbstractChoiceListTest;
 
 /**
@@ -38,7 +37,7 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
         $this->assertEquals(1, $this->list->getPageNumber());
         $this->assertEquals('', $this->list->getSearch());
         $this->assertCount(0, $this->list->getIds());
-        $this->assertEquals(3, $this->list->getSize());
+        $this->assertEquals(4, $this->list->getSize());
     }
 
     public function testCustomConfig()
@@ -70,135 +69,103 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
 
     public function testExtractValues()
     {
-        $sameValues = array(0 => 'a', 1 => 'b', 2 => 'c');
-
         $this->list = $this->createSimpleChoiceList();
-        $this->assertSame($sameValues, $this->list->getValues());
+        $this->assertSame($this->getChoices(), $this->list->getValues());
 
         $this->list->setExtractValues(false);
-        $this->assertSame($sameValues, $this->list->getValues());
+        $this->assertSame($this->getChoices(), $this->list->getValues());
 
         $this->list->setExtractValues(true);
-        $this->assertSame($sameValues, $this->list->getValues());
+        $this->assertSame($this->getChoices(), $this->list->getValues());
     }
 
     public function testInitArray()
     {
-        $validChoices = array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'a', 'text' => 'A'), 2 => array('id' => 'c', 'text' => 'C'));
-
         $this->list = $this->createSimpleChoiceList();
 
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c'), $this->list->getChoices());
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c'), $this->list->getValues());
-        $this->assertEquals(array(1 => new ChoiceView('b', 'b', 'B')), $this->list->getPreferredViews());
-        $this->assertEquals(array(0 => new ChoiceView('a', 'a', 'A'), 2 => new ChoiceView('c', 'c', 'C')), $this->list->getRemainingViews());
-        $this->assertSame($validChoices, $this->list->getDataChoices());
+        $this->assertSame($this->getChoices(), $this->list->getChoices());
+        $this->assertSame($this->getChoices(), $this->list->getValues());
+        $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
+        $this->assertSame($this->getFormattedChoices(), $this->list->getDataChoices());
 
-        $this->assertSame(array(0 => 'c', 1 => 'b'), $this->list->getChoicesForValues(array('c', 'b')));
+        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues(array('c', 'b')));
         $this->list->setAllowAdd(true);
-        $this->assertSame(array(0 => 'c', 1 => 'b'), $this->list->getChoicesForValues(array('c', 'b')));
+        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues(array('c', 'b')));
     }
 
     public function testInitArrayAjax()
     {
-        $validChoices = array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'a', 'text' => 'A'), 2 => array('id' => 'c', 'text' => 'C'));
-
         $this->list = $this->createSimpleChoiceList();
         $this->list->setAjax(true);
 
-        $this->assertSame($validChoices, $this->list->getChoices());
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c'), $this->list->getValues());
-        $this->assertEquals(array(1 => new ChoiceView('b', 'b', 'B')), $this->list->getPreferredViews());
-        $this->assertEquals(array(0 => new ChoiceView('a', 'a', 'A'), 2 => new ChoiceView('c', 'c', 'C')), $this->list->getRemainingViews());
-        $this->assertSame(array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C')), $this->list->getLabelChoicesForValues(array('c', 'b')));
+        $this->assertSame($this->getFormattedChoices(), $this->list->getChoices());
+        $this->assertSame($this->getValues(), $this->list->getValues());
+        $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
+        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
         $this->assertSame(array(), $this->list->getDataChoices());
         // cache
-        $this->assertSame($validChoices, $this->list->getChoices());
+        $this->assertSame($this->getFormattedChoices(), $this->list->getChoices());
     }
 
     public function testInitArrayAjaxSearch()
     {
-        $validChoices = array(0 => array('id' => 'a', 'text' => 'A'));
-
         $this->list = $this->createSimpleChoiceList();
         $this->list->setAjax(true);
-        $this->list->setSearch('A');
-        $this->assertSame($validChoices, $this->list->getChoices());
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c'), $this->list->getValues());
-        $this->assertEquals(array(1 => new ChoiceView('b', 'b', 'B')), $this->list->getPreferredViews());
-        $this->assertEquals(array(0 => new ChoiceView('a', 'a', 'A'), 2 => new ChoiceView('c', 'c', 'C')), $this->list->getRemainingViews());
-        $this->assertSame(array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C')), $this->list->getLabelChoicesForValues(array('c', 'b')));
+        $this->list->setSearch($this->getQueryForSearchChoices());
+        $this->assertSame($this->getSearchChoices(), $this->list->getChoices());
+        $this->assertSame($this->getValues(), $this->list->getValues());
+        $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
+        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
         // cache
-        $this->assertSame($validChoices, $this->list->getChoices());
+        $this->assertSame($this->getSearchChoices(), $this->list->getChoices());
     }
 
     public function testInitNestedArray()
     {
-        $validChoices = array(0 => array('text' => 'Group 1', 'children' => array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'a', 'text' => 'A'))), 1 => array('text' => 'Group 2', 'children' => array(0 => array('id' => 'c', 'text' => 'C'), 1 => array('id' => 'd', 'text' => 'D'))));
-
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd'), $this->list->getChoices());
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd'), $this->list->getValues());
-        $this->assertEquals(array(
-                'Group 1' => array(1 => new ChoiceView('b', 'b', 'B')),
-                'Group 2' => array(2 => new ChoiceView('c', 'c', 'C'))
-            ), $this->list->getPreferredViews());
-        $this->assertEquals(array(
-                'Group 1' => array(0 => new ChoiceView('a', 'a', 'A')),
-                'Group 2' => array(3 => new ChoiceView('d', 'd', 'D'))
-            ), $this->list->getRemainingViews());
-        $this->assertSame(array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C')), $this->list->getLabelChoicesForValues(array('c', 'b')));
-        $this->assertSame($validChoices, $this->list->getDataChoices());
+        $this->assertSame($this->getChoices(), $this->list->getChoices());
+        $this->assertSame($this->getValues(), $this->list->getValues());
+        $this->assertEquals($this->getGroupPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getGroupRemainingViews(), $this->list->getRemainingViews());
+        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
+        $this->assertSame($this->getFormattedGroupChoices(), $this->list->getDataChoices());
     }
 
     public function testInitNestedArrayAjax()
     {
-        $validChoices = array(0 => array('text' => 'Group 1', 'children' => array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'a', 'text' => 'A'))), 1 => array('text' => 'Group 2', 'children' => array(0 => array('id' => 'c', 'text' => 'C'), 1 => array('id' => 'd', 'text' => 'D'))));
-
         $this->list->setAjax(true);
 
-        $this->assertSame($validChoices, $this->list->getChoices());
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd'), $this->list->getValues());
-        $this->assertEquals(array(
-                'Group 1' => array(1 => new ChoiceView('b', 'b', 'B')),
-                'Group 2' => array(2 => new ChoiceView('c', 'c', 'C'))
-            ), $this->list->getPreferredViews());
-        $this->assertEquals(array(
-                'Group 1' => array(0 => new ChoiceView('a', 'a', 'A')),
-                'Group 2' => array(3 => new ChoiceView('d', 'd', 'D'))
-            ), $this->list->getRemainingViews());
-        $this->assertSame(array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C')), $this->list->getLabelChoicesForValues(array('c', 'b')));
+        $this->assertSame($this->getFormattedGroupChoices(), $this->list->getChoices());
+        $this->assertSame($this->getValues(), $this->list->getValues());
+        $this->assertEquals($this->getGroupPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getGroupRemainingViews(), $this->list->getRemainingViews());
+        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
         $this->assertSame(array(), $this->list->getDataChoices());
         // cache
-        $this->assertSame($validChoices, $this->list->getChoices());
+        $this->assertSame($this->getFormattedGroupChoices(), $this->list->getChoices());
     }
 
     public function testInitNestedArrayAjaxSearch()
     {
-        $validChoices = array(0 => array('text' => 'Group 1', 'children' => array(0 => array('id' => 'a', 'text' => 'A'))));
-
         $this->list->setAjax(true);
-        $this->list->setSearch('A');
+        $this->list->setSearch($this->getQueryForSearchGroupChoices());
 
-        $this->assertSame($validChoices, $this->list->getChoices());
-        $this->assertSame(array(0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd'), $this->list->getValues());
-        $this->assertEquals(array(
-                'Group 1' => array(1 => new ChoiceView('b', 'b', 'B')),
-                'Group 2' => array(2 => new ChoiceView('c', 'c', 'C'))
-            ), $this->list->getPreferredViews());
-        $this->assertEquals(array(
-                'Group 1' => array(0 => new ChoiceView('a', 'a', 'A')),
-                'Group 2' => array(3 => new ChoiceView('d', 'd', 'D'))
-            ), $this->list->getRemainingViews());
+        $this->assertSame($this->getSearchGroupChoices(), $this->list->getChoices());
+        $this->assertSame($this->getValues(), $this->list->getValues());
+        $this->assertEquals($this->getGroupPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getGroupRemainingViews(), $this->list->getRemainingViews());
         // cache
-        $this->assertSame($validChoices, $this->list->getChoices());
+        $this->assertSame($this->getSearchGroupChoices(), $this->list->getChoices());
     }
 
     public function testNonexistentValues()
     {
-        $this->assertSame(array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C'), 2 => array('id' => 'z', 'text' => 'z')), $this->list->getLabelChoicesForValues(array('c', 'b', 'z')));
+        $this->assertSame($this->getNonexistentLabelChoicesForValues(), $this->list->getLabelChoicesForValues(array('c', 'b', 'z')));
 
         $this->list->setAllowAdd(true);
-        $this->assertSame(array(0 => 'z'), $this->list->getChoicesForValues(array('z')));
+        $this->assertSame($this->getNonexistentChoicesForValues(), $this->list->getChoicesForValues($this->getListForNonexistentChoicesForValues()));
     }
 
     /**
@@ -240,4 +207,84 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
      * @return AjaxChoiceListInterface
      */
     abstract protected function createSimpleChoiceList();
+
+    /**
+     * @return array
+     */
+    abstract protected function getFormattedChoices();
+
+    /**
+     * @return array
+     */
+    abstract protected function getPreferredViews();
+
+    /**
+     * @return array
+     */
+    abstract protected function getRemainingViews();
+
+    /**
+     * @return array
+     */
+    abstract protected function getChoicesForValues();
+
+    /**
+     * @return array
+     */
+    abstract protected function getListForLabelChoicesForValues();
+
+    /**
+     * @return array
+     */
+    abstract protected function getLabelChoicesForValues();
+
+    /**
+     * @return array
+     */
+    abstract protected function getQueryForSearchChoices();
+
+    /**
+     * @return array
+     */
+    abstract protected function getSearchChoices();
+
+    /**
+     * @return array
+     */
+    abstract protected function getFormattedGroupChoices();
+
+    /**
+     * @return array
+     */
+    abstract protected function getGroupPreferredViews();
+
+    /**
+     * @return array
+     */
+    abstract protected function getGroupRemainingViews();
+
+    /**
+     * @return array
+     */
+    abstract protected function getQueryForSearchGroupChoices();
+
+    /**
+     * @return array
+     */
+    abstract protected function getSearchGroupChoices();
+
+    /**
+     * @return array
+     */
+    abstract protected function getListForNonexistentChoicesForValues();
+
+    /**
+     * @return array
+     */
+    abstract protected function getNonexistentChoicesForValues();
+
+    /**
+     * @return array
+     */
+    abstract protected function getNonexistentLabelChoicesForValues();
 }
