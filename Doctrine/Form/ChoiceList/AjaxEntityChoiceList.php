@@ -512,7 +512,10 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $this->cacheChoices = null;
         $this->size = null;
         $this->filtered = false;
-        $this->entityLoader->reset();
+
+        if ($this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
+            $this->entityLoader->reset();
+        }
 
         $ref = new \ReflectionClass($this);
         $parent = $ref->getParentClass();
