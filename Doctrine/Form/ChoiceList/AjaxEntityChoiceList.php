@@ -603,14 +603,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     protected function getChoiceViews()
     {
-        $choices = array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
-
-        if (count($choices) > 0 && !is_int(array_keys($choices)[0])) {
-            foreach ($choices as $group => $subChoices) {
-                $choices[$group] = array_values($subChoices);
-            }
-        }
-
-        return $choices;
+        return array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
     }
 }
