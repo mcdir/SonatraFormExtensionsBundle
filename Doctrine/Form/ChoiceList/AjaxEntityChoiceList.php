@@ -553,7 +553,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     }
 
     /**
-     * Exctract entity labels.
+     * Extracts entity labels.
      *
      * @param array|\Iterator $choices
      * @param array           $labels
