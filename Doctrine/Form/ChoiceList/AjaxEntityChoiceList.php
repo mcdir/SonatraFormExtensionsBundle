@@ -507,7 +507,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * Reset the cache.
      */
-    private function reset()
+    protected function reset()
     {
         $this->cacheChoices = null;
         $this->size = null;
@@ -529,7 +529,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      *
      * @return array
      */
-    private function filterQuery()
+    protected function filterQuery()
     {
         $qb = $this->entityLoader->getQueryBuilder();
 
@@ -577,7 +577,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      *
      * @throws StringCastException
      */
-    private function extractLabels($choices, array &$labels)
+    protected function extractLabels($choices, array &$labels)
     {
         foreach ($choices as $i => $choice) {
             if (is_array($choice)) {
