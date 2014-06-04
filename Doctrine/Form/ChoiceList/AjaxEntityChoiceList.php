@@ -208,57 +208,21 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getChoicesForValues(array $values)
     {
-        if (!$this->allowAdd || empty($values) || (1 === count($values) && '' === $values[0])) {
-            return parent::getChoicesForValues($values);
-        }
+        $choices = parent::getChoicesForValues($values);
 
-        if (empty($values) || (count($values) > 0 && '' === $values[0])) {
-            return array();
-        }
-
-        $ref = new \ReflectionClass($this);
-        $prop = $ref->getParentClass()->getProperty('idAsValue');
-        $prop->setAccessible(true);
-        $idAsValue = $prop->getValue($this);
-
-        $prop = $ref->getParentClass()->getProperty('idField');
-        $prop->setAccessible(true);
-        $idField = $prop->getValue($this);
-
-        $getIdentifierValues = $ref->getParentClass()->getMethod('getIdentifierValues');
-        $getIdentifierValues->setAccessible(true);
-
-        if ($idAsValue && $this->entityLoader) {
-            $unorderedEntities = $this->entityLoader->getEntitiesByIds($idField, $values);
-            $entitiesByValue = array();
-            $entities = array();
-
-            // Maintain order and indices from the given $values
-            // An alternative approach to the following loop is to add the
-            // "INDEX BY" clause to the Doctrine query in the loader,
-            // but I'm not sure whether that's doable in a generic fashion.
-            foreach ($unorderedEntities as $entity) {
-                $value = $this->fixValue(current($getIdentifierValues->invokeArgs($this, array($entity))));
-                $entitiesByValue[$value] = $entity;
-            }
-
-            foreach ($values as $i => $value) {
-                if (isset($entitiesByValue[$value])) {
-                    $entities[$i] = $entitiesByValue[$value];
-
-                } else {
+        if ($this->allowAdd && !empty($values) && !(1 === count($values) && '' === $values[0])) {
+            if (count($values) !== count($choices)) {
+                foreach ($values as $value) {
                     $entity = new $this->class();
                     $entity->{'set'.ucfirst($this->labelPath)}($value);
 
                     $this->manager->persist($entity);
-                    $entities[$i] = $entity;
+                    $choices[] = $entity;
                 }
             }
-
-            return $entities;
         }
 
-        return $values;
+        return $choices;
     }
 
     /**
@@ -346,16 +310,17 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         }
 
         if (count($ids) > 0) {
-            $class = $this->entityLoader->getQueryBuilder()->getRootEntities()[0];
+            $selectedChoices = $this->manager->getRepository($this->class)->findBy(array('id' => $ids));
+            $choices = array_merge($choices, $selectedChoices);
 
-            $qb = $this->entityLoader->getQueryBuilder()->getEntityManager()->createQueryBuilder();
+            /*$qb = $this->entityLoader->getQueryBuilder()->getEntityManager()->createQueryBuilder();
             $qb
                 ->select('e')
-                ->from($class, 'e')
+                ->from($this->class, 'e')
                 ->where($qb->expr()->in('e.id', $ids));
             ;
 
-            $choices = array_merge($choices, $qb->getQuery()->execute());
+            $choices = array_merge($choices, $qb->getQuery()->execute());*/
         }
 
         $this->extractLabels($choices, $labels);
