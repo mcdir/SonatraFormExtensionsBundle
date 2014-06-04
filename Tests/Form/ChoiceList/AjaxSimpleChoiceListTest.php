@@ -71,6 +71,11 @@ class AjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
         return array(0 => new ChoiceView('a', 'a', 'A'), 2 => new ChoiceView('c', 'c', 'C'), 3 => new ChoiceView('d', 'd', 'D'));
     }
 
+    protected function getListForChoicesForValues()
+    {
+        return array('c', 'b');
+    }
+
     protected function getChoicesForValues()
     {
         return array(0 => 'c', 1 => 'b');
@@ -135,6 +140,11 @@ class AjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
     protected function getNonexistentChoicesForValues()
     {
         return array(0 => 'z');
+    }
+
+    protected function getListForNonexistentLabelChoicesForValues()
+    {
+        return array('c', 'b', 'z');
     }
 
     protected function getNonexistentLabelChoicesForValues()

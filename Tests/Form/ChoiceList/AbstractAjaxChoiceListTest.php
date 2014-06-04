@@ -70,13 +70,13 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
     public function testExtractValues()
     {
         $this->list = $this->createSimpleChoiceList();
-        $this->assertSame($this->getChoices(), $this->list->getValues());
+        $this->assertSame($this->getValues(), $this->list->getValues());
 
         $this->list->setExtractValues(false);
-        $this->assertSame($this->getChoices(), $this->list->getValues());
+        $this->assertSame($this->getValues(), $this->list->getValues());
 
         $this->list->setExtractValues(true);
-        $this->assertSame($this->getChoices(), $this->list->getValues());
+        $this->assertSame($this->getValues(), $this->list->getValues());
     }
 
     public function testInitArray()
@@ -84,14 +84,14 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
         $this->list = $this->createSimpleChoiceList();
 
         $this->assertSame($this->getChoices(), $this->list->getChoices());
-        $this->assertSame($this->getChoices(), $this->list->getValues());
+        $this->assertSame($this->getValues(), $this->list->getValues());
         $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
         $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
         $this->assertSame($this->getFormattedChoices(), $this->list->getDataChoices());
 
-        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues(array('c', 'b')));
+        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues($this->getListForChoicesForValues()));
         $this->list->setAllowAdd(true);
-        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues(array('c', 'b')));
+        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues($this->getListForChoicesForValues()));
     }
 
     public function testInitArrayAjax()
@@ -162,7 +162,7 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
 
     public function testNonexistentValues()
     {
-        $this->assertSame($this->getNonexistentLabelChoicesForValues(), $this->list->getLabelChoicesForValues(array('c', 'b', 'z')));
+        $this->assertSame($this->getNonexistentLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForNonexistentLabelChoicesForValues()));
 
         $this->list->setAllowAdd(true);
         $this->assertSame($this->getNonexistentChoicesForValues(), $this->list->getChoicesForValues($this->getListForNonexistentChoicesForValues()));
@@ -226,6 +226,11 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
     /**
      * @return array
      */
+    abstract protected function getListForChoicesForValues();
+
+    /**
+     * @return array
+     */
     abstract protected function getChoicesForValues();
 
     /**
@@ -282,6 +287,11 @@ abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
      * @return array
      */
     abstract protected function getNonexistentChoicesForValues();
+
+    /**
+     * @return array
+     */
+    abstract protected function getListForNonexistentLabelChoicesForValues();
 
     /**
      * @return array
