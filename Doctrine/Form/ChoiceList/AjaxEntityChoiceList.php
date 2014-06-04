@@ -168,9 +168,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             return array();
         }
 
-        if ($this->ajax && !$this->filtered) {
-            $this->filterQuery();
-        }
+        $this->filterQuery();
 
         return parent::getValues();
     }
@@ -184,9 +182,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             return array();
         }
 
-        if ($this->ajax && !$this->filtered) {
-            $this->filterQuery();
-        }
+        $this->filterQuery();
 
         return parent::getPreferredViews();
     }
@@ -200,9 +196,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             return array();
         }
 
-        if ($this->ajax && !$this->filtered) {
-            $this->filterQuery();
-        }
+        $this->filterQuery();
 
         $choices = parent::getRemainingViews();
 
@@ -531,42 +525,44 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     protected function filterQuery()
     {
-        $qb = $this->entityLoader->getQueryBuilder();
+        if ($this->ajax && !$this->filtered && $this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
+            $qb = $this->entityLoader->getQueryBuilder();
 
-        $entityAlias = $qb->getRootAliases()[0];
+            $entityAlias = $qb->getRootAliases()[0];
 
-        // hide selected value
-        if (count($this->getIds()) > 0) {
-            $qb->andWhere($qb->expr()->notIn("{$entityAlias}.id", $this->getIds()));
-        }
-
-        if (null !== $this->labelPath) {
-            // search filter
-            if (null !== $this->getSearch() && '' !== $this->getSearch() && $this->labelPath) {
-                $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->labelPath}", ":{$this->labelPath}" ));
-                $qb->setParameter($this->labelPath, "%{$this->getSearch()}%");
+            // hide selected value
+            if (count($this->getIds()) > 0) {
+                $qb->andWhere($qb->expr()->notIn("{$entityAlias}.id", $this->getIds()));
             }
 
-            // order by
-            $qb->orderBy($entityAlias.'.'.$this->labelPath, 'ASC');
+            if (null !== $this->labelPath) {
+                // search filter
+                if (null !== $this->getSearch() && '' !== $this->getSearch() && $this->labelPath) {
+                    $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->labelPath}", ":{$this->labelPath}" ));
+                    $qb->setParameter($this->labelPath, "%{$this->getSearch()}%");
+                }
+
+                // order by
+                $qb->orderBy($entityAlias.'.'.$this->labelPath, 'ASC');
+            }
+
+            // get size
+            $qbl = clone $qb;
+            $qbl->setParameters($qb->getParameters());
+            $qbl->select("count($entityAlias)");
+            $this->size = (integer) $qbl->getQuery()->getSingleScalarResult();
+
+            // adds the selected entities
+            if (count($this->getIds()) > 0) {
+                $qb->orWhere($qb->expr()->in("{$entityAlias}.id", $this->getIds()));
+            }
+
+            // pagination
+            $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
+                ->setMaxResults($this->getPageSize());
+
+            $this->filtered = true;
         }
-
-        // get size
-        $qbl = clone $qb;
-        $qbl->setParameters($qb->getParameters());
-        $qbl->select("count($entityAlias)");
-        $this->size = (integer) $qbl->getQuery()->getSingleScalarResult();
-
-        // adds the selected entities
-        if (count($this->getIds()) > 0) {
-            $qb->orWhere($qb->expr()->in("{$entityAlias}.id", $this->getIds()));
-        }
-
-        // pagination
-        $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
-            ->setMaxResults($this->getPageSize());
-
-        $this->filtered = true;
     }
 
     /**
