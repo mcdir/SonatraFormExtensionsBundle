@@ -183,6 +183,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         }
 
         $this->filterQuery();
+        $this->refreshSize();
 
         return parent::getPreferredViews();
     }
@@ -197,23 +198,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         }
 
         $this->filterQuery();
+        $this->refreshSize();
 
-        $choices = parent::getRemainingViews();
-
-        if (!$this->ajax) {
-            $this->size = count($choices);
-
-            // groupable
-            if ($this->size > 0 && is_string(array_keys($choices)[0])) {
-                $this->size = 0;
-
-                foreach ($choices as $subChoices) {
-                    $this->size += count($subChoices);
-                }
-            }
-        }
-
-        return $choices;
+        return parent::getRemainingViews();
     }
 
     /**
@@ -603,5 +590,15 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     protected function getChoiceViews()
     {
         return array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
+    }
+
+    /**
+     * Refreshs the size of choices (only for non AJAX).
+     */
+    protected function refreshSize()
+    {
+        if (null === $this->size && !$this->ajax) {
+            $this->size = count($this->getChoices());
+        }
     }
 }
