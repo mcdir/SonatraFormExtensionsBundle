@@ -235,8 +235,8 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
             }
 
             // group
-            if (is_array($firstChoice) && isset($firstChoice[0])) {
-                return $firstChoice[0];
+            if (is_array($firstChoice) && count($firstChoice) > 0) {
+                return $firstChoice[array_keys($firstChoice)[0]];
             }
         }
 
