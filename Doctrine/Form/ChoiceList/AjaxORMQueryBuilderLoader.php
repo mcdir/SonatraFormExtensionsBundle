@@ -24,7 +24,7 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
     /**
      * @var QueryBuilder
      */
-    private $queryBuilderBak;
+    private $backupQueryBuilder;
 
     /**
      * Construct an ORM Query Builder Loader
@@ -37,13 +37,13 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
      */
     public function __construct($queryBuilder, $manager = null, $class = null)
     {
-        $this->queryBuilderBak = $queryBuilder;
+        $this->backupQueryBuilder = $queryBuilder;
 
         parent::__construct(clone $queryBuilder, $manager, $class);
     }
 
     /**
-     * Get query builder.
+     * Gets query builder.
      *
      * @return QueryBuilder
      */
@@ -58,7 +58,7 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
     }
 
     /**
-     * Restaure the query builder.
+     * Restores the query builder.
      */
     public function reset()
     {
@@ -66,6 +66,6 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
         $parent = $ref->getParentClass();
         $prop = $parent->getProperty('queryBuilder');
         $prop->setAccessible(true);
-        $prop->setValue($this, clone $this->queryBuilderBak);
+        $prop->setValue($this, clone $this->backupQueryBuilder);
     }
 }
