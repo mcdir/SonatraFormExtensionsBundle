@@ -11,7 +11,9 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList;
 
+use Doctrine\ORM\QueryBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Exception\StringCastException;
@@ -24,19 +26,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInterface
 {
     /**
+     * @var AjaxChoiceListFormatterInterface
+     */
+    private $formatter;
+
+    /**
      * @var boolean
      */
     private $allowAdd;
-
-    /**
-     * @var boolean
-     */
-    private $ajax;
-
-    /**
-     * @var bool
-     */
-    private $extractValues;
 
     /**
      * @var int
@@ -57,11 +54,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      * @var array
      */
     private $ids;
-
-    /**
-     * @var array
-     */
-    private $cacheChoices;
 
     /**
      * @var int
@@ -89,11 +81,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     private $entityLoader;
 
     /**
-     * @var boolean
-     */
-    private $filtered;
-
-    /**
      * @var ObjectManager
      */
     private $manager;
@@ -101,22 +88,22 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * Creates a new ajax entity choice list.
      *
-     * @param ObjectManager             $manager           An EntityManager instance
-     * @param string                    $class             The class name
-     * @param string                    $labelPath         The property path used for the label
-     * @param AjaxORMQueryBuilderLoader $entityLoader      An optional query builder
-     * @param array                     $entities          An array of choices
-     * @param array                     $preferredEntities An array of preferred choices
-     * @param string                    $groupPath         A property path pointing to the property used
-     *                                                     to group the choices. Only allowed if
-     *                                                     the choices are given as flat array.
-     * @param PropertyAccessorInterface $propertyAccessor  The reflection graph for reading property paths.
+     * @param AjaxChoiceListFormatterInterface $formatter         The formatter
+     * @param ObjectManager                    $manager           An EntityManager instance
+     * @param string                           $class             The class name
+     * @param string                           $labelPath         The property path used for the label
+     * @param AjaxORMQueryBuilderLoader        $entityLoader      An optional query builder
+     * @param array                            $entities          An array of choices
+     * @param array                            $preferredEntities An array of preferred choices
+     * @param string                           $groupPath         A property path pointing to the property used
+     *                                                            to group the choices. Only allowed if
+     *                                                            the choices are given as flat array.
+     * @param PropertyAccessorInterface        $propertyAccessor  The reflection graph for reading property paths.
      */
-    public function __construct(ObjectManager $manager, $class, $labelPath = null, AjaxORMQueryBuilderLoader $entityLoader = null, $entities = null,  array $preferredEntities = array(), $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(AjaxChoiceListFormatterInterface $formatter, ObjectManager $manager, $class, $labelPath = null, AjaxORMQueryBuilderLoader $entityLoader = null, $entities = null,  array $preferredEntities = array(), $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
     {
+        $this->formatter = $formatter;
         $this->allowAdd = false;
-        $this->ajax = false;
-        $this->extractValues = false;
         $this->pageSize = 10;
         $this->pageNumber = 1;
         $this->search = '';
@@ -125,7 +112,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $this->labelPath = $labelPath;
         $this->propertyAccessor = $propertyAccessor;
         $this->entityLoader = $entityLoader;
-        $this->filtered = false;
         $this->manager = $manager;
 
         parent::__construct($manager, $class, $labelPath, $entityLoader, $entities,  $preferredEntities, $groupPath, $propertyAccessor);
@@ -134,90 +120,17 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
-    public function getChoices()
-    {
-        if (!$this->ajax || null === $this->entityLoader) {
-            return parent::getChoices();
-        }
-
-        if (null !== $this->cacheChoices) {
-            return $this->cacheChoices;
-        }
-
-        // get choices
-        $choices = $this->getChoiceViews();
-
-        $this->cacheChoices = array();
-
-        foreach ($choices as $choice) {
-            $this->cacheChoices[] = array(
-                'id'   => (string) $choice->value,
-                'text' => $choice->label
-            );
-        }
-
-        return $this->cacheChoices;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValues()
-    {
-        if ($this->ajax && !$this->extractValues) {
-            return array();
-        }
-
-        $this->filterQuery();
-
-        return parent::getValues();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPreferredViews()
-    {
-        if ($this->ajax && !$this->extractValues) {
-            return array();
-        }
-
-        $this->filterQuery();
-        $this->refreshSize();
-
-        return parent::getPreferredViews();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRemainingViews()
-    {
-        if ($this->ajax && !$this->extractValues) {
-            return array();
-        }
-
-        $this->filterQuery();
-        $this->refreshSize();
-
-        return parent::getRemainingViews();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getChoicesForValues(array $values)
     {
         $choices = parent::getChoicesForValues($values);
+        $idChoices = parent::getValuesForChoices($choices);
 
-        if ($this->allowAdd && !empty($values) && !(1 === count($values) && '' === $values[0])) {
-            if (count($values) !== count($choices)) {
-                foreach ($values as $value) {
-                    $entity = new $this->class();
-                    $entity->{'set'.ucfirst($this->labelPath)}($value);
+        if ($this->getAllowAdd()) {
+            foreach ($values as $value) {
+                $pos = array_search($value, $idChoices);
 
-                    $this->manager->persist($entity);
-                    $choices[] = $entity;
+                if (false === $pos) {
+                    $choices[] = $value;
                 }
             }
         }
@@ -228,104 +141,113 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
-    public function getDataChoices()
-    {
-        if ($this->ajax) {
-            return array();
-        }
-
-        $choices = $this->getChoiceViews();
-
-        $data = array();
-
-        foreach ($choices as $choice) {
-            $data[] = array(
-                'id'   => (string) $choice->value,
-                'text' => $choice->label
-            );
-        }
-
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getValuesForChoices(array $values)
     {
-        if (!$this->ajax) {
-            return parent::getValuesForChoices($values);
-        }
+        $parentValues = parent::getValuesForChoices($values);
 
-        $ref = new \ReflectionClass($this);
-        $prop = $ref->getParentClass()->getProperty('idAsValue');
-        $prop->setAccessible(true);
-        $idAsValue = $prop->getValue($this);
-        $getIdentifierValues = $ref->getParentClass()->getMethod('getIdentifierValues');
-        $getIdentifierValues->setAccessible(true);
+        if ($this->getAllowAdd()) {
+            $items = $parentValues;
 
-        if ($idAsValue) {
-            $entities = $values;
-            $values = array();
+            foreach ($values as $value) {
+                if (!empty($value)) {
+                    $value = $this->convertEntityToChoiceView($value)->value;
+                    $pos = array_search($value, $items);
 
-            foreach ($entities as $i => $entity) {
-                if ($entity instanceof $this->class) {
-                    // Make sure to convert to the right format
-                    $values[$i] = $this->fixValue(current($getIdentifierValues->invokeArgs($this, array($entity))));
+                    if (false === $pos) {
+                        $parentValues[] = $value;
+                    }
                 }
             }
-
-            return $values;
         }
 
-        return $values;
+        return $parentValues;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getLabelChoicesForValues(array $values)
+    public function getFormattedChoicesForValues(array $values)
     {
         if (0 === count($values)) {
             return array();
         }
 
         $choices = array();
-        $ids = array();
-        $labels = array();
+        $selectedChoices = $values;
 
-        foreach ($values as $value) {
-            if ($value instanceof ChoiceView) {
-                $choices[] = $choices[] = array(
-                    'id'   => (string) $value->value,
-                    'text' => $value->label
-                );
+        if (!is_object($values[array_keys($values)[0]])) {
+            $selectedChoices = $this->getChoicesForValues($values);
+        }
 
-            } elseif (is_object($value)) {
-                $choices[] = $value;
+        foreach ($selectedChoices as $choice) {
+            $choiceView = $this->convertEntityToChoiceView($choice);
+            $choices[] = $this->formatter->formatChoice($choiceView);
+        }
 
-            } else {
-                $ids[] = $value;
+        return $choices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFormattedChoices()
+    {
+        if ($this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
+            $qb = $this->entityLoader->getQueryBuilder();
+
+            $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
+                ->setMaxResults($this->getPageSize());
+        }
+
+        $choices = $this->getChoiceViews();
+        $formattedChoices = array();
+
+        // simple
+        if (count($choices) > 0 && is_int(array_keys($choices)[0])) {
+            foreach ($choices as $choice) {
+                $formattedChoices[] = $this->formatter->formatChoice($choice);
+            }
+
+            return $formattedChoices;
+        }
+
+        // group
+        foreach ($choices as $groupName => $groupChoices) {
+            $group = $this->formatter->formatGroupChoice($groupName);
+
+            foreach ($groupChoices as $subChoice) {
+                $group = $this->formatter->addChoiceInGroup($group, $subChoice);
+            }
+
+            if (!$this->formatter->isEmptyGroup($group)) {
+                $formattedChoices[] = $group;
             }
         }
 
-        if (count($ids) > 0) {
-            $selectedChoices = $this->manager->getRepository($this->class)->findBy(array('id' => $ids));
-            $choices = array_merge($choices, $selectedChoices);
+        return $formattedChoices;
+    }
 
-            /*$qb = $this->entityLoader->getQueryBuilder()->getEntityManager()->createQueryBuilder();
-            $qb
-                ->select('e')
-                ->from($this->class, 'e')
-                ->where($qb->expr()->in('e.id', $ids));
-            ;
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstChoiceView()
+    {
+        $choices = $this->getChoiceViews();
 
-            $choices = array_merge($choices, $qb->getQuery()->execute());*/
+        if (count($choices) > 0) {
+            $firstChoice = $choices[array_keys($choices)[0]];
+
+            if ($firstChoice instanceof ChoiceView) {
+                return $firstChoice;
+            }
+
+            // group
+            if (is_array($firstChoice) && isset($firstChoice[0])) {
+                return $firstChoice[0];
+            }
         }
 
-        $this->extractLabels($choices, $labels);
-
-        return $labels;
+        return null;
     }
 
     /**
@@ -333,7 +255,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function setAllowAdd($allowAdd)
     {
-        $this->reset();
         $this->allowAdd = $allowAdd;
     }
 
@@ -348,35 +269,28 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
-    public function setAjax($ajax)
-    {
-        $this->reset();
-        $this->ajax = $ajax;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAjax()
-    {
-        return $this->ajax;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtractValues($extractValues)
-    {
-        $this->extractValues = (bool) $extractValues;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSize()
     {
         if (null === $this->size) {
-            $this->getChoiceViews();
+            $choices = $this->getChoices();
+            $this->size = count($choices);
+
+            // group
+            if ($this->size > 0 && is_array($choices[array_keys($choices)[0]])) {
+                $this->size = 0;
+
+                foreach ($choices as $subChoices) {
+                    $this->size += count($subChoices);
+                }
+            }
+
+        } elseif ($this->size instanceof QueryBuilder) {
+            $qb = $this->size;
+            $entityAlias = $qb->getRootAliases()[0];
+
+            $qb->setParameters($qb->getParameters());
+            $qb->select("count($entityAlias)");
+            $this->size = (integer) $qb->getQuery()->getSingleScalarResult();
         }
 
         return $this->size;
@@ -387,7 +301,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function setPageSize($size)
     {
-        $this->reset();
         $this->pageSize = $size;
     }
 
@@ -404,7 +317,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function setPageNumber($number)
     {
-        $this->reset();
         $this->pageNumber = $number;
     }
 
@@ -421,7 +333,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function setSearch($search)
     {
-        $this->reset();
         $this->search = $search;
     }
 
@@ -438,7 +349,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function setIds(array $ids)
     {
-        $this->reset();
         $this->ids = $ids;
     }
 
@@ -451,41 +361,24 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     }
 
     /**
-     * Reset the cache.
+     * {@inheritdoc}
      */
-    protected function reset()
+    public function reset()
     {
-        $this->cacheChoices = null;
         $this->size = null;
-        $this->filtered = false;
-
-        if ($this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
-            $this->entityLoader->reset();
-        }
 
         $ref = new \ReflectionClass($this);
         $parent = $ref->getParentClass();
-        $prop = $parent->getProperty('loaded');
-        $prop->setAccessible(true);
-        $prop->setValue($this, false);
-    }
+        $propLoaded = $parent->getProperty('loaded');
+        $propLoaded->setAccessible(true);
+        $propLoaded->setValue($this, false);
 
-    /**
-     * Filter query.
-     *
-     * @return array
-     */
-    protected function filterQuery()
-    {
-        if ($this->ajax && !$this->filtered && $this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
+        if ($this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
+            $this->entityLoader->reset();
+
             $qb = $this->entityLoader->getQueryBuilder();
 
             $entityAlias = $qb->getRootAliases()[0];
-
-            // hide selected value
-            if (count($this->getIds()) > 0) {
-                $qb->andWhere($qb->expr()->notIn("{$entityAlias}.id", $this->getIds()));
-            }
 
             if (null !== $this->labelPath) {
                 // search filter
@@ -493,64 +386,27 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
                     $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->labelPath}", ":{$this->labelPath}" ));
                     $qb->setParameter($this->labelPath, "%{$this->getSearch()}%");
                 }
-
-                // order by
-                $qb->orderBy($entityAlias.'.'.$this->labelPath, 'ASC');
             }
 
-            // get size
-            $qbl = clone $qb;
-            $qbl->setParameters($qb->getParameters());
-            $qbl->select("count($entityAlias)");
-            $this->size = (integer) $qbl->getQuery()->getSingleScalarResult();
-
-            // adds the selected entities
-            if (count($this->getIds()) > 0) {
-                $qb->orWhere($qb->expr()->in("{$entityAlias}.id", $this->getIds()));
+            // clone query builder for always get the real size
+            if (null !== $this->getPageSize()) {
+                $this->size = clone $qb;
             }
-
-            // pagination
-            $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
-                ->setMaxResults($this->getPageSize());
-
-            $this->filtered = true;
         }
     }
 
     /**
-     * Extracts entity labels.
-     *
-     * @param array|\Iterator $choices
-     * @param array           $labels
-     *
-     * @throws StringCastException
+     * {@inheritdoc}
      */
-    protected function extractLabels($choices, array &$labels)
+    protected function initialize($choices, array $labels, array $preferredChoices)
     {
-        foreach ($choices as $i => $choice) {
-            if (is_array($choice)) {
-                $labels[$i] = array();
-                $this->extractLabels($choice, $labels[$i]);
-
-            } elseif ($this->labelPath) {
-                $labels[$i] = array(
-                    'id'   => $this->propertyAccessor->getValue($choice, 'id'),
-                    'text' => $this->propertyAccessor->getValue($choice, $this->labelPath),
-                );
-
-            } elseif (method_exists($choice, '__toString')) {
-                $labels[$i] = (string) $choice;
-
-            } else {
-                throw new StringCastException(sprintf('A "__toString()" method was not found on the objects of type "%s" passed to the choice field. To read a custom getter instead, set the argument $labelPath to the desired property path.', get_class($choice)));
-            }
-        }
+        parent::initialize($choices, $labels, $preferredChoices);
     }
 
     /**
      * Gets all choice views, including preferred and remaining views.
      *
-     * @return array<int, ChoiceView>|array<string, ChoiceView[]>
+     * @return ChoiceView[]|array<string, ChoiceView[]>
      */
     protected function getChoiceViews()
     {
@@ -558,12 +414,45 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     }
 
     /**
-     * Refreshs the size of choices (only for non AJAX).
+     * Extracts the label of entity.
+     *
+     * @param object $entity
+     *
+     * @return string The label
+     *
+     * @throws StringCastException When the "__toString()" method was not found on the object
      */
-    protected function refreshSize()
+    protected function extractLabel($entity)
     {
-        if (null === $this->size && !$this->ajax) {
-            $this->size = count($this->getChoices());
+        if ($this->labelPath) {
+            return $this->propertyAccessor->getValue($entity, $this->labelPath);
+
+        } elseif (method_exists($entity, '__toString')) {
+            return (string) $entity;
         }
+
+        throw new StringCastException(sprintf('A "__toString()" method was not found on the objects of type "%s" passed to the choice field. To read a custom getter instead, set the argument $labelPath to the desired property path.', get_class($entity)));
+    }
+
+    /**
+     * Converts the entity to choice view.
+     *
+     * @param object $entity
+     *
+     * @return ChoiceView
+     */
+    protected function convertEntityToChoiceView($entity)
+    {
+        $label = $entity;
+        $value = $entity;
+
+        if (is_object($entity)) {
+            $label = $this->extractLabel($entity);
+            $value = $this->manager->getClassMetadata($this->class)->getIdentifierValues($entity);
+            $value = $this->fixValues($value);
+            $value = implode('', $value);
+        }
+
+        return new ChoiceView($entity, $value, $label);
     }
 }

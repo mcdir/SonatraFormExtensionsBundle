@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList;
 
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 
@@ -20,14 +21,14 @@ use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInterface
 {
     /**
-     * @var boolean
+     * @var AjaxChoiceListFormatterInterface
      */
-    private $allowAdd;
+    private $formatter;
 
     /**
      * @var boolean
      */
-    private $ajax;
+    private $allowAdd;
 
     /**
      * @var int
@@ -50,34 +51,43 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     private $ids;
 
     /**
-     * @var array
+     * @var int
      */
-    private $cacheChoices;
+    private $size;
 
     /**
      * @var array
      */
-    private $cacheFilteredChoices;
+    private $backupChoices;
+
+    /**
+     * @var array
+     */
+    private $backupPreferredChoices;
 
     /**
      * Creates a new ajax simple choice list.
      *
-     * @param array $choices          The array of choices with the choices as keys and
-     *                                the labels as values. Choices may also be given
-     *                                as hierarchy of unlimited depth by creating nested
-     *                                arrays. The title of the sub-hierarchy is stored
-     *                                in the array key pointing to the nested array.
-     * @param array $preferredChoices A flat array of choices that should be
-     *                                presented to the user with priority.
+     * @param AjaxChoiceListFormatterInterface $formatter        The formatter
+     * @param array                            $choices          The array of choices with the choices as keys and
+     *                                                           the labels as values. Choices may also be given
+     *                                                           as hierarchy of unlimited depth by creating nested
+     *                                                           arrays. The title of the sub-hierarchy is stored
+     *                                                           in the array key pointing to the nested array.
+     * @param array                            $preferredChoices A flat array of choices that should be
+     *                                                           presented to the user with priority.
      */
-    public function __construct($choices, array $preferredChoices = array())
+    public function __construct(AjaxChoiceListFormatterInterface $formatter, $choices, array $preferredChoices = array())
     {
+        $this->formatter = $formatter;
         $this->allowAdd = false;
         $this->ajax = false;
         $this->pageSize = 10;
         $this->pageNumber = 1;
         $this->search = '';
         $this->ids = array();
+        $this->backupChoices = $choices;
+        $this->backupPreferredChoices = $preferredChoices;
 
         parent::__construct($choices, $preferredChoices);
     }
@@ -85,159 +95,150 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
-    public function getChoices()
+    public function getChoicesForValues(array $values)
     {
-        if (!$this->ajax) {
-            return parent::getChoices();
+        $choices = parent::getChoicesForValues($values);
+
+        if ($this->getAllowAdd()) {
+            $items = $choices;
+
+            foreach ($values as $value) {
+                $pos = array_search($value, $items);
+
+                if (false === $pos) {
+                    $choices[] = $value;
+                }
+            }
         }
 
-        if (null !== $this->cacheChoices) {
-            return $this->cacheChoices;
+        return $choices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValuesForChoices(array $values)
+    {
+        $parentValues = parent::getValuesForChoices($values);
+
+        if ($this->getAllowAdd()) {
+            $items = $parentValues;
+
+            foreach ($values as $value) {
+                $pos = array_search($value, $items);
+
+                if (false === $pos) {
+                    $parentValues[] = $value;
+                }
+            }
         }
 
-        $this->cacheChoices = array();
+        return $parentValues;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFormattedChoicesForValues(array $values)
+    {
+        $choices = array();
+        $unresolvedValues = $values;
+
+        /* @var ChoiceView $choice */
+        foreach ($this->getChoiceViews() as $choice) {
+            // group choice
+            if (is_array($choice)) {
+                /* @var ChoiceView $subChoice */
+                foreach ($choice as $subChoice) {
+                    if (in_array($subChoice->value, $values)) {
+                        $choices[] = $this->formatter->formatChoice($subChoice);
+                        $pos = array_search($subChoice->value, $unresolvedValues);
+                        array_splice($unresolvedValues, $pos, 1);
+                    }
+                }
+
+            } else {
+                if (in_array($choice->value, $values)) {
+                    $choices[] = $this->formatter->formatChoice($choice);
+                    $pos = array_search($choice->value, $unresolvedValues);
+                    array_splice($unresolvedValues, $pos, 1);
+                }
+            }
+        }
+
+        foreach ($unresolvedValues as $value) {
+            $choices[] = $this->formatter->formatChoice(new ChoiceView($value, $value, $value));
+        }
+
+        return $choices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFormattedChoices()
+    {
+        $choices = $this->getChoiceViews();
+        $formattedChoices = array();
         $startTo = ($this->getPageNumber() - 1) * $this->getPageSize();
         $endTo = $startTo + $this->getPageSize();
-
-        $choices = $this->getFilteredChoices();
 
         if ($endTo > $this->getSize()) {
             $endTo = $this->getSize();
         }
 
+        // simple
         if (count($choices) > 0 && is_int(array_keys($choices)[0])) {
             for ($index=$startTo; $index<$endTo; $index++) {
-                $choice = $choices[$index];
-
-                $this->cacheChoices[] = array(
-                    'id'   => (string) $choice->value,
-                    'text' => $choice->label,
-                );
+                $formattedChoices[] = $this->formatter->formatChoice($choices[$index]);
             }
 
-            return $this->cacheChoices;
+            return $formattedChoices;
         }
 
+        // group
         $index = 0;
 
-        foreach ($choices as $groupName => $subChoices) {
-            $group = array(
-                'text'     => $groupName,
-                'children' => array(),
-            );
+        foreach ($choices as $groupName => $groupChoices) {
+            $group = $this->formatter->formatGroupChoice($groupName);
 
-            foreach ($subChoices as $choice) {
-                if ($index >= $startTo && $index <= $endTo) {
-                    $group['children'][] = array(
-                        'id'   => (string) $choice->value,
-                        'text' => $choice->label,
-                    );
+            foreach ($groupChoices as $subChoice) {
+                if ($index >= $startTo && $index < $endTo) {
+                    $group = $this->formatter->addChoiceInGroup($group, $subChoice);
                 }
 
                 $index++;
             }
 
-            if (count($group['children']) > 0) {
-                $this->cacheChoices[] = $group;
+            if (!$this->formatter->isEmptyGroup($group)) {
+                $formattedChoices[] = $group;
             }
         }
 
-        return $this->cacheChoices;
+        return $formattedChoices;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getLabelChoicesForValues(array $values)
+    public function getFirstChoiceView()
     {
-        $choices = array();
-        $data = array();
-
-        foreach ($this->getChoiceViews() as $choice) {
-            // group choice
-            if (is_array($choice)) {
-                foreach ($choice as $subChoice) {
-                    $data[] = $subChoice->value;
-                    $this->extractLabel($choices, $subChoice, $values);
-                }
-
-            } else {
-                $data[] = $choice->value;
-                $this->extractLabel($choices, $choice, $values);
-            }
-        }
-
-        foreach ($values as $value) {
-            if (!in_array($value, $data)) {
-                $choices[] = array(
-                    'id'   => $value,
-                    'text' => $value,
-                );
-            }
-        }
-
-        return $choices;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getChoicesForValues(array $values)
-    {
-        if (!$this->allowAdd || empty($values) || (1 === count($values) && '' === $values[0])) {
-            return parent::getChoicesForValues($values);
-        }
-
-        $items = parent::getChoicesForValues($values);
-        $choices = array();
-
-        foreach ($values as $value) {
-            $pos = array_search($value, $items);
-
-            if (false !== $pos) {
-                $choices[] = $items[$pos];
-
-            } else {
-                $choices[] = $value;
-            }
-        }
-
-        return $choices;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataChoices()
-    {
-        if ($this->ajax) {
-            return array();
-        }
-
         $choices = $this->getChoiceViews();
-        $data = array();
 
-        /* @var ChoiceView $choice */
-        foreach ($choices as $index => $choice) {
-            // group choice
-            if (is_array($choice)) {
-                $children = array();
+        if (count($choices) > 0) {
+            $firstChoice = $choices[array_keys($choices)[0]];
 
-                foreach ($choice as $subChoice) {
-                    $this->extractLabel($children, $subChoice, array($subChoice->value));
-                }
+            if ($firstChoice instanceof ChoiceView) {
+                return $firstChoice;
+            }
 
-                $data[] = array(
-                    'text'     => $index,
-                    'children' => $children,
-                );
-
-            } else {
-                $this->extractLabel($data, $choice, array($choice->value));
+            // group
+            if (is_array($firstChoice) && isset($firstChoice[0])) {
+                return $firstChoice[0];
             }
         }
 
-        return $data;
+        return null;
     }
 
     /**
@@ -245,8 +246,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function setAllowAdd($allowAdd)
     {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
         $this->allowAdd = $allowAdd;
     }
 
@@ -261,47 +260,9 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * {@inheritdoc}
      */
-    public function setAjax($ajax)
-    {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
-        $this->ajax = $ajax;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAjax()
-    {
-        return $this->ajax;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtractValues($extractValues)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSize()
     {
-        $filteredChoices = $this->getFilteredChoices();
-
-        if (count($filteredChoices) > 0 && is_int(array_keys($filteredChoices)[0])) {
-            return count($filteredChoices);
-        }
-
-        $size = 0;
-
-        /* @var ChoiceView[] $choices */
-        foreach ($filteredChoices as $choices) {
-            $size += count($choices);
-        }
-
-        return $size;
+        return $this->size;
     }
 
     /**
@@ -309,8 +270,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function setPageSize($size)
     {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
         $this->pageSize = $size;
     }
 
@@ -327,8 +286,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function setPageNumber($number)
     {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
         $this->pageNumber = $number;
     }
 
@@ -345,8 +302,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function setSearch($search)
     {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
         $this->search = $search;
     }
 
@@ -355,9 +310,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function getSearch()
     {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
-
         return $this->search;
     }
 
@@ -366,8 +318,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function setIds(array $ids)
     {
-        $this->cacheChoices = null;
-        $this->cacheFilteredChoices = null;
         $this->ids = $ids;
     }
 
@@ -380,82 +330,66 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     }
 
     /**
-     * Get the filtered choices.
-     *
-     * @return ChoiceView[]
+     * {@inheritdoc}
      */
-    protected function getFilteredChoices()
+    public function reset()
     {
+        $filteredChoices = array();
+
         if (null === $this->search || '' === $this->search) {
-            return $this->getChoiceViews();
-        }
+            $filteredChoices = $this->backupChoices;
 
-        if (null !== $this->cacheFilteredChoices) {
-            return $this->cacheFilteredChoices;
-        }
+        } else {
+            foreach ($this->backupChoices as $group => $choice) {
+                if (is_array($choice)) {
+                    foreach ($choice as $id => $subChoice) {
+                        if (false !== stripos($subChoice, $this->search) && !in_array($subChoice, $this->getIds())) {
+                            if (!array_key_exists($group, $filteredChoices)) {
+                                $filteredChoices[$group] = array();
+                            }
 
-        $this->cacheFilteredChoices = array();
-        $choices = $this->getChoiceViews();
+                            $filteredChoices[$group][$id] = $subChoice;
+                        }
+                    }
 
-        if (count($choices) > 0 && is_int(array_keys($choices)[0])) {
-            foreach ($choices as $choice) {
-                if (false !== stripos($choice->label, $this->search) && !in_array($choice->value, $this->getIds())) {
-                    $this->cacheFilteredChoices[] = $choice;
+                } else {
+                    if (false !== stripos($choice, $this->search) && !in_array($choice, $this->getIds())) {
+                        $filteredChoices[$group] = $choice;
+                    }
                 }
             }
-
-            return $this->cacheFilteredChoices;
         }
 
-        foreach ($choices as $groupName => $subChoices) {
-            $group = array();
-
-            foreach ($subChoices as $choice) {
-                if (false !== stripos($choice->label, $this->search) && !in_array($choice->value, $this->getIds())) {
-                    $group[] = $choice;
-                }
-            }
-
-            if (count($group) > 0) {
-                $this->cacheFilteredChoices[$groupName] = $group;
-            }
-        }
-
-        return $this->cacheFilteredChoices;
+        $this->initialize($filteredChoices, $filteredChoices, array_flip($this->backupPreferredChoices));
     }
 
     /**
-     * Extract the choice label.
-     *
-     * @param array      $result The array of list extraction
-     * @param ChoiceView $choice
-     * @param array      $values
+     * {@inheritdoc}
      */
-    protected function extractLabel(array &$result, ChoiceView $choice, array $values)
+    protected function initialize($choices, array $labels, array $preferredChoices)
     {
-        if (in_array($choice->data, $values)) {
-            $result[] = array(
-                'id'   => (string) $choice->value,
-                'text' => $choice->label
-            );
+        parent::initialize($choices, $labels, $preferredChoices);
+
+        $choices = $this->getChoices();
+        $this->size = count($choices);
+
+        // group
+        if ($this->size > 0 && is_array($choices[array_keys($choices)[0]])) {
+            $this->size = 0;
+
+            foreach ($choices as $subChoices) {
+                $this->size += count($subChoices);
+            }
         }
     }
 
     /**
      * Gets all choice views, including preferred and remaining views.
      *
-     * @return array<int, ChoiceView>|array<string, ChoiceView[]>
+     * @return ChoiceView[]|array<string, ChoiceView[]>
      */
     protected function getChoiceViews()
     {
-        $choices = array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
-
-        if (count($choices) > 0 && !is_int(array_keys($choices)[0])) {
-            foreach ($choices as $group => $subChoices) {
-                $choices[$group] = array_values($subChoices);
-            }
-        }
-
-        return $choices;
+        return array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
     }
 }

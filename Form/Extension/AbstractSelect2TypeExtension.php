@@ -15,6 +15,7 @@ use Sonatra\Bundle\AjaxBundle\AjaxEvents;
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
@@ -197,15 +198,16 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             $choiceList = $options['choice_list'];
             $values = (array) $view->vars['value'];
 
+            // add first value
             if ($options['required'] && null === $view->vars['data']) {
-                $choices = $choiceList->getChoices();
+                $firstChoice = $choiceList->getFirstChoiceView();
 
-                if (isset($choices[0]['id'])) {
-                    $values = (array) $choices[0]['id'];
+                if (null !== $firstChoice) {
+                    $values = (array) $firstChoice->value;
                 }
             }
 
-            $view->vars['choices_selected'] = $choiceList->getLabelChoicesForValues($values);
+            $view->vars['choices_selected'] = $choiceList->getFormattedChoicesForValues($values);
         }
 
         // convert array to string
@@ -315,15 +317,15 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             $normalizers['choice_list'] = function (Options $options, $value) {
                 if ($options['select2']['enabled']) {
                     if (!$value instanceof AjaxChoiceListInterface) {
-                        $value = new AjaxSimpleChoiceList($options['choices'], $options['preferred_choices']);
+                        $value = new AjaxSimpleChoiceList(new Select2AjaxChoiceListFormatter(), $options['choices'], $options['preferred_choices']);
                     }
 
                     $value->setAllowAdd($options['select2']['allow_add']);
-                    $value->setAjax($options['select2']['ajax']);
                     $value->setPageSize($options['select2']['page_size']);
                     $value->setPageNumber(1);
                     $value->setSearch('');
                     $value->setIds(array());
+                    $value->reset();
                 }
 
                 return $value;

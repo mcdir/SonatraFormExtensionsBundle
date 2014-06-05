@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
@@ -61,13 +62,13 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
         $routeName = $builder->getAttribute('prototype')->getConfig()->getAttribute('select2_ajax_route');
 
         if (null === $choiceList) {
-            $choiceList = new AjaxSimpleChoiceList($options['select2']['tags']);
+            $choiceList = new AjaxSimpleChoiceList(new Select2AjaxChoiceListFormatter(), $options['select2']['tags']);
             $choiceList->setAllowAdd($options['allow_add']);
-            $choiceList->setAjax($options['select2']['ajax']);
             $choiceList->setPageSize($options['select2']['page_size']);
             $choiceList->setPageNumber(1);
             $choiceList->setSearch('');
             $choiceList->setIds(array());
+            $choiceList->reset();
         }
 
         $builder->setAttribute('choice_list', $choiceList);
@@ -94,11 +95,13 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
         $view->vars = array_replace($view->vars, array(
             'multiple'         => $options['multiple'],
             'choice_list'      => $choiceList,
-            'choices_selected' => $choiceList->getLabelChoicesForValues((array) $view->vars['value']),
+            'choices_selected' => $choiceList->getFormattedChoicesForValues((array) $view->vars['value']),
             'select2'          => array_merge($view->vars['select2'], array(
-                'tags' => $choiceList->getDataChoices(),
+                'tags' => $choiceList->getFormattedChoices(),
             )),
         ));
+
+        $view->vars['value'] = $choiceList->getValuesForChoices($view->vars['value']);
     }
 
     /**
@@ -155,24 +158,22 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
                 return $value;
             },
             'options'   => function (Options $options, $value) {
-                if ($options['select2']['enabled']) {
-                    $dOptions = $this->factory->createBuilder($options['type'], null, $value)->getOptions();
+                $dOptions = $this->factory->createBuilder($options['type'], null, $value)->getOptions();
 
-                    if (isset($dOptions['select2'])) {
-                        $value = array_merge($value, array(
-                            'multiple'  => false,
-                            'select2'   => array_merge(array_key_exists('select2', $value) ? $value['select2'] : array(), array(
-                                'enabled'    => true,
-                                'ajax'       => $options['select2']['ajax'],
-                                'ajax_route' => $options['select2']['ajax_route'],
-                                'page_size'  => $options['select2']['page_size'],
-                                'allow_add'  => true,
-                            )),
-                        ));
-                    }
-
-                    $value['error_bubbling'] = true;
+                if (isset($dOptions['select2'])) {
+                    $value = array_merge($value, array(
+                        'multiple'  => false,
+                        'select2'   => array_merge(array_key_exists('select2', $value) ? $value['select2'] : array(), array(
+                            'enabled'    => $options['select2']['enabled'],
+                            'ajax'       => $options['select2']['ajax'],
+                            'ajax_route' => $options['select2']['ajax_route'],
+                            'page_size'  => $options['select2']['page_size'],
+                            'allow_add'  => true,
+                        )),
+                    ));
                 }
+
+                $value['error_bubbling'] = true;
 
                 return $value;
             },

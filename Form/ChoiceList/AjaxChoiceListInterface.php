@@ -12,6 +12,7 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -19,20 +20,27 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 interface AjaxChoiceListInterface extends ChoiceListInterface
 {
     /**
-     * Get the label of choices.
+     * Gets list of formatted choices for selected values (groups are not displayed).
      *
      * @param array $values
      *
-     * @return array The list of map 'id' and 'text'
+     * @return array The list of formatted choices selected
      */
-    public function getLabelChoicesForValues(array $values);
+    public function getFormattedChoicesForValues(array $values);
 
     /**
-     * Get all data of choices.
+     * Gets formatted choices.
      *
-     * @return array The list of map 'id' and 'text'
+     * @return array The list or group list of formatted choices
      */
-    public function getDataChoices();
+    public function getFormattedChoices();
+
+    /**
+     * Gets the first choice view of list or group choices.
+     *
+     * @return ChoiceView|null
+     */
+    public function getFirstChoiceView();
 
     /**
      * Set allow add.
@@ -47,27 +55,6 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * @return boolean
     */
     public function getAllowAdd();
-
-    /**
-     * Set ajax.
-     *
-     * @param boolean $ajax
-     */
-    public function setAjax($ajax);
-
-    /**
-     * Get ajax.
-     *
-     * @return boolean
-    */
-    public function getAjax();
-
-    /**
-     * Indicates if the get values can be returned the data or empty array.
-     *
-     * @param bool $extractValues
-     */
-    public function setExtractValues($extractValues);
 
     /**
      * Get the size of all.
@@ -131,4 +118,9 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * @return array
      */
     public function getIds();
+
+    /**
+     * Resets the choices with the filter conditions.
+     */
+    public function reset();
 }

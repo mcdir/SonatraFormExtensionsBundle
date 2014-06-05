@@ -53,11 +53,6 @@
             <tag name="form.type_extension" alias="entity" />
         </service>
 
-        <service id="form.type_extension.sonatra.entity_collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension\EntityCollectionSelect2Extension">
-            <tag name="form.type_extension" alias="collection" />
-            <argument type="service" id="doctrine" />
-        </service>
-
         <service id="form.type_extension.sonatra.datetime_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateTimeJqueryTypeExtension">
             <tag name="form.type_extension" alias="datetime" />
         </service>
