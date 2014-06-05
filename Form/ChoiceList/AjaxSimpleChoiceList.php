@@ -166,8 +166,10 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
             }
         }
 
-        foreach ($unresolvedValues as $value) {
-            $choices[] = $this->formatter->formatChoice(new ChoiceView($value, $value, $value));
+        if ($this->getAllowAdd()) {
+            foreach ($unresolvedValues as $value) {
+                $choices[] = $this->formatter->formatChoice(new ChoiceView($value, $value, $value));
+            }
         }
 
         return $choices;
