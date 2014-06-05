@@ -44,7 +44,6 @@ class SonatraFormExtensionsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition('form.type_extension.sonatra.timezone_select2'));
         $this->assertTrue($container->hasDefinition('form.type_extension.sonatra.collection_select2'));
         $this->assertTrue($container->hasDefinition('form.type_extension.sonatra.entity_select2'));
-        $this->assertTrue($container->hasDefinition('form.type_extension.sonatra.entity_collection_select2'));
 
         $this->assertTrue($container->hasDefinition('form.type_extension.sonatra.datetime_jquery'));
         $this->assertTrue($container->hasDefinition('form.type_extension.sonatra.date_jquery'));
