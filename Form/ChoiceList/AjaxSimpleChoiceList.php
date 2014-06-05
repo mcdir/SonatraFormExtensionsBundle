@@ -372,7 +372,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     {
         parent::initialize($choices, $labels, $preferredChoices);
 
-        $choices = $this->getChoices();
         $this->size = count($choices);
 
         // group
