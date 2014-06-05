@@ -12,289 +12,275 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\ChoiceList;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Symfony\Component\Form\Tests\Extension\Core\ChoiceList\AbstractChoiceListTest;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 
 /**
  * Abstract tests case for AJAX choice list.
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-abstract class AbstractAjaxChoiceListTest extends AbstractChoiceListTest
+abstract class AbstractAjaxChoiceListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AjaxChoiceListInterface
      */
     protected $list;
 
-    public function testDefaultConfig()
+    protected function setUp()
     {
-        $this->list = $this->createSimpleChoiceList();
-
-        $this->assertFalse($this->list->getAllowAdd());
-        $this->assertFalse($this->list->getAjax());
-        $this->assertEquals(10, $this->list->getPageSize());
-        $this->assertEquals(1, $this->list->getPageNumber());
-        $this->assertEquals('', $this->list->getSearch());
-        $this->assertCount(0, $this->list->getIds());
-        $this->assertEquals(4, $this->list->getSize());
+        $this->list = $this->createChoiceList();
     }
 
-    public function testCustomConfig()
+    protected function tearDown()
     {
-        $this->list = $this->createSimpleChoiceList();
+        $this->list = null;
+    }
 
+    public function testGetSizes()
+    {
+        $this->assertEquals($this->getValidSize(), $this->list->getSize());
+    }
+
+    public function testGetChoices()
+    {
+        $this->assertSame($this->getValidChoices(), $this->list->getChoices());
+        $this->list->reset();
+        $this->assertSame($this->getValidChoices(), $this->list->getChoices());
+    }
+
+    public function testGetValues()
+    {
+        $this->assertSame($this->getValidValues(), $this->list->getValues());
+        $this->list->reset();
+        $this->assertSame($this->getValidValues(), $this->list->getValues());
+    }
+
+    public function testGetChoicesForValues()
+    {
+        $this->assertSame($this->getValidChoicesForValues(), $this->list->getChoicesForValues($this->getChoicesForValuesData()));
+        $this->list->reset();
+        $this->assertSame($this->getValidChoicesForValues(), $this->list->getChoicesForValues($this->getChoicesForValuesData()));
+    }
+
+    public function testGetValuesForChoices()
+    {
+        $this->assertSame($this->getValidValuesForChoices(), $this->list->getChoicesForValues($this->getValuesForChoicesData()));
+        $this->list->reset();
+        $this->assertSame($this->getValidValuesForChoices(), $this->list->getChoicesForValues($this->getValuesForChoicesData()));
+    }
+
+    public function testGetPreferredViews()
+    {
+        $this->assertEquals($this->getValidPreferredViews(), $this->list->getPreferredViews());
+        $this->list->reset();
+        $this->assertEquals($this->getValidPreferredViews(), $this->list->getPreferredViews());
+    }
+
+    public function testGetRemainingViews()
+    {
+        $this->assertEquals($this->getValidRemainingViews(), $this->list->getRemainingViews());
+        $this->list->reset();
+        $this->assertEquals($this->getValidRemainingViews(), $this->list->getRemainingViews());
+    }
+
+    public function testGetFirstChoiceView()
+    {
+        $this->assertEquals($this->getValidFirstChoiceView(), $this->list->getFirstChoiceView());
+        $this->list->reset();
+        $this->assertEquals($this->getValidFirstChoiceView(), $this->list->getFirstChoiceView());
+    }
+
+    public function testGetFormattedChoicesForValues()
+    {
+        $this->assertEquals($this->getValidFormattedChoicesForValues(), $this->list->getFormattedChoicesForValues($this->getFormattedChoicesForValuesData()));
+        $this->list->reset();
+        $this->assertEquals($this->getValidFormattedChoicesForValues(), $this->list->getFormattedChoicesForValues($this->getFormattedChoicesForValuesData()));
+    }
+
+    public function testGetFormattedChoices()
+    {
+        $this->assertEquals($this->getValidFormattedChoices(), $this->list->getFormattedChoices());
+        $this->list->reset();
+        $this->assertEquals($this->getValidFormattedChoices(), $this->list->getFormattedChoices());
+    }
+
+    public function testAllowAddChoicesForValues()
+    {
         $this->list->setAllowAdd(true);
-        $this->list->setAjax(true);
-        $this->list->setPageSize(20);
-        $this->list->setPageNumber(2);
-        $this->list->setSearch('search');
-        $this->list->setIds(array('id1', 'id2'));
+        $this->list->reset();
 
-        $this->assertTrue($this->list->getAllowAdd());
-        $this->assertTrue($this->list->getAjax());
-        $this->assertEquals(20, $this->list->getPageSize());
-        $this->assertEquals(2, $this->list->getPageNumber());
-        $this->assertEquals('search', $this->list->getSearch());
-        $this->assertCount(2, $this->list->getIds());
-        $this->assertEquals(0, $this->list->getSize());
+        $this->assertEquals($this->getValidAllowAddChoicesForValues(), $this->list->getChoicesForValues($this->getAllowAddChoicesForValuesData()));
     }
 
-    public function testGetSizeWithGroupList()
+    public function testAllowAddValuesForChoices()
     {
-        $this->assertFalse($this->list->getAllowAdd());
-        $this->assertFalse($this->list->getAjax());
-        $this->assertEquals(4, $this->list->getSize());
-    }
-
-    public function testExtractValues()
-    {
-        $this->list = $this->createSimpleChoiceList();
-        $this->assertSame($this->getValues(), $this->list->getValues());
-
-        $this->list->setExtractValues(false);
-        $this->assertSame($this->getValues(), $this->list->getValues());
-
-        $this->list->setExtractValues(true);
-        $this->assertSame($this->getValues(), $this->list->getValues());
-    }
-
-    public function testInitArray()
-    {
-        $this->list = $this->createSimpleChoiceList();
-
-        $this->assertSame($this->getChoices(), $this->list->getChoices());
-        $this->assertSame($this->getValues(), $this->list->getValues());
-        $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
-        $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
-        $this->assertSame($this->getFormattedChoices(), $this->list->getDataChoices());
-
-        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues($this->getListForChoicesForValues()));
         $this->list->setAllowAdd(true);
-        $this->assertSame($this->getChoicesForValues(), $this->list->getChoicesForValues($this->getListForChoicesForValues()));
+        $this->list->reset();
+
+        $this->assertEquals($this->getValidAllowAddValuesForChoices(), $this->list->getValuesForChoices($this->getAllowAddValuesForChoicesData()));
     }
 
-    public function testInitArrayAjax()
+    public function testAllowAddFormattedChoicesForValues()
     {
-        $this->list = $this->createSimpleChoiceList();
-        $this->list->setAjax(true);
-
-        $this->assertSame($this->getFormattedChoices(), $this->list->getChoices());
-        $this->assertSame($this->getValues(), $this->list->getValues());
-        $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
-        $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
-        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
-        $this->assertSame(array(), $this->list->getDataChoices());
-        // cache
-        $this->assertSame($this->getFormattedChoices(), $this->list->getChoices());
-    }
-
-    public function testInitArrayAjaxSearch()
-    {
-        $this->list = $this->createSimpleChoiceList();
-        $this->list->setAjax(true);
-        $this->list->setSearch($this->getQueryForSearchChoices());
-        $this->assertSame($this->getSearchChoices(), $this->list->getChoices());
-        $this->assertSame($this->getValues(), $this->list->getValues());
-        $this->assertEquals($this->getPreferredViews(), $this->list->getPreferredViews());
-        $this->assertEquals($this->getRemainingViews(), $this->list->getRemainingViews());
-        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
-        // cache
-        $this->assertSame($this->getSearchChoices(), $this->list->getChoices());
-    }
-
-    public function testInitNestedArray()
-    {
-        $this->assertSame($this->getChoices(), $this->list->getChoices());
-        $this->assertSame($this->getValues(), $this->list->getValues());
-        $this->assertEquals($this->getGroupPreferredViews(), $this->list->getPreferredViews());
-        $this->assertEquals($this->getGroupRemainingViews(), $this->list->getRemainingViews());
-        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
-        $this->assertSame($this->getFormattedGroupChoices(), $this->list->getDataChoices());
-    }
-
-    public function testInitNestedArrayAjax()
-    {
-        $this->list->setAjax(true);
-
-        $this->assertSame($this->getFormattedGroupChoices(), $this->list->getChoices());
-        $this->assertSame($this->getValues(), $this->list->getValues());
-        $this->assertEquals($this->getGroupPreferredViews(), $this->list->getPreferredViews());
-        $this->assertEquals($this->getGroupRemainingViews(), $this->list->getRemainingViews());
-        $this->assertSame($this->getLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForLabelChoicesForValues()));
-        $this->assertSame(array(), $this->list->getDataChoices());
-        // cache
-        $this->assertSame($this->getFormattedGroupChoices(), $this->list->getChoices());
-    }
-
-    public function testInitNestedArrayAjaxSearch()
-    {
-        $this->list->setAjax(true);
-        $this->list->setSearch($this->getQueryForSearchGroupChoices());
-
-        $this->assertSame($this->getSearchGroupChoices(), $this->list->getChoices());
-        $this->assertSame($this->getValues(), $this->list->getValues());
-        $this->assertEquals($this->getGroupPreferredViews(), $this->list->getPreferredViews());
-        $this->assertEquals($this->getGroupRemainingViews(), $this->list->getRemainingViews());
-        // cache
-        $this->assertSame($this->getSearchGroupChoices(), $this->list->getChoices());
-    }
-
-    public function testNonexistentValues()
-    {
-        $this->assertSame($this->getNonexistentLabelChoicesForValues(), $this->list->getLabelChoicesForValues($this->getListForNonexistentLabelChoicesForValues()));
-
         $this->list->setAllowAdd(true);
-        $this->assertSame($this->getNonexistentChoicesForValues(), $this->list->getChoicesForValues($this->getListForNonexistentChoicesForValues()));
+        $this->list->reset();
+
+        $this->assertEquals($this->getValidAllowAddFormattedChoicesForValues(), $this->list->getFormattedChoicesForValues($this->getAllowAddFormattedChoicesForValuesData()));
+    }
+
+    public function testPagination()
+    {
+        $this->list->setPageSize(1);
+        $this->list->reset();
+
+        $this->assertEquals($this->getValidSize(), $this->list->getSize());
+        $this->assertEquals($this->getValidPaginationFormattedChoices(), $this->list->getFormattedChoices());
     }
 
     /**
-     * @dataProvider dirtyValuesProvider
-     */
-    public function testGetValuesForChoicesDealsWithDirtyValues($choice, $value)
-    {
-        $choices = array(
-            '0' => 'Zero',
-            '1' => 'One',
-            '' => 'Empty',
-            '1.23' => 'Float',
-            'foo' => 'Foo',
-            'foo10' => 'Foo 10',
-        );
-
-        $this->list = new AjaxSimpleChoiceList($choices, array());
-
-        $this->assertSame(array($value), $this->list->getValuesForChoices(array($choice)));
-    }
-
-    public function dirtyValuesProvider()
-    {
-        return array(
-            array(0, '0'),
-            array('0', '0'),
-            array('1', '1'),
-            array(false, '0'),
-            array(true, '1'),
-            array('', ''),
-            array(null, ''),
-            array('1.23', '1.23'),
-            array('foo', 'foo'),
-            array('foo10', 'foo10'),
-        );
-    }
-
-    /**
+     * Creates choice list for tests.
+     *
      * @return AjaxChoiceListInterface
      */
-    abstract protected function createSimpleChoiceList();
+    abstract protected function createChoiceList();
 
     /**
-     * @return array
+     * Gets choice list size.
+     *
+     * @return int
      */
-    abstract protected function getFormattedChoices();
+    abstract protected function getValidSize();
 
     /**
+     * Valid data for getChoices test.
+     *
      * @return array
      */
-    abstract protected function getPreferredViews();
+    abstract protected function getValidChoices();
 
     /**
+     * Valid data for getValues test.
+     *
      * @return array
      */
-    abstract protected function getRemainingViews();
+    abstract protected function getValidValues();
 
     /**
+     * Data for getChoicesForValues test.
+     *
      * @return array
      */
-    abstract protected function getListForChoicesForValues();
+    abstract protected function getChoicesForValuesData();
 
     /**
+     * Valid data for getChoicesForValues test.
+     *
      * @return array
      */
-    abstract protected function getChoicesForValues();
+    abstract protected function getValidChoicesForValues();
 
     /**
+     * Data for getValuesForChoices test.
+     *
      * @return array
      */
-    abstract protected function getListForLabelChoicesForValues();
+    abstract protected function getValuesForChoicesData();
 
     /**
+     * Valid data for getValuesForChoices test.
+     *
      * @return array
      */
-    abstract protected function getLabelChoicesForValues();
+    abstract protected function getValidValuesForChoices();
 
     /**
+     * Valid data for getPreferredViews test.
+     *
      * @return array
      */
-    abstract protected function getQueryForSearchChoices();
+    abstract protected function getValidPreferredViews();
 
     /**
+     * Valid data for getRemainingViews test.
+     *
      * @return array
      */
-    abstract protected function getSearchChoices();
+    abstract protected function getValidRemainingViews();
 
     /**
-     * @return array
+     * Valid data for getFirstChoiceView test.
+     *
+     * @return ChoiceView|null
      */
-    abstract protected function getFormattedGroupChoices();
+    abstract protected function getValidFirstChoiceView();
 
     /**
+     * Data for getFormattedChoicesForValues test.
+     *
      * @return array
      */
-    abstract protected function getGroupPreferredViews();
+    abstract protected function getFormattedChoicesForValuesData();
 
     /**
+     * Valid data for getFormattedChoicesForValues test.
+     *
      * @return array
      */
-    abstract protected function getGroupRemainingViews();
+    abstract protected function getValidFormattedChoicesForValues();
 
     /**
+     * Valid data for getFormattedChoices test.
+     *
      * @return array
      */
-    abstract protected function getQueryForSearchGroupChoices();
+    abstract protected function getValidFormattedChoices();
 
     /**
+     * Data for getChoicesForValues allow add test.
+     *
      * @return array
      */
-    abstract protected function getSearchGroupChoices();
+    abstract protected function getAllowAddChoicesForValuesData();
 
     /**
+     * Valid data for getChoicesForValues allow add test.
+     *
      * @return array
      */
-    abstract protected function getListForNonexistentChoicesForValues();
+    abstract protected function getValidAllowAddChoicesForValues();
 
     /**
+     * Data for getValuesForChoices allow add test.
+     *
      * @return array
      */
-    abstract protected function getNonexistentChoicesForValues();
+    abstract protected function getAllowAddValuesForChoicesData();
 
     /**
+     * Valid data for getValuesForChoices allow add test.
+     *
      * @return array
      */
-    abstract protected function getListForNonexistentLabelChoicesForValues();
+    abstract protected function getValidAllowAddValuesForChoices();
 
     /**
+     * Data for getFormattedChoicesForValues allow add test.
+     *
      * @return array
      */
-    abstract protected function getNonexistentLabelChoicesForValues();
+    abstract protected function getAllowAddFormattedChoicesForValuesData();
+
+    /**
+     * Valid data for getFormattedChoicesForValues allow add test.
+     *
+     * @return array
+     */
+    abstract protected function getValidAllowAddFormattedChoicesForValues();
+
+    /**
+     * Valid data for getFormattedChoices pagination test.
+     *
+     * @return array
+     */
+    abstract protected function getValidPaginationFormattedChoices();
 }

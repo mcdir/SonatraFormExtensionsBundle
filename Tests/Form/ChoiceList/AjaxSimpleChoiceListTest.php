@@ -11,29 +11,29 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\ChoiceList;
 
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Sonatra\Bundle\FormExtensionsBundle\Tests\Form\ChoiceList\Fixtures\FixtureAjaxChoiceListFormatter;
+use Symfony\Component\Form\Tests\Extension\Core\ChoiceList\AbstractChoiceListTest;
 
 /**
  * Tests case for AJAX simple choice list.
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class AjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
+class AjaxSimpleChoiceListTest extends AbstractChoiceListTest
 {
+    /**
+     * @var AjaxChoiceListInterface
+     */
+    protected $list;
+
     protected function createChoiceList()
     {
-        return new AjaxSimpleChoiceList(array(
+        return new AjaxSimpleChoiceList(new FixtureAjaxChoiceListFormatter(), array(
             'Group 1' => array('a' => 'A', 'b' => 'B'),
             'Group 2' => array('c' => 'C', 'd' => 'D'),
         ), array('b', 'c'));
-    }
-
-    protected function createSimpleChoiceList()
-    {
-        return new AjaxSimpleChoiceList(array(
-            'a' => 'A', 'b' => 'B', 'c' => 'C', 'd' => 'D'
-        ), array('b'));
     }
 
     protected function getChoices()
@@ -56,99 +56,62 @@ class AjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
         return array(0, 1, 2, 3);
     }
 
-    protected function getFormattedChoices()
+    public function testDefaultConfig()
     {
-        return array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'a', 'text' => 'A'), 2 => array('id' => 'c', 'text' => 'C'), 3 => array('id' => 'd', 'text' => 'D'));
+        $this->assertFalse($this->list->getAllowAdd());
+        $this->assertEquals(10, $this->list->getPageSize());
+        $this->assertEquals(1, $this->list->getPageNumber());
+        $this->assertEquals('', $this->list->getSearch());
+        $this->assertCount(0, $this->list->getIds());
     }
 
-    protected function getPreferredViews()
+    public function testCustomConfig()
     {
-        return array(1 => new ChoiceView('b', 'b', 'B'));
+        $this->list->setAllowAdd(true);
+        $this->list->setPageSize(20);
+        $this->list->setPageNumber(2);
+        $this->list->setSearch('search');
+        $this->list->setIds(array('id1', 'id2'));
+
+        $this->assertTrue($this->list->getAllowAdd());
+        $this->assertEquals(20, $this->list->getPageSize());
+        $this->assertEquals(2, $this->list->getPageNumber());
+        $this->assertEquals('search', $this->list->getSearch());
+        $this->assertCount(2, $this->list->getIds());
     }
 
-    protected function getRemainingViews()
+    /**
+     * @dataProvider dirtyValuesProvider
+     */
+    public function testGetValuesForChoicesDealsWithDirtyValues($choice, $value)
     {
-        return array(0 => new ChoiceView('a', 'a', 'A'), 2 => new ChoiceView('c', 'c', 'C'), 3 => new ChoiceView('d', 'd', 'D'));
+        $choices = array(
+            '0' => 'Zero',
+            '1' => 'One',
+            '' => 'Empty',
+            '1.23' => 'Float',
+            'foo' => 'Foo',
+            'foo10' => 'Foo 10',
+        );
+
+        $this->list = new AjaxSimpleChoiceList(new FixtureAjaxChoiceListFormatter(), $choices, array());
+
+        $this->assertSame(array($value), $this->list->getValuesForChoices(array($choice)));
     }
 
-    protected function getListForChoicesForValues()
-    {
-        return array('c', 'b');
-    }
-
-    protected function getChoicesForValues()
-    {
-        return array(0 => 'c', 1 => 'b');
-    }
-
-    protected function getListForLabelChoicesForValues()
-    {
-        return array('c', 'b');
-    }
-
-    protected function getLabelChoicesForValues()
-    {
-        return array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C'));
-    }
-
-    protected function getQueryForSearchChoices()
-    {
-        return 'A';
-    }
-
-    protected function getSearchChoices()
-    {
-        return array(0 => array('id' => 'a', 'text' => 'A'));
-    }
-
-    protected function getFormattedGroupChoices()
-    {
-        return array(0 => array('text' => 'Group 1', 'children' => array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'a', 'text' => 'A'))), 1 => array('text' => 'Group 2', 'children' => array(0 => array('id' => 'c', 'text' => 'C'), 1 => array('id' => 'd', 'text' => 'D'))));
-    }
-
-    protected function getGroupPreferredViews()
+    public function dirtyValuesProvider()
     {
         return array(
-            'Group 1' => array(1 => new ChoiceView('b', 'b', 'B')),
-            'Group 2' => array(2 => new ChoiceView('c', 'c', 'C'))
+            array(0, '0'),
+            array('0', '0'),
+            array('1', '1'),
+            array(false, '0'),
+            array(true, '1'),
+            array('', ''),
+            array(null, ''),
+            array('1.23', '1.23'),
+            array('foo', 'foo'),
+            array('foo10', 'foo10'),
         );
-    }
-
-    protected function getGroupRemainingViews()
-    {
-        return array(
-            'Group 1' => array(0 => new ChoiceView('a', 'a', 'A')),
-            'Group 2' => array(3 => new ChoiceView('d', 'd', 'D'))
-        );
-    }
-
-    protected function getQueryForSearchGroupChoices()
-    {
-        return 'A';
-    }
-
-    protected function getSearchGroupChoices()
-    {
-        return array(0 => array('text' => 'Group 1', 'children' => array(0 => array('id' => 'a', 'text' => 'A'))));
-    }
-
-    protected function getListForNonexistentChoicesForValues()
-    {
-        return array('z');
-    }
-
-    protected function getNonexistentChoicesForValues()
-    {
-        return array(0 => 'z');
-    }
-
-    protected function getListForNonexistentLabelChoicesForValues()
-    {
-        return array('c', 'b', 'z');
-    }
-
-    protected function getNonexistentLabelChoicesForValues()
-    {
-        return array(0 => array('id' => 'b', 'text' => 'B'), 1 => array('id' => 'c', 'text' => 'C'), 2 => array('id' => 'z', 'text' => 'z'));
     }
 }
