@@ -12,7 +12,6 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Helper;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -33,13 +32,14 @@ class AjaxChoiceListHelper
     /**
      * Generates the ajax response.
      *
-     * @param Request                                                           $request
-     * @param AjaxChoiceListInterface|FormBuilderInterface|FormInterface||array $choiceList
-     * @param string                                                            $format
+     * @param Request                                                          $request
+     * @param AjaxChoiceListInterface|FormBuilderInterface|FormInterface|array $choiceList
+     * @param string                                                           $format
      *
      * @return Response
      *
      * @throws InvalidArgumentException When the format is not allowed
+     * @throws InvalidArgumentException When the choice list is not an instance of AjaxChoiceListInterface
      */
     public static function generateResponse(Request $request, $choiceList, $format = 'json')
     {
@@ -50,18 +50,7 @@ class AjaxChoiceListHelper
             throw new InvalidArgumentException(sprintf($msg, $format, implode("', '", $formats)));
         }
 
-        if ($choiceList instanceof FormInterface) {
-            $choiceList = $choiceList->getConfig();
-        }
-
-        if ($choiceList instanceof FormBuilderInterface) {
-            $choiceList = $choiceList->getAttribute('choice_list', $choiceList->getOption('choice_list'));
-        }
-
-        if (!$choiceList instanceof AjaxChoiceListInterface) {
-            $choiceList = new AjaxSimpleChoiceList($choiceList);
-        }
-
+        $choiceList = static::convertChoiceList($choiceList);
         $data = static::getData($request, $choiceList);
 
         $encoders = array(new XmlEncoder(), new JsonEncoder());
@@ -95,19 +84,60 @@ class AjaxChoiceListHelper
             $ajaxIds = explode(',', $ajaxIds);
         }
 
-        $choiceList->setAjax(true);
-        $choiceList->setExtractValues(true);
         $choiceList->setPageSize($request->get($prefix.'ps', $choiceList->getPageSize()));
         $choiceList->setPageNumber($request->get($prefix.'pn', $choiceList->getPageNumber()));
         $choiceList->setSearch($request->get($prefix.'s', ''));
         $choiceList->setIds($ajaxIds);
+        $choiceList->reset();
 
         return array(
             'length'      => $choiceList->getSize(),
             'page_number' => $choiceList->getPageNumber(),
             'page_size'   => $choiceList->getPageSize(),
             'search'      => $choiceList->getSearch(),
-            'results'     => $choiceList->getChoices(),
+            'results'     => $choiceList->getFormattedChoices(),
         );
+    }
+
+    /**
+     * Converts the choice list to AJAX Choice List.
+     *
+     * @param AjaxChoiceListInterface|FormBuilderInterface|FormInterface|array $choiceList
+     *
+     * @return AjaxChoiceListInterface
+     *
+     * @throws InvalidArgumentException When the choice list is not an instance of AjaxChoiceListInterface
+     */
+    protected static function convertChoiceList($choiceList)
+    {
+        if ($choiceList instanceof FormInterface) {
+            $choiceList = $choiceList->getConfig();
+        }
+
+        if ($choiceList instanceof FormBuilderInterface) {
+            $choiceList = $choiceList->getAttribute('choice_list', $choiceList->getOption('choice_list'));
+        }
+
+        if (is_array($choiceList)) {
+            $choiceList = static::createChoiceList($choiceList);
+        }
+
+        if (!$choiceList instanceof AjaxChoiceListInterface) {
+            throw new InvalidArgumentException('The "choiceList" argument must be an instance of "Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface" or an array with formatter');
+        }
+
+        return $choiceList;
+    }
+
+    /**
+     * Creates the ajax choice list.
+     *
+     * @param array $choices
+     *
+     * @return AjaxChoiceListInterface
+     */
+    protected static function createChoiceList(array $choices)
+    {
+        return $choices;
     }
 }
