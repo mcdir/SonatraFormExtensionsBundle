@@ -233,21 +233,18 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     public function getFirstChoiceView()
     {
         $choices = $this->getChoiceViews();
+        $firstChoice = null;
 
         if (count($choices) > 0) {
             $firstChoice = $choices[array_keys($choices)[0]];
 
-            if ($firstChoice instanceof ChoiceView) {
-                return $firstChoice;
-            }
-
             // group
-            if (is_array($firstChoice) && isset($firstChoice[0])) {
-                return $firstChoice[0];
+            if (is_array($firstChoice) && count($firstChoice) > 0) {
+                $firstChoice = $firstChoice[array_keys($firstChoice)[0]];
             }
         }
 
-        return null;
+        return $firstChoice;
     }
 
     /**
