@@ -17,7 +17,6 @@ use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceList
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -408,19 +407,14 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      * @param object $entity
      *
      * @return string The label
-     *
-     * @throws StringCastException When the "__toString()" method was not found on the object
      */
     protected function extractLabel($entity)
     {
         if ($this->labelPath) {
             return $this->propertyAccessor->getValue($entity, $this->labelPath);
-
-        } elseif (method_exists($entity, '__toString')) {
-            return (string) $entity;
         }
 
-        throw new StringCastException(sprintf('A "__toString()" method was not found on the objects of type "%s" passed to the choice field. To read a custom getter instead, set the argument $labelPath to the desired property path.', get_class($entity)));
+        return (string) $entity;
     }
 
     /**
