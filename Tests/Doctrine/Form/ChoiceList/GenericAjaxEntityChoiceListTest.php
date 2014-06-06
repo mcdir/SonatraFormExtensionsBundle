@@ -295,4 +295,52 @@ class GenericAjaxEntityChoiceListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(1, 2), $choiceList->getValuesForChoices(array($item1, $item2)));
         $this->assertEquals(array(1, 2), $choiceList->getIndicesForChoices(array($item1, $item2)));
     }
+
+    public function testDefaultConfig()
+    {
+        $item1 = new SingleIntIdEntity(1, 'Foo');
+        $item2 = new SingleIntIdEntity(2, 'Bar');
+
+        $this->em->persist($item1);
+        $this->em->persist($item2);
+
+        $choiceList = new AjaxEntityChoiceList(
+            new FixtureAjaxChoiceListFormatter(),
+            $this->em,
+            'SymfonyTestsDoctrine:SingleIntIdEntity'
+        );
+
+        $this->assertFalse($choiceList->getAllowAdd());
+        $this->assertEquals(10, $choiceList->getPageSize());
+        $this->assertEquals(1, $choiceList->getPageNumber());
+        $this->assertEquals('', $choiceList->getSearch());
+        $this->assertCount(0, $choiceList->getIds());
+    }
+
+    public function testCustomConfig()
+    {
+        $item1 = new SingleIntIdEntity(1, 'Foo');
+        $item2 = new SingleIntIdEntity(2, 'Bar');
+
+        $this->em->persist($item1);
+        $this->em->persist($item2);
+
+        $choiceList = new AjaxEntityChoiceList(
+            new FixtureAjaxChoiceListFormatter(),
+            $this->em,
+            'SymfonyTestsDoctrine:SingleIntIdEntity'
+        );
+
+        $choiceList->setAllowAdd(true);
+        $choiceList->setPageSize(20);
+        $choiceList->setPageNumber(2);
+        $choiceList->setSearch('search');
+        $choiceList->setIds(array('id1', 'id2'));
+
+        $this->assertTrue($choiceList->getAllowAdd());
+        $this->assertEquals(20, $choiceList->getPageSize());
+        $this->assertEquals(2, $choiceList->getPageNumber());
+        $this->assertEquals('search', $choiceList->getSearch());
+        $this->assertCount(2, $choiceList->getIds());
+    }
 }
