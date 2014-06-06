@@ -15,6 +15,7 @@ use Doctrine\ORM\QueryBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
@@ -110,7 +111,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $this->ids = array();
         $this->class = $class;
         $this->labelPath = $labelPath;
-        $this->propertyAccessor = $propertyAccessor;
+        $this->propertyAccessor = null === $propertyAccessor ? PropertyAccess::createPropertyAccessor() : $propertyAccessor;
         $this->entityLoader = $entityLoader;
         $this->manager = $manager;
 
