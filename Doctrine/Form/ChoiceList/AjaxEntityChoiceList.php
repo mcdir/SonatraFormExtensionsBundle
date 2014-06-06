@@ -273,15 +273,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             $choices = $this->getChoices();
             $this->size = count($choices);
 
-            // group
-            if ($this->size > 0 && is_array($choices[array_keys($choices)[0]])) {
-                $this->size = 0;
-
-                foreach ($choices as $subChoices) {
-                    $this->size += count($subChoices);
-                }
-            }
-
         } elseif ($this->size instanceof QueryBuilder) {
             $qb = $this->size;
             $entityAlias = $qb->getRootAliases()[0];
