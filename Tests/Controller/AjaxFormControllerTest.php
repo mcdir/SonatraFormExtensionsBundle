@@ -67,6 +67,8 @@ class AjaxFormControllerTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $this->controller = null;
+        $this->helper = null;
+        $this->request = null;
     }
 
     public function testAjaxChoiceListAction()
