@@ -84,8 +84,8 @@ class AjaxChoiceListHelper
             $ajaxIds = explode(',', $ajaxIds);
         }
 
-        $choiceList->setPageSize($request->get($prefix.'ps', $choiceList->getPageSize()));
-        $choiceList->setPageNumber($request->get($prefix.'pn', $choiceList->getPageNumber()));
+        $choiceList->setPageSize(intval($request->get($prefix.'ps', $choiceList->getPageSize())));
+        $choiceList->setPageNumber(intval($request->get($prefix.'pn', $choiceList->getPageNumber())));
         $choiceList->setSearch($request->get($prefix.'s', ''));
         $choiceList->setIds($ajaxIds);
         $choiceList->reset();
