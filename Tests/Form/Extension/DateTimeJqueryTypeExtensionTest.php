@@ -17,7 +17,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 /**
- * Tests case for birthday jquery form extension type.
+ * Tests case for datetime jquery form extension type.
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
