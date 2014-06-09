@@ -16,7 +16,7 @@ use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
-use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
+use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputSubscriber;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -97,7 +97,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         }
 
         if ($options['select2']['ajax'] && $options['multiple']) {
-            $builder->addEventSubscriber(new FixStringInputListener());
+            $builder->addEventSubscriber(new FixStringInputSubscriber());
         }
     }
 

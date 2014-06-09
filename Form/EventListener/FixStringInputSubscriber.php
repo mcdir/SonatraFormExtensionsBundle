@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormEvent;
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class FixStringInputListener implements EventSubscriberInterface
+class FixStringInputSubscriber implements EventSubscriberInterface
 {
     /**
      * {@inheritdoc}

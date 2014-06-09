@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormFactory;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputListener;
+use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputSubscriber;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -56,7 +56,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
             return;
         }
 
-        $builder->addEventSubscriber(new FixStringInputListener());
+        $builder->addEventSubscriber(new FixStringInputSubscriber());
 
         $choiceList = $builder->getAttribute('prototype')->getConfig()->getOption('choice_list');
         $routeName = $builder->getAttribute('prototype')->getConfig()->getAttribute('select2_ajax_route');
