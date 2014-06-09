@@ -107,14 +107,13 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
             $formater->setLenient(false);
             $pattern = $formater->getPattern();
 
-            if (false !== strpos($pattern, 'yyyy')) {
-                return $pattern;
+            if (false === strpos($pattern, 'yyyy')) {
+                if (false !== strpos($pattern, 'yy')) {
+                    $pattern = str_replace('yy', 'yyyy', $pattern);
 
-            } elseif (false !== strpos($pattern, 'yy')) {
-                $pattern = str_replace('yy', 'yyyy', $pattern);
-
-            } elseif (false !== strpos($pattern, 'y')) {
-                $pattern = str_replace('y', 'yyyy', $pattern);
+                } elseif (false !== strpos($pattern, 'y')) {
+                    $pattern = str_replace('y', 'yyyy', $pattern);
+                }
             }
 
             return $pattern;
