@@ -62,7 +62,9 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
         $routeName = $builder->getAttribute('prototype')->getConfig()->getAttribute('select2_ajax_route');
 
         if (null === $choiceList) {
-            $choiceList = new AjaxSimpleChoiceList(new Select2AjaxChoiceListFormatter(), $options['select2']['tags']);
+            $tags = $options['select2']['tags'];
+            $tags = isset($tags) ? $tags : array();
+            $choiceList = new AjaxSimpleChoiceList(new Select2AjaxChoiceListFormatter(), $tags);
             $choiceList->setAllowAdd($options['allow_add']);
             $choiceList->setPageSize($options['select2']['page_size']);
             $choiceList->setPageNumber(1);
@@ -73,7 +75,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
 
         $builder->setAttribute('choice_list', $choiceList);
 
-        if (null === $options['select2']['ajax_route']&& $options['select2']['ajax']
+        if (null === $options['select2']['ajax_route'] && $options['select2']['ajax']
                 && null !== $options['type'] && null !== $routeName) {
             $builder->setAttribute('select2_ajax_route', $routeName);
         }
@@ -101,7 +103,9 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
             )),
         ));
 
-        $view->vars['value'] = $choiceList->getValuesForChoices($view->vars['value']);
+        if (!empty($view->vars['value'])) {
+            $view->vars['value'] = $choiceList->getValuesForChoices($view->vars['value']);
+        }
     }
 
     /**
@@ -164,11 +168,14 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
                     $value = array_merge($value, array(
                         'multiple'  => false,
                         'select2'   => array_merge(array_key_exists('select2', $value) ? $value['select2'] : array(), array(
-                            'enabled'    => $options['select2']['enabled'],
-                            'ajax'       => $options['select2']['ajax'],
-                            'ajax_route' => $options['select2']['ajax_route'],
-                            'page_size'  => $options['select2']['page_size'],
-                            'allow_add'  => true,
+                            'enabled'             => $options['select2']['enabled'],
+                            'ajax'                => $options['select2']['ajax'],
+                            'ajax_route'          => $options['select2']['ajax_route'],
+                            'ajax_parameters'     => $options['select2']['ajax_parameters'],
+                            'ajax_reference_type' => $options['select2']['ajax_reference_type'],
+                            'page_size'           => $options['select2']['page_size'],
+                            'tags'                => $options['select2']['tags'],
+                            'allow_add'           => $options['allow_add'],
                         )),
                     ));
                 }
