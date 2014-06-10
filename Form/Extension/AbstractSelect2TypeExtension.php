@@ -22,7 +22,6 @@ use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransf
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -126,12 +125,9 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 $routeReferenceType = $options['select2']['ajax_reference_type'];
                 $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
 
-            } elseif (isset($choiceList)) {
+            } else {
                 $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->request, $choiceList);
                 $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
-
-            } else {
-                throw new InvalidConfigurationException('The "ajax_route" option of "select2" option must be present if the form use the ajax request');
             }
         }
 
