@@ -82,15 +82,21 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
                 );
             }
 
+            if ($value instanceof AjaxEntityChoiceList) {
+                $value->setLazy($options['lazy']);
+            }
+
             return $value;
         };
 
         $resolver->setDefaults(array(
+            'lazy'        => false,
             'loader'      => $loader,
             'choice_list' => $choiceList,
         ));
 
         $resolver->setAllowedTypes(array(
+            'lazy'   => 'bool',
             'loader' => 'Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader',
         ));
     }

@@ -15,6 +15,7 @@ use Doctrine\ORM\QueryBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
+use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
@@ -86,6 +87,21 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     private $manager;
 
     /**
+     * @var bool
+     */
+    private $lazy;
+
+    /**
+     * @var QueryBuilder
+     */
+    private $qbForGetChoices;
+
+    /**
+     * @var array<string, array<int, object>>
+     */
+    private $lazyCache;
+
+    /**
      * Creates a new ajax entity choice list.
      *
      * @param AjaxChoiceListFormatterInterface $formatter         The formatter
@@ -113,8 +129,30 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
         $this->propertyAccessor = null === $propertyAccessor ? PropertyAccess::createPropertyAccessor() : $propertyAccessor;
         $this->entityLoader = $entityLoader;
         $this->manager = $manager;
+        $this->lazy = false;
+        $this->lazyCache = array();
 
         parent::__construct($manager, $class, $labelPath, $entityLoader, $entities,  $preferredEntities, $groupPath, $propertyAccessor);
+    }
+
+    /**
+     * Defines if the choice list uses lazy loading.
+     *
+     * @param bool $value
+     */
+    public function setLazy($value)
+    {
+        $this->lazy = (boolean) $value;
+    }
+
+    /**
+     * Checks if the choice list uses the lazy loading.
+     *
+     * @return bool
+     */
+    public function isLazy()
+    {
+        return $this->lazy;
     }
 
     /**
@@ -122,7 +160,34 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getChoicesForValues(array $values)
     {
+        if (empty($values) || '' === implode('', $values)) {
+            return array();
+        }
+
         $choices = parent::getChoicesForValues($values);
+
+        if ($this->isLazy() && null !== $this->qbForGetChoices && count($values) !== count($choices)) {
+            $identifier = $this->manager->getClassMetadata($this->class)->getIdentifierFieldNames()[0];
+            $findValues = $values;
+
+            foreach ($choices as $choice) {
+                $findValues[] = $this->propertyAccessor->getValue($choice, $identifier);
+            }
+
+            $findValues = array_unique($findValues);
+            $cacheId = implode(',', $findValues);
+
+            if (!isset($this->lazyCache[$cacheId])) {
+                $qb = clone $this->qbForGetChoices;
+                $entityAlias = $qb->getRootAliases()[0];
+                $qb->andWhere($qb->expr()->in($entityAlias.'.'.$identifier, $findValues));
+
+                $this->lazyCache[$cacheId] = $qb->getQuery()->getResult();
+            }
+
+            $choices = $this->lazyCache[$cacheId];
+        }
+
         $idChoices = parent::getValuesForChoices($choices);
 
         if ($this->getAllowAdd()) {
@@ -192,7 +257,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getFormattedChoices()
     {
-        if ($this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
+        if (!$this->isLazy()
+                && $this->entityLoader instanceof AjaxORMQueryBuilderLoader
+                && $this->getPageSize() > 0) {
             $qb = $this->entityLoader->getQueryBuilder();
 
             $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
@@ -268,17 +335,17 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getSize()
     {
-        if (null === $this->size) {
-            $choices = $this->getChoices();
-            $this->size = count($choices);
-
-        } elseif ($this->size instanceof QueryBuilder) {
+        if ($this->size instanceof QueryBuilder) {
             $qb = $this->size;
             $entityAlias = $qb->getRootAliases()[0];
 
             $qb->setParameters($qb->getParameters());
             $qb->select("count($entityAlias)");
             $this->size = (integer) $qb->getQuery()->getSingleScalarResult();
+
+        } elseif (null === $this->size) {
+            $choices = $this->getChoices();
+            $this->size = count($choices);
         }
 
         return $this->size;
@@ -354,6 +421,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     public function reset()
     {
         $this->size = null;
+        $this->lazyCache = array();
+        $this->qbForGetChoices = null;
 
         $ref = new \ReflectionClass($this);
         $parent = $ref->getParentClass();
@@ -365,8 +434,11 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             $this->entityLoader->reset();
 
             $qb = $this->entityLoader->getQueryBuilder();
-
             $entityAlias = $qb->getRootAliases()[0];
+
+            if ($this->isLazy()) {
+                $this->qbForGetChoices = clone $qb;
+            }
 
             if (null !== $this->labelPath) {
                 // search filter
@@ -380,15 +452,16 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
             if (null !== $this->getPageSize()) {
                 $this->size = clone $qb;
             }
-        }
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function initialize($choices, array $labels, array $preferredChoices)
-    {
-        parent::initialize($choices, $labels, $preferredChoices);
+            // pagination
+            if ($this->isLazy() && $this->getPageSize() > 0) {
+                $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
+                    ->setMaxResults($this->getPageSize());
+            }
+
+        } elseif ($this->isLazy()) {
+            throw new InvalidConfigurationException('The lazy loading of ajax entity choice list must have a "Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader"');
+        }
     }
 
     /**
