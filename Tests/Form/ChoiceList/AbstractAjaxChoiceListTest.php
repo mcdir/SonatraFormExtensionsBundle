@@ -137,6 +137,23 @@ abstract class AbstractAjaxChoiceListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getValidPaginationFormattedChoices(), $this->list->getFormattedChoices());
     }
 
+    public function testWithoutPagination()
+    {
+        $this->list->setPageSize(0);
+        $this->list->reset();
+
+        $this->assertEquals($this->getValidSize(), $this->list->getSize());
+        $this->assertSame($this->getValidChoices(), $this->list->getChoices());
+        $this->assertSame($this->getValidValues(), $this->list->getValues());
+        $this->assertSame($this->getValidChoicesForValues(), $this->list->getChoicesForValues($this->getChoicesForValuesData()));
+        $this->assertSame($this->getValidValuesForChoices(), $this->list->getChoicesForValues($this->getValuesForChoicesData()));
+        $this->assertEquals($this->getValidPreferredViews(), $this->list->getPreferredViews());
+        $this->assertEquals($this->getValidRemainingViews(), $this->list->getRemainingViews());
+        $this->assertEquals($this->getValidFirstChoiceView(), $this->list->getFirstChoiceView());
+        $this->assertEquals($this->getValidFormattedChoicesForValues(), $this->list->getFormattedChoicesForValues($this->getFormattedChoicesForValuesData()));
+        $this->assertEquals($this->getValidFormattedChoices(), $this->list->getFormattedChoices());
+    }
+
     /**
      * Creates choice list for tests.
      *
