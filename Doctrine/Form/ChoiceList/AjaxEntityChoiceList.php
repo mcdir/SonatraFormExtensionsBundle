@@ -15,10 +15,12 @@ use Doctrine\ORM\QueryBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
+use Symfony\Component\Form\Exception\RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -69,6 +71,13 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
      * @var string
      */
     private $labelPath;
+
+    /**
+     * The property path used for object grouping.
+     *
+     * @var PropertyPath
+     */
+    private $groupPath;
 
     /**
      * @var PropertyAccessorInterface
@@ -162,11 +171,11 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
         $choices = parent::getChoicesForValues($values);
 
         if ($this->isLazy() && null !== $this->qbForGetChoices && count($values) !== count($choices)) {
-            $identifier = $this->manager->getClassMetadata($this->class)->getIdentifierFieldNames()[0];
+            $identifier = current($this->manager->getClassMetadata($this->class)->getIdentifierFieldNames());
             $findValues = $values;
 
             foreach ($choices as $choice) {
-                $findValues[] = $this->propertyAccessor->getValue($choice, $identifier);
+                $findValues[] = current($this->getIdentifierValues($choice));
             }
 
             $findValues = array_unique($findValues);
@@ -509,5 +518,32 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
         }
 
         return new ChoiceView($entity, $value, $label);
+    }
+
+    /**
+     * Returns the values of the identifier fields of an entity.
+     *
+     * Doctrine must know about this entity, that is, the entity must already
+     * be persisted or added to the identity map before. Otherwise an
+     * exception is thrown.
+     *
+     * @param object $entity The entity for which to get the identifier
+     *
+     * @return array The identifier values
+     *
+     * @throws RuntimeException If the entity does not exist in Doctrine's identity map
+     */
+    protected function getIdentifierValues($entity)
+    {
+        if (!$this->manager->contains($entity)) {
+            throw new RuntimeException(
+                'Entities passed to the choice field must be managed. Maybe ' .
+                'persist them in the entity manager?'
+            );
+        }
+
+        $this->manager->initializeObject($entity);
+
+        return $this->manager->getClassMetadata($this->class)->getIdentifierValues($entity);
     }
 }
