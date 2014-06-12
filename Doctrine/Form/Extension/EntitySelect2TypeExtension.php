@@ -12,6 +12,7 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 
 use Doctrine\ORM\EntityManager;
+use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\Options;
@@ -19,7 +20,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader;
 
@@ -68,7 +68,7 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
         };
 
         $choiceList = function (Options $options, $value) use ($propertyAccessor) {
-            if (!$value instanceof AjaxChoiceListInterface) {
+            if (!$value instanceof AjaxEntityChoiceListInterface) {
                 $value = new AjaxEntityChoiceList(
                     isset($options['select2']) ? $options['select2']['formatter'] : new Select2AjaxChoiceListFormatter(),
                     $options['em'],

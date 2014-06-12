@@ -12,7 +12,6 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList;
 
 use Doctrine\ORM\QueryBuilder;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
@@ -24,7 +23,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInterface
+class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceListInterface
 {
     /**
      * @var AjaxChoiceListFormatterInterface
@@ -136,9 +135,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     }
 
     /**
-     * Defines if the choice list uses lazy loading.
-     *
-     * @param bool $value
+     * {@inheritdoc}
      */
     public function setLazy($value)
     {
@@ -146,9 +143,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
     }
 
     /**
-     * Checks if the choice list uses the lazy loading.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isLazy()
     {

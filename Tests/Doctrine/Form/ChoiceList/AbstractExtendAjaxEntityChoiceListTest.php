@@ -12,6 +12,7 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Doctrine\Form\ChoiceList;
 
 use Doctrine\ORM\Tools\SchemaTool;
+use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Tests\Form\ChoiceList\AbstractAjaxChoiceListTest;
 use Symfony\Bridge\Doctrine\Test\DoctrineTestHelper;
 
@@ -35,6 +36,11 @@ abstract class AbstractExtendAjaxEntityChoiceListTest extends AbstractAjaxChoice
      * @var array
      */
     protected $items;
+
+    /**
+     * @var AjaxEntityChoiceListInterface
+     */
+    protected $list;
 
     protected function setUp()
     {
