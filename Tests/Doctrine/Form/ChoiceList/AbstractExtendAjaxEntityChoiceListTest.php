@@ -89,4 +89,12 @@ abstract class AbstractExtendAjaxEntityChoiceListTest extends AbstractAjaxChoice
         $this->em = null;
         $this->items = null;
     }
+
+    public function testLazyLoading()
+    {
+        $this->list->setLazy(true);
+        $this->list->reset();
+
+        $this->assertEquals($this->getValidChoicesForValues(), $this->list->getChoicesForValues($this->getChoicesForValuesData()));
+    }
 }

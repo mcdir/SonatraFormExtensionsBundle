@@ -343,4 +343,20 @@ class GenericAjaxEntityChoiceListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('search', $choiceList->getSearch());
         $this->assertCount(2, $choiceList->getIds());
     }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage The lazy loading of ajax entity choice list must have a "Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader"
+     */
+    public function testLazyWithoutEntityLoader()
+    {
+        $choiceList = new AjaxEntityChoiceList(
+            new FixtureAjaxChoiceListFormatter(),
+            $this->em,
+            'SymfonyTestsDoctrine:SingleIntIdEntity'
+        );
+
+        $choiceList->setLazy(true);
+        $choiceList->reset();
+    }
 }
