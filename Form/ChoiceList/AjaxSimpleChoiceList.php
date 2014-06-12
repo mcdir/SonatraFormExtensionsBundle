@@ -185,6 +185,10 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         $startTo = ($this->getPageNumber() - 1) * $this->getPageSize();
         $endTo = $startTo + $this->getPageSize();
 
+        if (0 >= $this->getPageSize()) {
+            $endTo = $this->getSize();
+        }
+
         if ($endTo > $this->getSize()) {
             $endTo = $this->getSize();
         }
