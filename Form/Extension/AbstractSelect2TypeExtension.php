@@ -236,6 +236,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 $select2Resolver->setDefaults(array(
                     'enabled'                    => $enabled,
                     'wrapper_attr'               => array(),
+                    'formatter'                  => new Select2AjaxChoiceListFormatter(),
                     'allow_add'                  => false,
                     'ajax'                       => false,
                     'ajax_route'                 => null,
@@ -274,6 +275,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 $select2Resolver->setAllowedTypes(array(
                     'enabled'             => 'bool',
                     'wrapper_attr'        => 'array',
+                    'formatter'           => 'Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface',
                     'allow_add'           => 'bool',
                     'ajax'                => 'bool',
                     'ajax_route'          => array('null', 'string'),
@@ -313,7 +315,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             $normalizers['choice_list'] = function (Options $options, $value) {
                 if ($options['select2']['enabled']) {
                     if (!$value instanceof AjaxChoiceListInterface) {
-                        $value = new AjaxSimpleChoiceList(new Select2AjaxChoiceListFormatter(), $options['choices'], $options['preferred_choices']);
+                        $value = new AjaxSimpleChoiceList($options['select2']['formatter'], $options['choices'], $options['preferred_choices']);
                     }
 
                     $value->setAllowAdd($options['select2']['allow_add']);

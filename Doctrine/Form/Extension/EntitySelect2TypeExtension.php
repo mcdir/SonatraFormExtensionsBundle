@@ -70,7 +70,7 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
         $choiceList = function (Options $options, $value) use ($propertyAccessor) {
             if (!$value instanceof AjaxChoiceListInterface) {
                 $value = new AjaxEntityChoiceList(
-                    new Select2AjaxChoiceListFormatter(),
+                    isset($options['select2']) ? $options['select2']['formatter'] : new Select2AjaxChoiceListFormatter(),
                     $options['em'],
                     $options['class'],
                     $options['property'],
