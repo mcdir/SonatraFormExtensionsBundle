@@ -18,6 +18,7 @@ Features include:
 - Select2 tags compatible for:
   * collection form type
   * collection entity form type
+- Select2 lazy loading for get the selected choices with a big repository
 - Select2 AJAX search filter compatible
 - Select2 AJAX request with specific route optimized, already existing for:
   * country form type
