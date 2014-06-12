@@ -444,16 +444,16 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
             $qb = $this->entityLoader->getQueryBuilder();
             $entityAlias = $qb->getRootAliases()[0];
 
-            if ($this->isLazy()) {
-                $this->qbForGetChoices = clone $qb;
-            }
-
             if (null !== $this->labelPath) {
                 // search filter
                 if (null !== $this->getSearch() && '' !== $this->getSearch() && $this->labelPath) {
                     $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->labelPath}", ":{$this->labelPath}" ));
                     $qb->setParameter($this->labelPath, "%{$this->getSearch()}%");
                 }
+            }
+
+            if ($this->isLazy()) {
+                $this->qbForGetChoices = clone $qb;
             }
 
             // clone query builder for always get the real size
