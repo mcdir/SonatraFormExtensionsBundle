@@ -15,7 +15,6 @@ use Doctrine\ORM\QueryBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
-use Symfony\Component\Form\Exception\RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
@@ -523,25 +522,12 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     /**
      * Returns the values of the identifier fields of an entity.
      *
-     * Doctrine must know about this entity, that is, the entity must already
-     * be persisted or added to the identity map before. Otherwise an
-     * exception is thrown.
-     *
      * @param object $entity The entity for which to get the identifier
      *
      * @return array The identifier values
-     *
-     * @throws RuntimeException If the entity does not exist in Doctrine's identity map
      */
     protected function getIdentifierValues($entity)
     {
-        if (!$this->manager->contains($entity)) {
-            throw new RuntimeException(
-                'Entities passed to the choice field must be managed. Maybe ' .
-                'persist them in the entity manager?'
-            );
-        }
-
         $this->manager->initializeObject($entity);
 
         return $this->manager->getClassMetadata($this->class)->getIdentifierValues($entity);
