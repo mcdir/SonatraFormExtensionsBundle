@@ -335,13 +335,17 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxChoiceListInt
      */
     public function getSize()
     {
-        if ($this->size instanceof QueryBuilder) {
+        if ($this->size instanceof QueryBuilder && $this->getPageSize() > 0) {
             $qb = $this->size;
             $entityAlias = $qb->getRootAliases()[0];
 
             $qb->setParameters($qb->getParameters());
             $qb->select("count($entityAlias)");
             $this->size = (integer) $qb->getQuery()->getSingleScalarResult();
+
+        } elseif ($this->size instanceof QueryBuilder) {
+            $choices = $this->getChoices();
+            $this->size = count($choices);
 
         } elseif (null === $this->size) {
             $choices = $this->getChoices();
