@@ -15,7 +15,7 @@
             {{ block('base_choice_widget') }}
         {% endif %}
     </div>
-    {% asset_javascript %}
+    {% embed_javascript %}
         <script type="text/javascript">
         $( '#{{ id }}' ).select2( {
             {% if select2.minimum_input_length is not null %}minimumInputLength: {{ select2.minimum_input_length }},{% endif %}
@@ -120,7 +120,7 @@
         }){% endif %};
         $('input.select2-focusser', $( '#{{ id }}' ).data('select2').container).attr('readonly', 'readonly');
         </script>
-    {% endasset %}
+    {% endembed_javascript %}
 {% endspaceless %}
 {% endblock select2_widget_content %}
 
