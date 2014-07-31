@@ -21,7 +21,7 @@
     "require" : {
         "php" : ">=5.3.2",
         "symfony/framework-bundle" : "~2.4",
-        "sonatra/twig-extensions-bundle" : "~1.0",
+        "sonatra/assetic-extra-bundle" : "~1.0",
         "sonatra/ajax-bundle" : "~1.0",
         "symfony/serializer": "~2.4",
         "symfony/form": "~2.4",
@@ -29,7 +29,7 @@
         "sonatra_jquery/jquery" : "1.11.*",
         "sonatra_ivaynberg/select2" : "~3.4",
         "sonatra_moment/moment": "~2.5",
-        "sonatra_eightmedia/hammer-js": "~1.1",
+        "sonatra_hammerjs/hammer-js": "~2.0",
         "sonatra_aterrien/jquery-knob": "1.2.*"
     },
     "require-dev" : {
