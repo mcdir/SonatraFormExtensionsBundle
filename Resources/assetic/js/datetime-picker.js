@@ -23,7 +23,7 @@
  *
  * @typedef {DatetimePicker} DatetimePicker
  * @typedef {function} moment.clone
- * @typedef {function} moment.lang
+ * @typedef {function} moment.localeData
  * @typedef {function} moment.format
  */
 (function ($) {
@@ -518,11 +518,11 @@
      * @private
      */
     function generateWeekdays(self) {
-        var lang = moment.langData(self.options.locale),
+        var lang = moment.localeData(self.options.locale),
             wekkdaysMin = '_weekdaysMin',
             week = '_week',
             days = lang[wekkdaysMin].slice(),
-            startDay = moment.langData(self.options.locale)[week].dow,
+            startDay = moment.localeData(self.options.locale)[week].dow,
             endDays = days.splice(0, startDay),
             $days = $('.dtp-body-header-days', self.$picker),
             i;
@@ -559,14 +559,14 @@
             j;
 
         today = moment();
-        today.lang(self.options.locale);
+        today.localeData(self.options.locale);
         startDay = date.clone().startOf('month');
         currentDay = startDay.clone();
         $calendar = $('<div class="dtp-body-calendar" data-calendar-name="' + name + '"></div>');
 
         if (1 === currentDay.clone().startOf('week').date()) {
-            startDay.add('days', -7);
-            currentDay.add('days', -7);
+            startDay.add(-7, 'days');
+            currentDay.add(-7, 'days');
         }
 
         currentDay.startOf('week');
@@ -598,7 +598,7 @@
 
                 $week.append($day);
 
-                currentDay.add('days', 1);
+                currentDay.add(1, 'days');
             }
 
             $calendar.append($week);
@@ -631,22 +631,22 @@
         $calendarCurrent = generateCalendar(self, 'current', date);
         $calendars.append($calendarCurrent);
 
-        $calendarPreviousMonth = generateCalendar(self, 'previous-month', date.clone().add('month', -1));
+        $calendarPreviousMonth = generateCalendar(self, 'previous-month', date.clone().add(-1, 'month'));
         $calendarPreviousMonth.css('-webkit-transform', 'translate3d(-100%, 0px, 0px)');
         $calendarPreviousMonth.css('transform', 'translate3d(-100%, 0px, 0px)');
         $calendars.append($calendarPreviousMonth);
 
-        $calendarNextMonth = generateCalendar(self, 'next-month', date.clone().add('month', 1));
+        $calendarNextMonth = generateCalendar(self, 'next-month', date.clone().add(1, 'month'));
         $calendarNextMonth.css('-webkit-transform', 'translate3d(100%, 0px, 0px)');
         $calendarNextMonth.css('transform', 'translate3d(100%, 0px, 0px)');
         $calendars.append($calendarNextMonth);
 
-        $calendarPreviousYear = generateCalendar(self, 'previous-year', date.clone().add('year', -1));
+        $calendarPreviousYear = generateCalendar(self, 'previous-year', date.clone().add(-1, 'year'));
         $calendarPreviousYear.css('-webkit-transform', 'translate3d(0px, -100%, 0px)');
         $calendarPreviousYear.css('transform', 'translate3d(0px, -100%, 0px)');
         $calendars.append($calendarPreviousYear);
 
-        $calendarNextYear = generateCalendar(self, 'next-year', date.clone().add('year', 1));
+        $calendarNextYear = generateCalendar(self, 'next-year', date.clone().add(1, 'year'));
         $calendarNextYear.css('-webkit-transform', 'translate3d(0px, 100%, 0px)');
         $calendarNextYear.css('transform', 'translate3d(0px, 100%, 0px)');
         $calendars.append($calendarNextYear);
@@ -1038,10 +1038,10 @@
             '<div class="' + this.options.classHeaderPicker + '-tabs">',
             '<ul class="' + this.options.classHeaderPicker + '-nav-tabs">',
             '<li data-role="tab" class="' + this.options.classHeaderPicker + '-nav-tab dtp-tab-date">',
-            '<span class="dtp-show-tab">' + this.langData().date + '</span>',
+            '<span class="dtp-show-tab">' + this.localeData().date + '</span>',
             '</li>',
             '<li data-role="tab" class="' + this.options.classHeaderPicker + '-nav-tab dtp-tab-time">',
-            '<span class="dtp-show-tab">' + this.langData().time + '</span>',
+            '<span class="dtp-show-tab">' + this.localeData().time + '</span>',
             '</li>',
             '</ul>',
             '</div>',
@@ -1079,11 +1079,11 @@
             '<div class="dtp-body-time-wrapper time-has-hours">',
             '<div class="dtp-body-time-display">',
             '<span class="dtp-body-time-display-hours"></span>',
-            '<span class="dtp-body-time-display-hours-split">' + this.langData().hours + '</span>',
+            '<span class="dtp-body-time-display-hours-split">' + this.localeData().hours + '</span>',
             '<span class="dtp-body-time-display-minutes"></span>',
-            '<span class="dtp-body-time-display-minutes-split">' + this.langData().minutes + '</span>',
+            '<span class="dtp-body-time-display-minutes-split">' + this.localeData().minutes + '</span>',
             '<span class="dtp-body-time-display-seconds"></span>',
-            '<span class="dtp-body-time-display-seconds-split">' + this.langData().seconds + '</span>',
+            '<span class="dtp-body-time-display-seconds-split">' + this.localeData().seconds + '</span>',
             '</div>',
             '<div class="dtp-body-time-display-meridiem">',
             '<span class="dtp-body-time-display-meridiem-btn"></span>',
@@ -1103,9 +1103,9 @@
             '</div>',
             '</div>',
             '<div class="' + this.options.classFooterPicker + '">',
-            '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-cancel"><span>' + this.langData().cancel + '</span></span>',
-            '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-clear"><span>' + this.langData().clear + '</span></span>',
-            '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-define"><span>' + this.langData().define + '</span></span>',
+            '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-cancel"><span>' + this.localeData().cancel + '</span></span>',
+            '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-clear"><span>' + this.localeData().clear + '</span></span>',
+            '<span class="' + this.options.classFooterPicker + '-btn dtp-btn-define"><span>' + this.localeData().define + '</span></span>',
             '</div>',
             '</div>'
         ].join(''));
@@ -1121,7 +1121,7 @@
             this.currentDate = moment(value, format);
         }
 
-        this.currentDate.lang(this.options.locale);
+        this.currentDate.localeData(this.options.locale);
 
         generateWeekdays(this);
         generateTimer(this);
@@ -1254,7 +1254,7 @@
      *
      * @this DatetimePicker
      */
-    DatetimePicker.prototype.langData = function (locale) {
+    DatetimePicker.prototype.localeData = function (locale) {
         if (undefined === locale) {
             locale = this.options.locale;
         }
@@ -1278,7 +1278,7 @@
         if (typeof date === 'string') {
             /* @type {moment} */
             date = moment(date, this.options.format);
-            date.lang(this.options.locale);
+            date.localeData(this.options.locale);
         }
 
         if (null !== date) {
@@ -1319,7 +1319,7 @@
             this.currentDate = moment(value, format);
         }
 
-        this.currentDate.lang(this.options.locale);
+        this.currentDate.localeData(this.options.locale);
 
         this.refreshPicker();
     };
@@ -1365,7 +1365,7 @@
 
         // months list
         $months = $('.dtp-choice-month-value', $body);
-        monthList = moment.langData()[monthsShort];
+        monthList = moment.localeData()[monthsShort];
         $months.empty();
 
         for (i = 0; i < monthList.length; i += 1) {
@@ -1379,8 +1379,8 @@
         endYear = this.currentDate.clone();
 
         $years.empty();
-        startYear = startYear.add('year', -10).year();
-        endYear = endYear.add('year', 10).year();
+        startYear = startYear.add(-10, 'year').year();
+        endYear = endYear.add(10, 'year').year();
 
         for (j = startYear; j <= endYear; j += 1) {
             selectedYear = (j === this.currentDate.year()) ? ' selected="selected"' : '';
@@ -1437,7 +1437,7 @@
         $displayHours.text(this.currentDate.format(hourFormat));
         $displayMinutes.text(this.currentDate.format(minuteFormat));
         $displaySeconds.text(this.currentDate.format(secondFormat));
-        $displayMeridiem.text(moment.langData().meridiem(this.currentDate.hour(), this.currentDate.minute(), false));
+        $displayMeridiem.text(moment.localeData().meridiem(this.currentDate.hour(), this.currentDate.minute(), false));
 
         $contentHours.val(this.currentDate.hour() % 12);
         $contentMinutes.val(this.currentDate.minute());
@@ -1695,7 +1695,7 @@
         }
 
         this.currentDate = datetime;
-        this.currentDate.lang(this.options.locale);
+        this.currentDate.localeData(this.options.locale);
         this.refreshPicker();
     };
 
@@ -1752,7 +1752,7 @@
             return;
         }
 
-        this.currentDate.add('year', -1);
+        this.currentDate.add(-1, 'year');
         this.refreshDatePicker();
     };
 
@@ -1773,7 +1773,7 @@
             return;
         }
 
-        this.currentDate.add('year', 1);
+        this.currentDate.add(1, 'year');
         this.refreshDatePicker();
     };
 
@@ -1814,7 +1814,7 @@
             return;
         }
 
-        this.currentDate.add('month', -1);
+        this.currentDate.add(-1, 'month');
         this.refreshDatePicker();
     };
 
@@ -1835,7 +1835,7 @@
             return;
         }
 
-        this.currentDate.add('month', 1);
+        this.currentDate.add(1, 'month');
         this.refreshDatePicker();
     };
 
@@ -1872,7 +1872,7 @@
             return;
         }
 
-        this.currentDate.add('hour', -this.options.hourStep);
+        this.currentDate.add(-this.options.hourStep, 'hour');
         this.refreshTimePicker();
     };
 
@@ -1893,7 +1893,7 @@
             return;
         }
 
-        this.currentDate.add('hour', this.options.hourStep);
+        this.currentDate.add(this.options.hourStep, 'hour');
         this.refreshTimePicker();
     };
 
@@ -1930,7 +1930,7 @@
             return;
         }
 
-        this.currentDate.add('minute', -this.options.minuteStep);
+        this.currentDate.add(-this.options.minuteStep, 'minute');
         this.refreshTimePicker();
     };
 
@@ -1951,7 +1951,7 @@
             return;
         }
 
-        this.currentDate.add('minute', this.options.minuteStep);
+        this.currentDate.add(this.options.minuteStep, 'minute');
         this.refreshTimePicker();
     };
 
@@ -1988,7 +1988,7 @@
             return;
         }
 
-        this.currentDate.add('second', -this.options.secondStep);
+        this.currentDate.add(-this.options.secondStep, 'second');
         this.refreshTimePicker();
     };
 
@@ -2009,7 +2009,7 @@
             return;
         }
 
-        this.currentDate.add('second', this.options.secondStep);
+        this.currentDate.add(this.options.secondStep, 'second');
         this.refreshTimePicker();
     };
 
@@ -2028,10 +2028,10 @@
         meridiem = meridiem.toLowerCase();
 
         if (this.currentDate.hours() >= 12 && 'am' === meridiem) {
-            this.currentDate.add('hour', -12);
+            this.currentDate.add(-12, 'hour');
 
         } else if (this.currentDate.hours() < 12 && 'pm' === meridiem) {
-            this.currentDate.add('hour', 12);
+            this.currentDate.add(12, 'hour');
 
         } else {
             return;
