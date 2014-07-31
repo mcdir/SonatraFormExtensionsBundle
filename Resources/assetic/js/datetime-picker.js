@@ -131,13 +131,10 @@
 
         var hammerCalendar = 'hammerCalendar';
 
-        self[hammerCalendar] = new Hammer($('.dtp-body-calendar-wrapper', self.$picker).get(0), {
-            swipe: false,
-            transform: false,
-            prevent_default: true,
-            drag_lock_to_axis: true
-        })
-
+        self[hammerCalendar] = new Hammer($('.dtp-body-calendar-wrapper', self.$picker).get(0));
+        self[hammerCalendar].get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        self[hammerCalendar].get('swipe').set({ enable: false });
+        self[hammerCalendar]
             .on('tap', $.proxy(function (event) {
                 var value = $(event.target).attr('data-date-value');
 
@@ -146,8 +143,7 @@
                 }
             }, self))
 
-            .on('drag', $.proxy(function (event) {
-                event.stopPropagation();
+            .on('panmove', $.proxy(function (event) {
                 event.preventDefault();
 
                 var $calendarAll = $('.dtp-body-calendar-all', this.$picker),
@@ -157,14 +153,20 @@
                     horizontal = 0,
                     vertical = 0;
 
-                switch (event.gesture.direction) {
-                case 'left':
-                case 'right':
-                    horizontal = Math.round(event.gesture.deltaX);
+                if (undefined === this.panMoveDirection) {
+                    this.panMoveDirection = event.direction;
+                }
+
+                switch (this.panMoveDirection) {
+                case Hammer.DIRECTION_HORIZONTAL:
+                case Hammer.DIRECTION_LEFT:
+                case Hammer.DIRECTION_RIGHT:
+                    horizontal = Math.round(event.deltaX);
                     break;
-                case 'up':
-                case 'down':
-                    vertical = Math.round(event.gesture.deltaY);
+                case Hammer.DIRECTION_VERTICAL:
+                case Hammer.DIRECTION_UP:
+                case Hammer.DIRECTION_DOWN:
+                    vertical = Math.round(event.deltaY);
                     break;
                 default:
                     break;
@@ -184,13 +186,15 @@
                 $calendarAll.css('transform', 'translate3d(' + horizontal + 'px, ' + vertical + 'px, 0px)');
             }, self))
 
-            .on('dragend', $.proxy(function () {
+            .on('panend', $.proxy(function () {
                 var $calendarAll = $('.dtp-body-calendar-all', this.$picker),
                     $calendar = $('.dtp-body-calendar[data-calendar-name=current]', $calendarAll),
                     transform = getTransformMatrix($calendarAll),
                     horizontal = transform.e,
                     vertical = transform.f,
                     type = null;
+
+                delete this.panMoveDirection;
 
                 if (0 !== horizontal && Math.abs(horizontal) >= Math.min($calendar.outerWidth() / 3, this.options.dragDistance)) {
                     if (horizontal < 0) {
