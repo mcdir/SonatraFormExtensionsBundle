@@ -19,15 +19,18 @@
         "symfony/serializer": "~2.4",
         "symfony/form": "~2.4",
         "oyejorge/less.php": "~1.7",
-        "sonatra_jquery/jquery" : "1.11.*",
-        "sonatra_ivaynberg/select2" : "~3.4",
-        "sonatra_moment/moment": "~2.5",
-        "sonatra_hammerjs/hammer-js": "~2.0",
-        "sonatra_aterrien/jquery-knob": "1.2.*"
+        "bower-asset/jquery": "1.11.*",
+        "bower-asset/select2": "3.5.*",
+        "bower-asset/moment": "2.8.*",
+        "bower-asset/jquery-knob": "1.2.*",
+        "npm-asset/hammerjs": "2.0.*"
     },
     "require-dev" : {
         "symfony/doctrine-bridge" : "~2.4",
         "doctrine/orm" : "~2.4"
+    },
+    "suggest": {
+        "fxp/composer-asset-plugin": "For manage NPM/Bower dependencies with Composer"
     },
     "autoload": {
         "psr-4": { "Sonatra\\Bundle\\FormExtensionsBundle\\": "" }
