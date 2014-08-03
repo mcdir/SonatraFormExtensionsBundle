@@ -1,28 +1,21 @@
 {
     "name" : "sonatra/form-extensions-bundle",
-    "description" : "Sonatra Form Extensions Bundle",
-    "type" : "symfony-bundle",
-    "authors" : [{
-            "name" : "François Pluchino",
-            "email" : "francois.pluchino@sonatra.com"
+    "type": "symfony-bundle",
+    "description": "Add new form types for Symfony2",
+    "keywords": ["datetime", "date", "time", "picker", "form", "hammerjs", "knob", "select2", "ajax"],
+    "homepage": "https://github.com/sonatra/SonatraFormExtensionsBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "François Pluchino",
+            "email": "francois.pluchino@sonatra.com"
         }
-    ],
-    "keywords" : [
-        "Init form-extensions",
-        "PDO",
-        "Currency form type",
-        "Datetime picker",
-        "Select2 form"
-    ],
-    "homepage" : "http://sonatra.com",
-    "license" : [
-        "MIT"
     ],
     "require" : {
         "php" : ">=5.3.2",
         "symfony/framework-bundle" : "~2.4",
-        "fxp/require-asset-bundle" : "~1.0",
-        "sonatra/ajax-bundle" : "~1.0",
+        "fxp/require-asset-bundle" : "~1.0@dev",
+        "sonatra/ajax-bundle" : "~1.0@dev",
         "symfony/serializer": "~2.4",
         "symfony/form": "~2.4",
         "oyejorge/less.php": "~1.7",
@@ -34,22 +27,20 @@
     },
     "require-dev" : {
         "symfony/doctrine-bridge" : "~2.4",
-        "doctrine/orm" : "~2.5"
+        "doctrine/orm" : "~2.4"
     },
-    "autoload" : {
-        "psr-4" : {
-            "Sonatra\\Bundle\\FormExtensionsBundle\\" : ""
-        }
+    "autoload": {
+        "psr-4": { "Sonatra\\Bundle\\FormExtensionsBundle\\": "" }
     },
-    "minimum-stability" : "dev",
-    "repositories" : [{
-            "type" : "composer",
-            "url" : "http://packager.sonatra.com"
-        }
-    ],
     "extra" : {
         "branch-alias" : {
             "dev-master" : "1.0.x-dev"
         }
-    }
+    },
+    "repositories" : [
+        {
+            "type" : "composer",
+            "url" : "http://packager.sonatra.com"
+        }
+    ]
 }
