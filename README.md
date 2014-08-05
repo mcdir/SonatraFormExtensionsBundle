@@ -1,6 +1,9 @@
 Sonatra Form Extensions Bundle
 ==============================
 
+[![Latest Stable Version](https://poser.pugx.org/sonatra/form-extensions-bundle/v/stable.svg)](https://packagist.org/packages/sonatra/form-extensions-bundle)
+[![Latest Unstable Version](https://poser.pugx.org/sonatra/form-extensions-bundle/v/unstable.svg)](https://packagist.org/packages/sonatra/form-extensions-bundle)
+
 The Sonatra FormExtensionsBundle add form types.
 
 Features include:
