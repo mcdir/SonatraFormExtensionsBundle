@@ -14,6 +14,7 @@ matrix:
 
 before_script:
     - composer self-update
+    - composer global require fxp/composer-asset-plugin:@beta
     - composer install
     - composer require --dev --no-update phpunit/phpunit:@stable phpunit/php-code-coverage:@dev
     - composer update phpunit/php-code-coverage
