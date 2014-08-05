@@ -182,7 +182,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
 
             if (!isset($this->lazyCache[$cacheId])) {
                 $qb = clone $this->qbForGetChoices;
-                $entityAlias = $qb->getRootAliases()[0];
+                $entityAliases = $qb->getRootAliases();
+                $entityAlias = $entityAliases[0];
                 $qb->andWhere($qb->expr()->in($entityAlias.'.'.$identifier, $findValues));
 
                 $this->lazyCache[$cacheId] = $qb->getQuery()->getResult();
@@ -242,8 +243,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
 
         $choices = array();
         $selectedChoices = $values;
+        $keyValues = array_keys($values);
 
-        if (!is_object($values[array_keys($values)[0]])) {
+        if (!is_object($values[$keyValues[0]])) {
             $selectedChoices = $this->getChoicesForValues($values);
         }
 
@@ -271,9 +273,10 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
 
         $choices = $this->getChoiceViews();
         $formattedChoices = array();
+        $keyChoices = array_keys($choices);
 
         // simple
-        if (count($choices) > 0 && is_int(array_keys($choices)[0])) {
+        if (count($choices) > 0 && is_int($keyChoices[0])) {
             foreach ($choices as $choice) {
                 $formattedChoices[] = $this->formatter->formatChoice($choice);
             }
@@ -304,13 +307,15 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     {
         $choices = $this->getChoiceViews();
         $firstChoice = null;
+        $keyChoices = array_keys($choices);
 
         if (count($choices) > 0) {
-            $firstChoice = $choices[array_keys($choices)[0]];
+            $firstChoice = $choices[$keyChoices[0]];
 
             // group
             if (is_array($firstChoice) && count($firstChoice) > 0) {
-                $firstChoice = $firstChoice[array_keys($firstChoice)[0]];
+                $keyFirstChoice = array_keys($firstChoice);
+                $firstChoice = $firstChoice[$keyFirstChoice[0]];
             }
         }
 
@@ -340,7 +345,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     {
         if ($this->size instanceof QueryBuilder && $this->getPageSize() > 0) {
             $qb = $this->size;
-            $entityAlias = $qb->getRootAliases()[0];
+            $entityAliases = $qb->getRootAliases();
+            $entityAlias = $entityAliases[0];
 
             $qb->setParameters($qb->getParameters());
             $qb->select("count($entityAlias)");
@@ -441,7 +447,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
             $this->entityLoader->reset();
 
             $qb = $this->entityLoader->getQueryBuilder();
-            $entityAlias = $qb->getRootAliases()[0];
+            $entityAliases = $qb->getRootAliases();
+            $entityAlias = $entityAliases[0];
 
             if (null !== $this->labelPath) {
                 // search filter

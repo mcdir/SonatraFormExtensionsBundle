@@ -210,9 +210,10 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
         $this->assertFalse($config->getOption('compound'));
         $this->assertFalse($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertFalse($config->getOption('select2')['ajax']);
-        $this->assertFalse($config->getOption('select2')['allow_add']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertFalse($select2Opts['ajax']);
+        $this->assertFalse($select2Opts['allow_add']);
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
     }
 }

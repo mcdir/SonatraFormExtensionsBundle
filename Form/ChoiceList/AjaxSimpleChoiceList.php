@@ -181,6 +181,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     public function getFormattedChoices()
     {
         $choices = $this->getChoiceViews();
+        $keyChoices = array_keys($choices);
         $formattedChoices = array();
         $startTo = ($this->getPageNumber() - 1) * $this->getPageSize();
         $endTo = $startTo + $this->getPageSize();
@@ -194,7 +195,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         }
 
         // simple
-        if (count($choices) > 0 && is_int(array_keys($choices)[0])) {
+        if (count($choices) > 0 && is_int($keyChoices[0])) {
             for ($index=$startTo; $index<$endTo; $index++) {
                 $formattedChoices[] = $this->formatter->formatChoice($choices[$index]);
             }
@@ -230,14 +231,16 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     public function getFirstChoiceView()
     {
         $choices = $this->getChoiceViews();
+        $keyChoices = array_keys($choices);
         $firstChoice = null;
 
         if (count($choices) > 0) {
-            $firstChoice = $choices[array_keys($choices)[0]];
+            $firstChoice = $choices[$keyChoices[0]];
 
             // group
             if (is_array($firstChoice) && count($firstChoice) > 0) {
-                $firstChoice = $firstChoice[array_keys($firstChoice)[0]];
+                $keyFirstChoice = array_keys($firstChoice);
+                $firstChoice = $firstChoice[$keyFirstChoice[0]];
             }
         }
 
@@ -374,9 +377,10 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         parent::initialize($choices, $labels, $preferredChoices);
 
         $this->size = count($choices);
+        $keyChoices = array_keys($choices);
 
         // group
-        if ($this->size > 0 && is_array($choices[array_keys($choices)[0]])) {
+        if ($this->size > 0 && is_array($choices[$keyChoices[0]])) {
             $this->size = 0;
 
             foreach ($choices as $subChoices) {

@@ -107,8 +107,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('allow_add'));
         $this->assertTrue($config->getOption('allow_delete'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertFalse($config->getOption('select2')['ajax']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertFalse($select2Opts['ajax']);
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getAttribute('choice_list'));
 
         $view = $form->createView();
@@ -128,7 +129,8 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('compound'));
         $this->assertTrue($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertFalse($config->getOption('select2')['enabled']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertFalse($select2Opts['enabled']);
 
         $view = $form->createView();
         $this->assertFalse(array_key_exists('select2', $view->vars));
@@ -145,8 +147,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('compound'));
         $this->assertTrue($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertFalse($config->getOption('select2')['ajax']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertFalse($select2Opts['ajax']);
         $this->assertTrue($config->getOption('allow_add'));
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getAttribute('choice_list'));
 
@@ -167,8 +170,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('compound'));
         $this->assertTrue($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertTrue($config->getOption('select2')['ajax']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertTrue($select2Opts['ajax']);
         $this->assertTrue($config->getOption('allow_add'));
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getAttribute('choice_list'));
 
@@ -188,8 +192,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('compound'));
         $this->assertTrue($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertTrue($config->getOption('select2')['ajax']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertTrue($select2Opts['ajax']);
         $this->assertTrue($config->getOption('allow_add'));
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getAttribute('choice_list'));
 
@@ -209,8 +214,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('compound'));
         $this->assertTrue($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertFalse($config->getOption('select2')['ajax']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertFalse($select2Opts['ajax']);
         $this->assertTrue($config->getOption('allow_add'));
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getAttribute('choice_list'));
 
@@ -230,8 +236,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->assertTrue($config->getOption('compound'));
         $this->assertTrue($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
-        $this->assertTrue($config->getOption('select2')['enabled']);
-        $this->assertTrue($config->getOption('select2')['ajax']);
+        $select2Opts = $config->getOption('select2');
+        $this->assertTrue($select2Opts['enabled']);
+        $this->assertTrue($select2Opts['ajax']);
         $this->assertTrue($config->getOption('allow_add'));
         $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getAttribute('choice_list'));
 
