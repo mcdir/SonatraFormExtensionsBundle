@@ -4,6 +4,7 @@ Sonatra Form Extensions Bundle
 [![Latest Stable Version](https://poser.pugx.org/sonatra/form-extensions-bundle/v/stable.svg)](https://packagist.org/packages/sonatra/form-extensions-bundle)
 [![Latest Unstable Version](https://poser.pugx.org/sonatra/form-extensions-bundle/v/unstable.svg)](https://packagist.org/packages/sonatra/form-extensions-bundle)
 [![Build Status](https://travis-ci.org/sonatra/SonatraFormExtensionsBundle.svg)](https://travis-ci.org/sonatra/SonatraFormExtensionsBundle)
+[![Coverage Status](https://coveralls.io/repos/sonatra/SonatraFormExtensionsBundle/badge.png)](https://coveralls.io/r/sonatra/SonatraFormExtensionsBundle)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sonatra/SonatraFormExtensionsBundle/badges/quality-score.png)](https://scrutinizer-ci.com/g/sonatra/SonatraFormExtensionsBundle)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/f353d527-edf0-42a5-aa13-8b045668d853/mini.png)](https://insight.sensiolabs.com/projects/f353d527-edf0-42a5-aa13-8b045668d853)
 
