@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
@@ -112,13 +113,13 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
     /**
      * Return the default loader object.
      *
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param mixed         $queryBuilder
      * @param string        $class
      *
      * @return ORMQueryBuilderLoader
      */
-    public function getLoader(EntityManager $manager, $queryBuilder, $class)
+    public function getLoader(ObjectManager $manager, $queryBuilder, $class)
     {
         return new AjaxORMQueryBuilderLoader(
             $queryBuilder,

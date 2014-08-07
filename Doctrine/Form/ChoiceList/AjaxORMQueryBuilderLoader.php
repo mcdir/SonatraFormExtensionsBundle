@@ -11,10 +11,10 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityManager;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -30,7 +30,7 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
      * Construct an ORM Query Builder Loader
      *
      * @param QueryBuilder|\Closure $queryBuilder
-     * @param EntityManager         $manager
+     * @param ObjectManager         $manager
      * @param string                $class
      *
      * @throws UnexpectedTypeException
