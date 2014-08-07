@@ -39,7 +39,11 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
     {
         $this->backupQueryBuilder = $queryBuilder;
 
-        parent::__construct(clone $queryBuilder, $manager, $class);
+        if ($queryBuilder instanceof QueryBuilder) {
+            $queryBuilder = clone $queryBuilder;
+        }
+
+        parent::__construct($queryBuilder, $manager, $class);
     }
 
     /**
