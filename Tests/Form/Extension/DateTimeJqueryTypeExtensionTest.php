@@ -40,13 +40,13 @@ class DateTimeJqueryTypeExtensionTest extends TypeTestCase
 
     public function testDefaultOption()
     {
-        $form = $this->factory->create('datetime', null, array('locale' => 'en'));
+        $form = $this->factory->create('datetime', null, array('locale' => 'en_EN'));
         $config = $form->getConfig();
 
         $this->assertEquals('single_text', $config->getOption('widget'));
         $this->assertTrue($config->getOption('date_picker'));
         $this->assertTrue($config->getOption('time_picker'));
-        $this->assertEquals('en', $config->getOption('locale'));
+        $this->assertEquals('en_EN', $config->getOption('locale'));
         $this->assertEquals('M/d/yyyy, h:mm a', $config->getOption('format'));
     }
 
@@ -59,10 +59,10 @@ class DateTimeJqueryTypeExtensionTest extends TypeTestCase
 
     public function testDefaultAttributes()
     {
-        $form = $this->factory->create('datetime', null, array('locale' => 'en'));
+        $form = $this->factory->create('datetime', null, array('locale' => 'en_EN'));
         $view = $form->createView();
         $validAttr = array(
-            'data-locale'            => 'en',
+            'data-locale'            => 'en_EN',
             'data-date-picker'       => 'true',
             'data-time-picker'       => 'true',
             'data-time-picker-first' => 'false',
