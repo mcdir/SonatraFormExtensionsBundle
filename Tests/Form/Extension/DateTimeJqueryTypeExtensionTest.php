@@ -47,7 +47,7 @@ class DateTimeJqueryTypeExtensionTest extends TypeTestCase
         $this->assertTrue($config->getOption('date_picker'));
         $this->assertTrue($config->getOption('time_picker'));
         $this->assertEquals('en_EN', $config->getOption('locale'));
-        $this->assertEquals('M/d/yyyy, h:mm a', $config->getOption('format'));
+        $this->assertEquals($this->getValidDateTime(), $config->getOption('format'));
     }
 
     public function testFormatFr()
@@ -67,7 +67,7 @@ class DateTimeJqueryTypeExtensionTest extends TypeTestCase
             'data-time-picker'       => 'true',
             'data-time-picker-first' => 'false',
             'data-open-focus'        => 'true',
-            'data-format'            => 'M/D/YYYY, h:mm A',
+            'data-format'            => $this->getValidDateTimeAttribute(),
             'data-with-minutes'      => 'true',
             'data-with-seconds'      => 'false',
             'data-datetime-picker'   => 'true',
@@ -75,5 +75,31 @@ class DateTimeJqueryTypeExtensionTest extends TypeTestCase
         );
 
         $this->assertEquals($validAttr, $view->vars['attr']);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getValidDateTime()
+    {
+        if (defined('INTL_ICU_VERSION')
+                && version_compare(INTL_ICU_VERSION, '51.2', '>=')) {
+            return 'M/d/yyyy, h:mm a';
+        }
+
+        return 'M/d/yyyy h:mm a';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getValidDateTimeAttribute()
+    {
+        if (defined('INTL_ICU_VERSION')
+                && version_compare(INTL_ICU_VERSION, '51.2', '>=')) {
+            return 'M/D/YYYY, h:mm A';
+        }
+
+        return 'M/D/YYYY h:mm A';
     }
 }
