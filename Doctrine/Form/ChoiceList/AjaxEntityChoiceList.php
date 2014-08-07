@@ -19,7 +19,6 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -70,13 +69,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
      * @var string
      */
     private $labelPath;
-
-    /**
-     * The property path used for object grouping.
-     *
-     * @var PropertyPath
-     */
-    private $groupPath;
 
     /**
      * @var PropertyAccessorInterface
