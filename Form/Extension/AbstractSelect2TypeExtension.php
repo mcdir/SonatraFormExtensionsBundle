@@ -225,8 +225,9 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             'select2' => 'array',
         ));
 
+        $ajaxPageSize = $this->ajaxPageSize;
         $normalizers = array(
-            'select2' => function (Options $options, $value) {
+            'select2' => function (Options $options, $value) use ($ajaxPageSize) {
                 $select2Resolver = new OptionsResolver();
                 $pDefault = $options;
                 $enabled = function (Options $options) use ($pDefault) {
@@ -243,7 +244,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                     'ajax_parameters'            => array(),
                     'ajax_reference_type'        => RouterInterface::ABSOLUTE_PATH,
                     'quiet_millis'               => 200,
-                    'page_size'                  => $this->ajaxPageSize,
+                    'page_size'                  => $ajaxPageSize,
                     'width'                      => 'resolve',
                     'close_on_select'            => null,
                     'open_on_enter'              => null,

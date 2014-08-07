@@ -148,6 +148,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
             'multiple' => 'bool',
         ));
 
+        $factory = $this->factory;
         $resolver->setNormalizers(array(
             'prototype' => function (Options $options) {
                 return true;
@@ -161,8 +162,8 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
             'type'      => function (Options $options, $value) {
                 return $value;
             },
-            'options'   => function (Options $options, $value) {
-                $dOptions = $this->factory->createBuilder($options['type'], null, $value)->getOptions();
+            'options'   => function (Options $options, $value) use ($factory) {
+                $dOptions = $factory->createBuilder($options['type'], null, $value)->getOptions();
 
                 if (isset($dOptions['select2'])) {
                     $value = array_merge($value, array(

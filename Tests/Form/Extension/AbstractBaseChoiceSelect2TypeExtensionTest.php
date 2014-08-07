@@ -51,16 +51,20 @@ abstract class AbstractBaseChoiceSelect2TypeExtensionTest extends TypeTestCase
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
+        $dispatcher = $this->dispatcher;
+        $request = $this->request;
+        $router = $this->router;
+
         $this->container->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($param) {
+            ->will($this->returnCallback(function ($param) use ($dispatcher, $request, $router) {
                 switch ($param) {
                     case 'event_dispatcher':
-                        return $this->dispatcher;
+                        return $dispatcher;
                     case 'request':
-                        return $this->request;
+                        return $request;
                     case 'router':
-                        return $this->router;
+                        return $router;
                     default:
                         return null;
                 }
