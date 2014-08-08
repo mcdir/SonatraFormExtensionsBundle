@@ -19,7 +19,6 @@ use Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension\AbstractSelect2Type
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\Test\DoctrineTestHelper;
 use Symfony\Bridge\Doctrine\Tests\Fixtures\SingleIntIdEntity;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
@@ -89,12 +88,9 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
         $this->createEntities();
 
-        /* @var ContainerInterface $container */
-        $container = $this->container;
-
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($container, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($this->dispatcher, $this->request, $this->router, $this->getExtensionTypeName(), 10))
             ->addType(new EntityType($this->emRegistry))
             ->addTypeExtension(new EntitySelect2TypeExtension())
             ->getFormFactory();

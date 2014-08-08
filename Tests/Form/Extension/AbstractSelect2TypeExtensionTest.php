@@ -12,7 +12,7 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -26,11 +26,6 @@ use Symfony\Component\Routing\RouterInterface;
  */
 abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var Request
      */
@@ -48,29 +43,8 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         \Locale::setDefault('en');
 
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
-
-        $dispatcher = $this->dispatcher;
-        $request = $this->request;
-        $router = $this->router;
-
-        $this->container->expects($this->any())
-            ->method('get')
-            ->will($this->returnCallback(function ($param) use ($dispatcher, $request, $router) {
-                switch ($param) {
-                    case 'event_dispatcher':
-                        return $dispatcher;
-                    case 'request':
-                        return $request;
-                    case 'router':
-                        return $router;
-                    default:
-                        return null;
-                }
-            }))
-        ;
 
         $this->router->expects($this->any())
             ->method('generate')
@@ -79,12 +53,16 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
             }))
         ;
 
-        /* @var ContainerInterface $container */
-        $container = $this->container;
+        /* @var EventDispatcherInterface $dispatcher */
+        $dispatcher = $this->dispatcher;
+        /* @var Request $request */
+        $request = $this->request;
+        /* @var RouterInterface $router */
+        $router = $this->router;
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($container, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $request, $router, $this->getExtensionTypeName(), 10))
             ->getFormFactory();
 
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
@@ -95,7 +73,6 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
     {
         parent::tearDown();
 
-        $this->container = null;
         $this->request = null;
         $this->router = null;
     }

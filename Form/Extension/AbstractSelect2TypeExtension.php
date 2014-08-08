@@ -19,8 +19,7 @@ use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxCho
 use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputSubscriber;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
 use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
@@ -37,7 +36,7 @@ use Symfony\Component\Routing\RouterInterface;
 abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 {
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     protected $dispatcher;
 
@@ -64,15 +63,17 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     /**
      * Constructor.
      *
-     * @param ContainerInterface $container
-     * @param string             $type
-     * @param integer            $defaultPageSize
+     * @param EventDispatcherInterface $dispatcher
+     * @param Request                  $request
+     * @param RouterInterface          $router
+     * @param string                   $type
+     * @param integer                  $defaultPageSize
      */
-    public function __construct(ContainerInterface $container, $type, $defaultPageSize = 10)
+    public function __construct(EventDispatcherInterface $dispatcher, Request $request, RouterInterface $router, $type, $defaultPageSize = 10)
     {
-        $this->dispatcher = $container->get('event_dispatcher');
-        $this->request = $container->get('request');
-        $this->router = $container->get('router');
+        $this->dispatcher = $dispatcher;
+        $this->request = $request;
+        $this->router = $router;
         $this->type = $type;
         $this->ajaxPageSize = $defaultPageSize;
     }

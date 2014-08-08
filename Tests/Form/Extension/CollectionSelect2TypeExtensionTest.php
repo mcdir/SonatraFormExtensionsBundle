@@ -14,9 +14,11 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExtension;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Tests case for collection of select2 form extension type.
@@ -29,20 +31,24 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
     {
         parent::setUp();
 
-        /* @var ContainerInterface $container */
-        $container = $this->container;
+        /* @var EventDispatcherInterface $dispatcher */
+        $dispatcher = $this->dispatcher;
+        /* @var Request $request */
+        $request = $this->request;
+        /* @var RouterInterface $router */
+        $router = $this->router;
 
         $includeFactory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($container, 'currency', 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $request, $router, 'currency', 10))
             ->addTypeExtension(new BaseChoiceSelect2TypeExtension('currency'))
             ->getFormFactory();
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($container, 'currency', 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $request, $router, 'currency', 10))
             ->addTypeExtension(new BaseChoiceSelect2TypeExtension('currency'))
-            ->addTypeExtension(new CollectionSelect2TypeExtension($includeFactory, $container, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new CollectionSelect2TypeExtension($includeFactory, $dispatcher, $request, $router, $this->getExtensionTypeName(), 10))
             ->getFormFactory();
 
         $this->builder = new FormBuilder(null, null, $this->dispatcher, $this->factory);
