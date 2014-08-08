@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
@@ -40,14 +40,14 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
      *
      * @param FormFactoryInterface     $factory
      * @param EventDispatcherInterface $dispatcher
-     * @param Request                  $request
+     * @param RequestStack             $requestStack
      * @param RouterInterface          $router
      * @param string                   $type
      * @param integer                  $defaultPageSize
      */
-    public function __construct(FormFactoryInterface $factory, EventDispatcherInterface $dispatcher, Request $request, RouterInterface $router, $type, $defaultPageSize = 10)
+    public function __construct(FormFactoryInterface $factory, EventDispatcherInterface $dispatcher, RequestStack $requestStack, RouterInterface $router, $type, $defaultPageSize = 10)
     {
-        parent::__construct($dispatcher, $request, $router, $type, $defaultPageSize);
+        parent::__construct($dispatcher, $requestStack, $router, $type, $defaultPageSize);
 
         $this->factory = $factory;
     }

@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -27,9 +28,9 @@ use Symfony\Component\Routing\RouterInterface;
 abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 {
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var RouterInterface
@@ -43,8 +44,11 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         \Locale::setDefault('en');
 
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
+        $this->requestStack = new RequestStack();
+        /* @var Request $request */
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->requestStack->push($request);
 
         $this->router->expects($this->any())
             ->method('generate')
@@ -55,14 +59,12 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 
         /* @var EventDispatcherInterface $dispatcher */
         $dispatcher = $this->dispatcher;
-        /* @var Request $request */
-        $request = $this->request;
         /* @var RouterInterface $router */
         $router = $this->router;
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $request, $router, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, $this->getExtensionTypeName(), 10))
             ->getFormFactory();
 
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');

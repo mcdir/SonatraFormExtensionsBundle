@@ -25,6 +25,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -64,15 +65,15 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
      * Constructor.
      *
      * @param EventDispatcherInterface $dispatcher
-     * @param Request                  $request
+     * @param RequestStack             $requestStack
      * @param RouterInterface          $router
      * @param string                   $type
      * @param integer                  $defaultPageSize
      */
-    public function __construct(EventDispatcherInterface $dispatcher, Request $request, RouterInterface $router, $type, $defaultPageSize = 10)
+    public function __construct(EventDispatcherInterface $dispatcher, RequestStack $requestStack, RouterInterface $router, $type, $defaultPageSize = 10)
     {
         $this->dispatcher = $dispatcher;
-        $this->request = $request;
+        $this->request = $requestStack->getMasterRequest();
         $this->router = $router;
         $this->type = $type;
         $this->ajaxPageSize = $defaultPageSize;

@@ -11,10 +11,10 @@
         </service>
 
         <!-- Extensions -->
-        <service id="form.type_extension.sonatra.choice_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension" scope="request">
+        <service id="form.type_extension.sonatra.choice_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension">
             <tag name="form.type_extension" alias="choice" />
             <argument type="service" id="event_dispatcher" />
-            <argument type="service" id="request" />
+            <argument type="service" id="request_stack" />
             <argument type="service" id="router" />
             <argument>choice</argument>
         </service>
@@ -44,11 +44,11 @@
             <argument>timezone</argument>
         </service>
 
-        <service id="form.type_extension.sonatra.collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExtension" scope="request">
+        <service id="form.type_extension.sonatra.collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExtension">
             <tag name="form.type_extension" alias="collection" />
             <argument type="service" id="form.factory" />
             <argument type="service" id="event_dispatcher" />
-            <argument type="service" id="request" />
+            <argument type="service" id="request_stack" />
             <argument type="service" id="router" />
             <argument>collection</argument>
         </service>

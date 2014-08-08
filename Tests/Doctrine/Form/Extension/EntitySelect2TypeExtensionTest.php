@@ -90,7 +90,7 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($this->dispatcher, $this->request, $this->router, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($this->dispatcher, $this->requestStack, $this->router, $this->getExtensionTypeName(), 10))
             ->addType(new EntityType($this->emRegistry))
             ->addTypeExtension(new EntitySelect2TypeExtension())
             ->getFormFactory();

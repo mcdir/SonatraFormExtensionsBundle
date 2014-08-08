@@ -17,7 +17,6 @@ use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExte
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -33,22 +32,20 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
         /* @var EventDispatcherInterface $dispatcher */
         $dispatcher = $this->dispatcher;
-        /* @var Request $request */
-        $request = $this->request;
         /* @var RouterInterface $router */
         $router = $this->router;
 
         $includeFactory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $request, $router, 'currency', 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, 'currency', 10))
             ->addTypeExtension(new BaseChoiceSelect2TypeExtension('currency'))
             ->getFormFactory();
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $request, $router, 'currency', 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, 'currency', 10))
             ->addTypeExtension(new BaseChoiceSelect2TypeExtension('currency'))
-            ->addTypeExtension(new CollectionSelect2TypeExtension($includeFactory, $dispatcher, $request, $router, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new CollectionSelect2TypeExtension($includeFactory, $dispatcher, $this->requestStack, $router, $this->getExtensionTypeName(), 10))
             ->getFormFactory();
 
         $this->builder = new FormBuilder(null, null, $this->dispatcher, $this->factory);
