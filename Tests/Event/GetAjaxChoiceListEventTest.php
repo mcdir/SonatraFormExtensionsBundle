@@ -12,7 +12,6 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Event;
 
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
