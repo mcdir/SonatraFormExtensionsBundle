@@ -269,12 +269,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/francoispluchino/FxpRequireAssetBundle.git",
-                "reference": "d824c83931c69ef7fccbad32526e9032e2e71704"
+                "reference": "b4705e78b0af205a8d6cd00a66b4f12626301f67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/francoispluchino/FxpRequireAssetBundle/zipball/d824c83931c69ef7fccbad32526e9032e2e71704",
-                "reference": "d824c83931c69ef7fccbad32526e9032e2e71704",
+                "url": "https://api.github.com/repos/francoispluchino/FxpRequireAssetBundle/zipball/b4705e78b0af205a8d6cd00a66b4f12626301f67",
+                "reference": "b4705e78b0af205a8d6cd00a66b4f12626301f67",
                 "shasum": ""
             },
             "require": {
@@ -318,7 +318,7 @@
                 "ui",
                 "user interface"
             ],
-            "time": "2014-08-02 16:12:53"
+            "time": "2014-08-14 08:04:37"
         },
         {
             "name": "npm-asset/hammerjs",
