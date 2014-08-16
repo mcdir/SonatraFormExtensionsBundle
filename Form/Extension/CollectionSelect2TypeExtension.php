@@ -17,7 +17,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -31,7 +30,7 @@ use Symfony\Component\Routing\RouterInterface;
 class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
 {
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     protected $factory;
 
