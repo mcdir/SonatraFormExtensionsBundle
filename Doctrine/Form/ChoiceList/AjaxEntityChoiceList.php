@@ -56,7 +56,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     private $ids;
 
     /**
-     * @var int
+     * @var int|QueryBuilder
      */
     private $size;
 

@@ -22,7 +22,7 @@ use Doctrine\ORM\QueryBuilder;
 class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
 {
     /**
-     * @var QueryBuilder
+     * @var QueryBuilder|\Closure
      */
     private $backupQueryBuilder;
 
