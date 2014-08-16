@@ -63,22 +63,22 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     /**
      * @var string
      */
-    private $class;
+    private $ajaxClass;
 
     /**
      * @var string
      */
-    private $labelPath;
+    private $ajaxLabelPath;
 
     /**
      * @var PropertyAccessorInterface
      */
-    private $propertyAccessor;
+    private $ajaxPropertyAccessor;
 
     /**
      * @var AjaxORMQueryBuilderLoader
      */
-    private $entityLoader;
+    private $ajaxEntityLoader;
 
     /**
      * @var ObjectManager
@@ -123,10 +123,10 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
         $this->pageNumber = 1;
         $this->search = '';
         $this->ids = array();
-        $this->class = $class;
-        $this->labelPath = $labelPath;
-        $this->propertyAccessor = null === $propertyAccessor ? PropertyAccess::createPropertyAccessor() : $propertyAccessor;
-        $this->entityLoader = $entityLoader;
+        $this->ajaxClass = $class;
+        $this->ajaxLabelPath = $labelPath;
+        $this->ajaxPropertyAccessor = null === $propertyAccessor ? PropertyAccess::createPropertyAccessor() : $propertyAccessor;
+        $this->ajaxEntityLoader = $entityLoader;
         $this->manager = $manager;
         $this->lazy = false;
         $this->lazyCache = array();
@@ -164,7 +164,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
         $choices = parent::getChoicesForValues($values);
 
         if ($this->isLazy() && null !== $this->qbForGetChoices && count($values) !== count($choices)) {
-            $identifier = current($this->manager->getClassMetadata($this->class)->getIdentifierFieldNames());
+            $identifier = current($this->manager->getClassMetadata($this->ajaxClass)->getIdentifierFieldNames());
             $findValues = $values;
 
             foreach ($choices as $choice) {
@@ -257,9 +257,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     public function getFormattedChoices()
     {
         if (!$this->isLazy()
-                && $this->entityLoader instanceof AjaxORMQueryBuilderLoader
+                && $this->ajaxEntityLoader instanceof AjaxORMQueryBuilderLoader
                 && $this->getPageSize() > 0) {
-            $qb = $this->entityLoader->getQueryBuilder();
+            $qb = $this->ajaxEntityLoader->getQueryBuilder();
 
             $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
                 ->setMaxResults($this->getPageSize());
@@ -437,18 +437,18 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
         $propLoaded->setAccessible(true);
         $propLoaded->setValue($this, false);
 
-        if ($this->entityLoader instanceof AjaxORMQueryBuilderLoader) {
-            $this->entityLoader->reset();
+        if ($this->ajaxEntityLoader instanceof AjaxORMQueryBuilderLoader) {
+            $this->ajaxEntityLoader->reset();
 
-            $qb = $this->entityLoader->getQueryBuilder();
+            $qb = $this->ajaxEntityLoader->getQueryBuilder();
             $entityAliases = $qb->getRootAliases();
             $entityAlias = $entityAliases[0];
 
-            if (null !== $this->labelPath) {
+            if (null !== $this->ajaxLabelPath) {
                 // search filter
-                if (null !== $this->getSearch() && '' !== $this->getSearch() && $this->labelPath) {
-                    $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->labelPath}", ":{$this->labelPath}" ));
-                    $qb->setParameter($this->labelPath, "%{$this->getSearch()}%");
+                if (null !== $this->getSearch() && '' !== $this->getSearch() && $this->ajaxLabelPath) {
+                    $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->ajaxLabelPath}", ":{$this->ajaxLabelPath}" ));
+                    $qb->setParameter($this->ajaxLabelPath, "%{$this->getSearch()}%");
                 }
             }
 
@@ -491,8 +491,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
      */
     protected function extractLabel($entity)
     {
-        if ($this->labelPath) {
-            return $this->propertyAccessor->getValue($entity, $this->labelPath);
+        if ($this->ajaxLabelPath) {
+            return $this->ajaxPropertyAccessor->getValue($entity, $this->ajaxLabelPath);
         }
 
         return (string) $entity;
@@ -512,7 +512,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
 
         if (is_object($entity)) {
             $label = $this->extractLabel($entity);
-            $value = $this->manager->getClassMetadata($this->class)->getIdentifierValues($entity);
+            $value = $this->manager->getClassMetadata($this->ajaxClass)->getIdentifierValues($entity);
             $value = $this->fixValues($value);
             $value = implode('', $value);
         }
@@ -531,6 +531,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     {
         $this->manager->initializeObject($entity);
 
-        return $this->manager->getClassMetadata($this->class)->getIdentifierValues($entity);
+        return $this->manager->getClassMetadata($this->ajaxClass)->getIdentifierValues($entity);
     }
 }
