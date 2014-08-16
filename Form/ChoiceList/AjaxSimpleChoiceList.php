@@ -81,7 +81,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     {
         $this->formatter = $formatter;
         $this->allowAdd = false;
-        $this->ajax = false;
         $this->pageSize = 10;
         $this->pageNumber = 1;
         $this->search = '';
