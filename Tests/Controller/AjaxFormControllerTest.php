@@ -80,6 +80,6 @@ class AjaxFormControllerTest extends \PHPUnit_Framework_TestCase
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent('{"length":null,"page_number":null,"page_size":null,"search":null,"results":null}');
 
-        $this->assertEquals($response, $this->controller->ajaxChoiceListAction($request, 'locale'));
+        $this->assertEquals($response->getContent(), $this->controller->ajaxChoiceListAction($request, 'locale')->getContent());
     }
 }
