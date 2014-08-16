@@ -22,6 +22,8 @@ interface AjaxEntityChoiceListInterface extends AjaxChoiceListInterface
      * Defines if the choice list uses lazy loading.
      *
      * @param bool $value
+     *
+     * @return self
      */
     public function setLazy($value);
 

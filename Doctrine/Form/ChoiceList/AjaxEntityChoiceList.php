@@ -140,6 +140,8 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     public function setLazy($value)
     {
         $this->lazy = (boolean) $value;
+
+        return $this;
     }
 
     /**

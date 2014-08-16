@@ -46,6 +46,8 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * Set allow add.
      *
      * @param boolean $allowAdd
+     *
+     * @return self
      */
     public function setAllowAdd($allowAdd);
 
@@ -67,6 +69,8 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * Set page size.
      *
      * @param int $size
+     *
+     * @return self
      */
     public function setPageSize($size);
 
@@ -81,6 +85,8 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * Set page number.
      *
      * @param int $number
+     *
+     * @return self
      */
     public function setPageNumber($number);
 
@@ -95,6 +101,8 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * Set search filter.
      *
      * @param string $search
+     *
+     * @return self
      */
     public function setSearch($search);
 
@@ -109,6 +117,8 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * Set ids.
      *
      * @param array $ids
+     *
+     * @return self
      */
     public function setIds(array $ids);
 
@@ -121,6 +131,8 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
 
     /**
      * Resets the choices with the filter conditions.
+     *
+     * @return self
      */
     public function reset();
 }

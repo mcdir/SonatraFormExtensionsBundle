@@ -253,6 +253,8 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     public function setAllowAdd($allowAdd)
     {
         $this->allowAdd = $allowAdd;
+
+        return $this;
     }
 
     /**
@@ -277,6 +279,8 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     public function setPageSize($size)
     {
         $this->pageSize = $size;
+
+        return $this;
     }
 
     /**
@@ -309,6 +313,8 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     public function setSearch($search)
     {
         $this->search = $search;
+
+        return $this;
     }
 
     /**
@@ -325,6 +331,8 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     public function setIds(array $ids)
     {
         $this->ids = $ids;
+
+        return $this;
     }
 
     /**
@@ -367,6 +375,8 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
         }
 
         $this->initialize($filteredChoices, $filteredChoices, array_flip($this->backupPreferredChoices));
+
+        return $this;
     }
 
     /**
