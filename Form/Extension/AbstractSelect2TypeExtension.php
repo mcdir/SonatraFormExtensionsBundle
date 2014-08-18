@@ -24,7 +24,6 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -42,9 +41,9 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     protected $dispatcher;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var RouterInterface
@@ -73,7 +72,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     public function __construct(EventDispatcherInterface $dispatcher, RequestStack $requestStack, RouterInterface $router, $type, $defaultPageSize = 10)
     {
         $this->dispatcher = $dispatcher;
-        $this->request = $requestStack->getMasterRequest();
+        $this->requestStack = $requestStack;
         $this->router = $router;
         $this->type = $type;
         $this->ajaxPageSize = $defaultPageSize;
@@ -111,7 +110,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $ajaxUrl = $this->request->getRequestUri();
+        $ajaxUrl = $this->requestStack->getMasterRequest()->getRequestUri();
         $routeName = null;
         $choiceList = $form->getConfig()->getAttribute('choice_list');
 
@@ -128,7 +127,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
 
             } else {
-                $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->request, $choiceList);
+                $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->requestStack, $choiceList);
                 $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
             }
         }

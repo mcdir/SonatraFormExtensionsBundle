@@ -12,6 +12,9 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Event;
 
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -25,10 +28,14 @@ class GetAjaxChoiceListEventTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        /* @var Request $request */
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+        /* @var AjaxChoiceListInterface $choiceList */
         $choiceList = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface');
 
-        $this->event = new GetAjaxChoiceListEvent('foo', $request, $choiceList, 'json');
+        $this->event = new GetAjaxChoiceListEvent('foo', $requestStack, $choiceList, 'json');
     }
 
     protected function tearDown()

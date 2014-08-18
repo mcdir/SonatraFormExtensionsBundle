@@ -15,6 +15,7 @@ use Sonatra\Bundle\AjaxBundle\Event\GetAjaxEvent;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Helper\AjaxChoiceListHelper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -35,15 +36,15 @@ class GetAjaxChoiceListEvent extends GetAjaxEvent
      * Constructor.
      *
      * @param string                  $id
-     * @param Request                 $request
+     * @param RequestStack            $requestStack
      * @param AjaxChoiceListInterface $choiceList
      * @param string                  $format
      */
-    public function __construct($id, Request $request, AjaxChoiceListInterface $choiceList, $format = 'json')
+    public function __construct($id, RequestStack $requestStack, AjaxChoiceListInterface $choiceList, $format = 'json')
     {
         parent::__construct($id, $format);
 
-        $this->request = $request;
+        $this->request = $requestStack->getMasterRequest();
         $this->choiceList = $choiceList;
     }
 
