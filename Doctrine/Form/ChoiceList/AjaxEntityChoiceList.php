@@ -501,7 +501,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     /**
      * Converts the entity to choice view.
      *
-     * @param object $entity
+     * @param object|string $entity
      *
      * @return ChoiceView
      */
