@@ -232,6 +232,8 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                 $select2Resolver = new OptionsResolver();
                 $pDefault = $options;
                 $enabled = function (Options $options) use ($pDefault) {
+                    $options->valid();
+
                     return !$pDefault['expanded'];
                 };
 

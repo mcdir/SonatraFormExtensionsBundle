@@ -154,16 +154,18 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
 
         $factory = $this->factory;
         $resolver->setNormalizers(array(
-            'prototype' => function (Options $options) {
+            'prototype' => function () {
                 return true;
             },
-            'compound'  => function (Options $options) {
+            'compound'  => function () {
                 return true;
             },
-            'multiple'  => function (Options $options) {
+            'multiple'  => function () {
                 return true;
             },
             'type'      => function (Options $options, $value) {
+                $options->valid();
+
                 return $value;
             },
             'options'   => function (Options $options, $value) use ($factory) {
