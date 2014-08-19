@@ -42,4 +42,33 @@ class Util
 
         return $firstChoice;
     }
+
+    /**
+     * Finds the items for types.
+     *
+     * @param array $choices     The choices
+     * @param array $parents     The parents items
+     * @param array $items       The items
+     * @param bool  $allowAdd    Indicate if the non-existent items must be added
+     * @param bool  $resetSearch Reset item search
+     *
+     * @return array The choices with new items
+     */
+    public static function findItemsForTypes(array $choices, array $parents, array $items, $allowAdd, $resetSearch = false)
+    {
+        if ($allowAdd) {
+            $prevItems = $parents;
+
+            foreach ($items as $item) {
+                $searchItems = $resetSearch ? $parents : $prevItems;
+                $pos = array_search($item, $searchItems);
+
+                if (false === $pos) {
+                    $choices[] = $item;
+                }
+            }
+        }
+
+        return $choices;
+    }
 }

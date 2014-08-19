@@ -98,7 +98,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     {
         $parentChoices = parent::getChoicesForValues($values);
 
-        return $this->findItemsForTypes($parentChoices, $values);
+        return Util::findItemsForTypes($parentChoices, $parentChoices, $values, $this->getAllowAdd());
     }
 
     /**
@@ -108,7 +108,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     {
         $parentValues = parent::getValuesForChoices($values);
 
-        return $this->findItemsForTypes($parentValues, $values);
+        return Util::findItemsForTypes($parentValues, $parentValues, $values, $this->getAllowAdd());
     }
 
     /**
@@ -360,31 +360,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     protected function getChoiceViews()
     {
         return array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
-    }
-
-    /**
-     * Finds the items for types.
-     *
-     * @param array $parents The parents items
-     * @param array $items   The items
-     *
-     * @return array
-     */
-    protected function findItemsForTypes(array $parents, array $items)
-    {
-        if ($this->getAllowAdd()) {
-            $prevItems = $parents;
-
-            foreach ($items as $item) {
-                $pos = array_search($item, $prevItems);
-
-                if (false === $pos) {
-                    $parents[] = $item;
-                }
-            }
-        }
-
-        return $parents;
     }
 
     /**

@@ -189,17 +189,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
 
         $idChoices = parent::getValuesForChoices($choices);
 
-        if ($this->getAllowAdd()) {
-            foreach ($values as $value) {
-                $pos = array_search($value, $idChoices);
-
-                if (false === $pos) {
-                    $choices[] = $value;
-                }
-            }
-        }
-
-        return $choices;
+        return Util::findItemsForTypes($choices, $idChoices, $values, $this->getAllowAdd(), true);
     }
 
     /**
