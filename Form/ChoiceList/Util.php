@@ -34,13 +34,33 @@ class Util
             $firstChoice = $choices[$keyChoices[0]];
 
             // group
-            if (is_array($firstChoice) && count($firstChoice) > 0) {
-                $keyFirstChoice = array_keys($firstChoice);
-                $firstChoice = $firstChoice[$keyFirstChoice[0]];
-            }
+            $firstChoice = self::getFirstValue($firstChoice, false, $firstChoice);
         }
 
         return $firstChoice;
+    }
+
+    /**
+     * Gets the first value.
+     *
+     * @param array|mixed $data
+     * @param bool        $singleString
+     * @param mixed|null  $default
+     *
+     * @return string|mixed|null
+     */
+    public static function getFirstValue($data, $singleString = false, $default = null)
+    {
+        if (is_array($data) && count($data) > 0) {
+            $firstKey = array_keys($data);
+            $value = $data[$firstKey[0]];
+
+            if (!$singleString || ($singleString && 1 === count($data) && is_string($value))) {
+                $default = $value;
+            }
+        }
+
+        return $default;
     }
 
     /**

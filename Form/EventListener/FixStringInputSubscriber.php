@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\EventListener;
 
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Util;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -38,10 +39,7 @@ class FixStringInputSubscriber implements EventSubscriberInterface
     public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();
-
-        if (is_array($data) && 1 === count($data) && is_string($data[0])) {
-            $data = $data[0];
-        }
+        $data = Util::getFirstValue($data, true, $data);
 
         if (is_string($data)) {
             if ('' === $data) {
