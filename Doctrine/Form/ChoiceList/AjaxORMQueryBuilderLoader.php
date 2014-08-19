@@ -56,12 +56,8 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
      */
     public function getQueryBuilder()
     {
-        $ref = new \ReflectionClass($this);
-        $parent = $ref->getParentClass();
-        $prop = $parent->getProperty('queryBuilder');
-        $prop->setAccessible(true);
-
-        return $prop->getValue($this);
+        return $this->getReflectionProperty('queryBuilder')
+            ->getValue($this);
     }
 
     /**
@@ -69,10 +65,24 @@ class AjaxORMQueryBuilderLoader extends ORMQueryBuilderLoader
      */
     public function reset()
     {
+        $this->getReflectionProperty('queryBuilder')
+            ->setValue($this, clone $this->backupQueryBuilder);
+    }
+
+    /**
+     * Gets the reflection parent property.
+     *
+     * @param string $property The property name
+     *
+     * @return \ReflectionProperty
+     */
+    protected function getReflectionProperty($property)
+    {
         $ref = new \ReflectionClass($this);
         $parent = $ref->getParentClass();
-        $prop = $parent->getProperty('queryBuilder');
+        $prop = $parent->getProperty($property);
         $prop->setAccessible(true);
-        $prop->setValue($this, clone $this->backupQueryBuilder);
+
+        return $prop;
     }
 }

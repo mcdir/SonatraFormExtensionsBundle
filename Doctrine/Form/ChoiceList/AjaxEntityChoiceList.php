@@ -13,6 +13,7 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList;
 
 use Doctrine\ORM\QueryBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Util;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -299,21 +300,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
      */
     public function getFirstChoiceView()
     {
-        $choices = $this->getChoiceViews();
-        $firstChoice = null;
-        $keyChoices = array_keys($choices);
-
-        if (count($choices) > 0) {
-            $firstChoice = $choices[$keyChoices[0]];
-
-            // group
-            if (is_array($firstChoice) && count($firstChoice) > 0) {
-                $keyFirstChoice = array_keys($firstChoice);
-                $firstChoice = $firstChoice[$keyFirstChoice[0]];
-            }
-        }
-
-        return $firstChoice;
+        return Util::getFirstChoiceView($this->getChoiceViews());
     }
 
     /**

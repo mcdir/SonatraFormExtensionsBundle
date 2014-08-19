@@ -96,21 +96,9 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function getChoicesForValues(array $values)
     {
-        $choices = parent::getChoicesForValues($values);
+        $parentChoices = parent::getChoicesForValues($values);
 
-        if ($this->getAllowAdd()) {
-            $items = $choices;
-
-            foreach ($values as $value) {
-                $pos = array_search($value, $items);
-
-                if (false === $pos) {
-                    $choices[] = $value;
-                }
-            }
-        }
-
-        return $choices;
+        return $this->findItemsForTypes($parentChoices, $values);
     }
 
     /**
@@ -120,19 +108,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     {
         $parentValues = parent::getValuesForChoices($values);
 
-        if ($this->getAllowAdd()) {
-            $items = $parentValues;
-
-            foreach ($values as $value) {
-                $pos = array_search($value, $items);
-
-                if (false === $pos) {
-                    $parentValues[] = $value;
-                }
-            }
-        }
-
-        return $parentValues;
+        return $this->findItemsForTypes($parentValues, $values);
     }
 
     /**
@@ -149,19 +125,11 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
             if (is_array($choice)) {
                 /* @var ChoiceView $subChoice */
                 foreach ($choice as $subChoice) {
-                    if (in_array($subChoice->value, $values)) {
-                        $choices[] = $this->formatter->formatChoice($subChoice);
-                        $pos = array_search($subChoice->value, $unresolvedValues);
-                        array_splice($unresolvedValues, $pos, 1);
-                    }
+                    $this->addFormattedChoices($choices, $unresolvedValues, $values, $subChoice);
                 }
 
             } else {
-                if (in_array($choice->value, $values)) {
-                    $choices[] = $this->formatter->formatChoice($choice);
-                    $pos = array_search($choice->value, $unresolvedValues);
-                    array_splice($unresolvedValues, $pos, 1);
-                }
+                $this->addFormattedChoices($choices, $unresolvedValues, $values, $choice);
             }
         }
 
@@ -229,21 +197,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
      */
     public function getFirstChoiceView()
     {
-        $choices = $this->getChoiceViews();
-        $keyChoices = array_keys($choices);
-        $firstChoice = null;
-
-        if (count($choices) > 0) {
-            $firstChoice = $choices[$keyChoices[0]];
-
-            // group
-            if (is_array($firstChoice) && count($firstChoice) > 0) {
-                $keyFirstChoice = array_keys($firstChoice);
-                $firstChoice = $firstChoice[$keyFirstChoice[0]];
-            }
-        }
-
-        return $firstChoice;
+        return Util::getFirstChoiceView($this->getChoiceViews());
     }
 
     /**
@@ -406,5 +360,47 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     protected function getChoiceViews()
     {
         return array_merge_recursive($this->getPreferredViews(), $this->getRemainingViews());
+    }
+
+    /**
+     * Finds the items for types.
+     *
+     * @param array $parents The parents items
+     * @param array $items   The items
+     *
+     * @return array
+     */
+    protected function findItemsForTypes(array $parents, array $items)
+    {
+        if ($this->getAllowAdd()) {
+            $prevItems = $parents;
+
+            foreach ($items as $item) {
+                $pos = array_search($item, $prevItems);
+
+                if (false === $pos) {
+                    $parents[] = $item;
+                }
+            }
+        }
+
+        return $parents;
+    }
+
+    /**
+     * Adds formatted choice in choice list.
+     *
+     * @param array      $choices          By reference
+     * @param array      $unresolvedValues By reference
+     * @param array      $values
+     * @param ChoiceView $choice
+     */
+    protected function addFormattedChoices(array &$choices, array &$unresolvedValues, array $values, ChoiceView $choice)
+    {
+        if (in_array($choice->value, $values)) {
+            $choices[] = $this->formatter->formatChoice($choice);
+            $pos = array_search($choice->value, $unresolvedValues);
+            array_splice($unresolvedValues, $pos, 1);
+        }
     }
 }
