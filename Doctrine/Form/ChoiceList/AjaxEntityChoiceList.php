@@ -517,6 +517,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
             $value = implode('', $value);
         }
 
+        /* @var string $value */
+        /* @var string $label */
+
         return new ChoiceView($entity, $value, $label);
     }
 
