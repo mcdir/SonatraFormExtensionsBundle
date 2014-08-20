@@ -67,6 +67,22 @@ class ChoiceToValueTransformer implements DataTransformerInterface
             throw new TransformationFailedException('Expected a scalar.');
         }
 
+        $value = $this->reverseTransformEmptyValue($value);
+
+        return $this->reverseTransformChoice($value);
+    }
+
+    /**
+     * Reverse transform the empty value.
+     *
+     * @param string|null $value
+     *
+     * @return string|null
+     *
+     * @throws TransformationFailedException When value is empty and required
+     */
+    protected function reverseTransformEmptyValue($value)
+    {
         // These are now valid ChoiceList values, so we can return null
         // right away
         if ('' === $value) {
@@ -82,6 +98,20 @@ class ChoiceToValueTransformer implements DataTransformerInterface
             }
         }
 
+        return $value;
+    }
+
+    /**
+     * Reverse transform the choice.
+     *
+     * @param string|null $value
+     *
+     * @return string|null
+     *
+     * @throws TransformationFailedException
+     */
+    protected function reverseTransformChoice($value)
+    {
         $choices = $this->choiceList->getChoicesForValues(array($value));
 
         if (1 !== count($choices)) {
