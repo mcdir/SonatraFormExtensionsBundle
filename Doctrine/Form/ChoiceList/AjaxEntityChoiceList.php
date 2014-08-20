@@ -247,42 +247,17 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
      */
     public function getFormattedChoices()
     {
-        if (!$this->isLazy()
-                && $this->ajaxEntityLoader instanceof AjaxORMQueryBuilderLoader
-                && $this->getPageSize() > 0) {
-            $qb = $this->ajaxEntityLoader->getQueryBuilder();
-
-            $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
-                ->setMaxResults($this->getPageSize());
-        }
+        $this->refreshRangePagination();
 
         $choices = $this->getChoiceViews();
-        $formattedChoices = array();
         $keyChoices = array_keys($choices);
 
         // simple
         if (count($choices) > 0 && is_int($keyChoices[0])) {
-            foreach ($choices as $choice) {
-                $formattedChoices[] = $this->formatter->formatChoice($choice);
-            }
-
-            return $formattedChoices;
+            return $this->getSimpleFormattedChoices($choices);
         }
 
-        // group
-        foreach ($choices as $groupName => $groupChoices) {
-            $group = $this->formatter->formatGroupChoice($groupName);
-
-            foreach ($groupChoices as $subChoice) {
-                $group = $this->formatter->addChoiceInGroup($group, $subChoice);
-            }
-
-            if (!$this->formatter->isEmptyGroup($group)) {
-                $formattedChoices[] = $group;
-            }
-        }
-
-        return $formattedChoices;
+        return $this->getGroupFormattedChoices($choices);
     }
 
     /**
@@ -509,5 +484,66 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
         $this->manager->initializeObject($entity);
 
         return $this->manager->getClassMetadata($this->ajaxClass)->getIdentifierValues($entity);
+    }
+
+    /**
+     * Refresh the range pagination.
+     *
+     * @return void
+     */
+    protected function refreshRangePagination()
+    {
+        if (!$this->isLazy()
+            && $this->ajaxEntityLoader instanceof AjaxORMQueryBuilderLoader
+            && $this->getPageSize() > 0) {
+            $qb = $this->ajaxEntityLoader->getQueryBuilder();
+
+            $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
+                ->setMaxResults($this->getPageSize());
+        }
+    }
+
+    /**
+     * Gets the simple formatted choices.
+     *
+     * @param array|ChoiceView[] $choices
+     *
+     * @return array The list or group list of formatted choices
+     */
+    protected function getSimpleFormattedChoices($choices)
+    {
+        $formattedChoices = array();
+
+        foreach ($choices as $choice) {
+            $formattedChoices[] = $this->formatter->formatChoice($choice);
+        }
+
+        return $formattedChoices;
+    }
+
+    /**
+     * Gets the group formatted choices.
+     *
+     * @param array|ChoiceView[] $choices
+     *
+     * @return array The list or group list of formatted choices
+     */
+    protected function getGroupFormattedChoices($choices)
+    {
+        $formattedChoices = array();
+
+        foreach ($choices as $groupName => $groupChoices) {
+            $group = $this->formatter->formatGroupChoice($groupName);
+
+            foreach ($groupChoices as $subChoice) {
+                $group = $this->formatter->addChoiceInGroup($group, $subChoice);
+            }
+
+            if (!$this->formatter->isEmptyGroup($group)) {
+                $formattedChoices[] = $group;
+            }
+        }
+
+        return $formattedChoices;;
     }
 }
