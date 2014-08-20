@@ -348,7 +348,7 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     /**
      * Gets range values.
      *
-     * @return array The startTo and endTo
+     * @return integer[] The startTo and endTo
      */
     protected function getRangeValues()
     {
