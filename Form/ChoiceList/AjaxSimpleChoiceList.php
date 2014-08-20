@@ -149,47 +149,13 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
     {
         $choices = $this->getChoiceViews();
         $keyChoices = array_keys($choices);
-        $formattedChoices = array();
-        $startTo = ($this->getPageNumber() - 1) * $this->getPageSize();
-        $endTo = $startTo + $this->getPageSize();
-
-        if (0 >= $this->getPageSize()) {
-            $endTo = $this->getSize();
-        }
-
-        if ($endTo > $this->getSize()) {
-            $endTo = $this->getSize();
-        }
 
         // simple
         if (count($choices) > 0 && is_int($keyChoices[0])) {
-            for ($index=$startTo; $index<$endTo; $index++) {
-                $formattedChoices[] = $this->formatter->formatChoice($choices[$index]);
-            }
-
-            return $formattedChoices;
+            return $this->getSimpleFormattedChoices($choices);
         }
 
-        // group
-        $index = 0;
-
-        foreach ($choices as $groupName => $groupChoices) {
-            $group = $this->formatter->formatGroupChoice($groupName);
-
-            foreach ($groupChoices as $subChoice) {
-                if ($index >= $startTo && $index < $endTo) {
-                    $group = $this->formatter->addChoiceInGroup($group, $subChoice);
-                }
-
-                $index++;
-            }
-
-            if (!$this->formatter->isEmptyGroup($group)) {
-                $formattedChoices[] = $group;
-            }
-        }
-
-        return $formattedChoices;
+        return $this->getGroupFormattedChoices($choices);
     }
 
     /**
@@ -377,5 +343,77 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
             $pos = array_search($choice->value, $unresolvedValues);
             array_splice($unresolvedValues, $pos, 1);
         }
+    }
+
+    /**
+     * Gets range values.
+     *
+     * @return array The startTo and endTo
+     */
+    protected function getRangeValues()
+    {
+        $startTo = ($this->getPageNumber() - 1) * $this->getPageSize();
+        $endTo = $startTo + $this->getPageSize();
+
+        if (0 >= $this->getPageSize()) {
+            $endTo = $this->getSize();
+        }
+
+        if ($endTo > $this->getSize()) {
+            $endTo = $this->getSize();
+        }
+
+        return array($startTo, $endTo);
+    }
+
+    /**
+     * Gets the simple formatted choices.
+     *
+     * @param array|ChoiceView[] $choices
+     *
+     * @return array The list or group list of formatted choices
+     */
+    protected function getSimpleFormattedChoices($choices)
+    {
+        $formattedChoices = array();
+        list($startTo, $endTo) = $this->getRangeValues();
+
+        for ($index=$startTo; $index<$endTo; $index++) {
+            $formattedChoices[] = $this->formatter->formatChoice($choices[$index]);
+        }
+
+        return $formattedChoices;
+    }
+
+    /**
+     * Gets the group formatted choices.
+     *
+     * @param array|ChoiceView[] $choices
+     *
+     * @return array The list or group list of formatted choices
+     */
+    protected function getGroupFormattedChoices($choices)
+    {
+        $index = 0;
+        $formattedChoices = array();
+        list($startTo, $endTo) = $this->getRangeValues();
+
+        foreach ($choices as $groupName => $groupChoices) {
+            $group = $this->formatter->formatGroupChoice($groupName);
+
+            foreach ($groupChoices as $subChoice) {
+                if ($index >= $startTo && $index < $endTo) {
+                    $group = $this->formatter->addChoiceInGroup($group, $subChoice);
+                }
+
+                $index++;
+            }
+
+            if (!$this->formatter->isEmptyGroup($group)) {
+                $formattedChoices[] = $group;
+            }
+        }
+
+        return $formattedChoices;
     }
 }
