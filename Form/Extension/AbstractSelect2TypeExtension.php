@@ -141,22 +141,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
         $view->vars['form']->vars['no_label_for'] = true;
 
-        if ($options['select2']['ajax'] && isset($options['choice_list'])) {
-            /* @var AjaxChoiceListInterface $choiceList */
-            $choiceList = $options['choice_list'];
-            $values = (array) $view->vars['value'];
-
-            // add first value
-            if ($options['required'] && null === $view->vars['data']) {
-                $firstChoice = $choiceList->getFirstChoiceView();
-
-                if (null !== $firstChoice) {
-                    $values = (array) $firstChoice->value;
-                }
-            }
-
-            $view->vars['choices_selected'] = $choiceList->getFormattedChoicesForValues($values);
-        }
+        $this->addChoicesSelectedInView($view, $options);
 
         // convert array to string
         if ($options['select2']['ajax'] && is_array($view->vars['value'])) {
@@ -390,5 +375,33 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             ),
             'required' => $options['select2']['ajax'] ? false : $options['required'],
         );
+    }
+
+    /**
+     * Adds formatted choices selected in form view.
+     *
+     * @param FormView $view
+     * @param array    $options
+     *
+     * @return void
+     */
+    protected function addChoicesSelectedInView(FormView $view, array $options)
+    {
+        if ($options['select2']['ajax'] && isset($options['choice_list'])) {
+            /* @var AjaxChoiceListInterface $choiceList */
+            $choiceList = $options['choice_list'];
+            $values = (array) $view->vars['value'];
+
+            // add first value
+            if ($options['required'] && null === $view->vars['data']) {
+                $firstChoice = $choiceList->getFirstChoiceView();
+
+                if (null !== $firstChoice) {
+                    $values = (array) $firstChoice->value;
+                }
+            }
+
+            $view->vars['choices_selected'] = $choiceList->getFormattedChoicesForValues($values);
+        }
     }
 }
