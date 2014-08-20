@@ -248,16 +248,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
     public function getFormattedChoices()
     {
         $this->refreshRangePagination();
+        $util = new EntityFormatterUtil($this, $this->formatter);
 
-        $choices = $this->getChoiceViews();
-        $keyChoices = array_keys($choices);
-
-        // simple
-        if (count($choices) > 0 && is_int($keyChoices[0])) {
-            return $this->getSimpleFormattedChoices($choices);
-        }
-
-        return $this->getGroupFormattedChoices($choices);
+        return $util->getFormattedChoices();
     }
 
     /**
@@ -501,49 +494,5 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
             $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
                 ->setMaxResults($this->getPageSize());
         }
-    }
-
-    /**
-     * Gets the simple formatted choices.
-     *
-     * @param array|ChoiceView[] $choices
-     *
-     * @return array The list or group list of formatted choices
-     */
-    protected function getSimpleFormattedChoices($choices)
-    {
-        $formattedChoices = array();
-
-        foreach ($choices as $choice) {
-            $formattedChoices[] = $this->formatter->formatChoice($choice);
-        }
-
-        return $formattedChoices;
-    }
-
-    /**
-     * Gets the group formatted choices.
-     *
-     * @param array|ChoiceView[] $choices
-     *
-     * @return array The list or group list of formatted choices
-     */
-    protected function getGroupFormattedChoices($choices)
-    {
-        $formattedChoices = array();
-
-        foreach ($choices as $groupName => $groupChoices) {
-            $group = $this->formatter->formatGroupChoice($groupName);
-
-            foreach ($groupChoices as $subChoice) {
-                $group = $this->formatter->addChoiceInGroup($group, $subChoice);
-            }
-
-            if (!$this->formatter->isEmptyGroup($group)) {
-                $formattedChoices[] = $group;
-            }
-        }
-
-        return $formattedChoices;;
     }
 }
