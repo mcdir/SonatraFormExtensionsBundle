@@ -110,65 +110,16 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $ajaxUrl = $this->requestStack->getMasterRequest()->getRequestUri();
-        $routeName = null;
-        $choiceList = $form->getConfig()->getAttribute('choice_list');
+        list($ajaxUrl, $routeName) = $this->getAjaxUrlAndRouteName($form, $options);
+        $choiceList = $this->getAjaxChoiceList($form, $options);
 
-        if (isset($options['choice_list'])) {
-            $choiceList = $options['choice_list'];
+        if ($options['select2']['ajax'] && null === $routeName) {
+            $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->requestStack, $choiceList);
+            $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
         }
 
-        if ($options['select2']['ajax']) {
-            $routeName = $form->getConfig()->getAttribute('select2_ajax_route', $options['select2']['ajax_route']);
-
-            if (null !== $routeName) {
-                $routeParams = $options['select2']['ajax_parameters'];
-                $routeReferenceType = $options['select2']['ajax_reference_type'];
-                $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
-
-            } else {
-                $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->requestStack, $choiceList);
-                $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
-            }
-        }
-
-        $view->vars = array_replace($view->vars, array(
-            'select2'  => array(
-                'wrapper_attr'               => $options['select2']['wrapper_attr'],
-                'allow_clear'                => $options['required'] ? 'false' : 'true',
-                'ajax'                       => $options['select2']['ajax'],
-                'ajax_url'                   => $ajaxUrl,
-                'ajax_id'                    => (null === $routeName && isset($choiceList)) ? $view->vars['id'] : null,
-                'quiet_millis'               => $options['select2']['quiet_millis'],
-                'page_size'                  => $options['select2']['page_size'],
-                'close_on_select'            => $options['select2']['close_on_select'],
-                'open_on_enter'              => $options['select2']['open_on_enter'],
-                'container_css'              => $options['select2']['container_css'],
-                'dropdown_css'               => $options['select2']['dropdown_css'],
-                'container_css_class'        => $options['select2']['container_css_class'],
-                'dropdown_css_class'         => $options['select2']['dropdown_css_class'],
-                'format_result'              => $options['select2']['format_result'],
-                'format_selection'           => $options['select2']['format_selection'],
-                'format_result_css_class'    => $options['select2']['format_result_css_class'],
-                'minimum_results_for_search' => $options['select2']['minimum_results_for_search'],
-                'minimum_input_length'       => $options['select2']['minimum_input_length'],
-                'maximum_selection_size'     => $options['select2']['maximum_selection_size'],
-                'matcher'                    => $options['select2']['matcher'],
-                'select_separator'           => $options['select2']['select_separator'],
-                'token_separators'           => $options['select2']['token_separators'],
-                'tokenizer'                  => $options['select2']['tokenizer'],
-                'escape_markup'              => $options['select2']['escape_markup'],
-                'blur_on_change'             => $options['select2']['blur_on_change'],
-                'select_id'                  => $options['select2']['select_id'],
-                'create_search_choice'       => $options['select2']['create_search_choice'],
-                'init_selection'             => $options['select2']['init_selection'],
-                'select_query'               => $options['select2']['select_query'],
-                'select_ajax'                => $options['select2']['select_ajax'],
-                'select_data'                => $options['select2']['select_data'],
-                'width'                      => $options['select2']['width'],
-            ),
-            'required' => $options['select2']['ajax'] ? false : $options['required'],
-        ));
+        $view->vars = array_replace($view->vars,
+            $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName));
 
         if ($options['select2']['ajax'] && !$options['multiple'] && !$options['required']) {
             $view->vars['attr']['placeholder'] = ' ';
@@ -343,5 +294,101 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     public function getExtendedType()
     {
         return $this->type;
+    }
+
+    /**
+     * Get ajax choice list.
+     *
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return AjaxChoiceListInterface
+     */
+    protected function getAjaxChoiceList(FormInterface $form, array $options)
+    {
+        $choiceList = $form->getConfig()->getAttribute('choice_list');
+
+        if (isset($options['choice_list'])) {
+            $choiceList = $options['choice_list'];
+        }
+
+        return $choiceList;
+    }
+
+    /**
+     * Gets the ajax url and route name.
+     *
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return array The ajaxUrl and routeName
+     */
+    protected function getAjaxUrlAndRouteName(FormInterface $form, array $options)
+    {
+        $ajaxUrl = $this->requestStack->getMasterRequest()->getRequestUri();
+        $routeName = null;
+
+        if ($options['select2']['ajax']) {
+            $routeName = $form->getConfig()->getAttribute('select2_ajax_route', $options['select2']['ajax_route']);
+
+            if (null !== $routeName) {
+                $routeParams = $options['select2']['ajax_parameters'];
+                $routeReferenceType = $options['select2']['ajax_reference_type'];
+                $ajaxUrl = $this->router->generate($routeName, $routeParams, $routeReferenceType);
+            }
+        }
+
+        return array($ajaxUrl, $routeName);
+    }
+
+    /**
+     * Gets the new view vars for the replacement.
+     *
+     * @param FormView    $view
+     * @param array       $options
+     * @param string      $ajaxUrl
+     * @param string|null $routeName
+     *
+     * @return array
+     */
+    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName)
+    {
+        return array(
+            'select2'  => array(
+                'wrapper_attr'               => $options['select2']['wrapper_attr'],
+                'allow_clear'                => $options['required'] ? 'false' : 'true',
+                'ajax'                       => $options['select2']['ajax'],
+                'ajax_url'                   => $ajaxUrl,
+                'ajax_id'                    => (null === $routeName && isset($choiceList)) ? $view->vars['id'] : null,
+                'quiet_millis'               => $options['select2']['quiet_millis'],
+                'page_size'                  => $options['select2']['page_size'],
+                'close_on_select'            => $options['select2']['close_on_select'],
+                'open_on_enter'              => $options['select2']['open_on_enter'],
+                'container_css'              => $options['select2']['container_css'],
+                'dropdown_css'               => $options['select2']['dropdown_css'],
+                'container_css_class'        => $options['select2']['container_css_class'],
+                'dropdown_css_class'         => $options['select2']['dropdown_css_class'],
+                'format_result'              => $options['select2']['format_result'],
+                'format_selection'           => $options['select2']['format_selection'],
+                'format_result_css_class'    => $options['select2']['format_result_css_class'],
+                'minimum_results_for_search' => $options['select2']['minimum_results_for_search'],
+                'minimum_input_length'       => $options['select2']['minimum_input_length'],
+                'maximum_selection_size'     => $options['select2']['maximum_selection_size'],
+                'matcher'                    => $options['select2']['matcher'],
+                'select_separator'           => $options['select2']['select_separator'],
+                'token_separators'           => $options['select2']['token_separators'],
+                'tokenizer'                  => $options['select2']['tokenizer'],
+                'escape_markup'              => $options['select2']['escape_markup'],
+                'blur_on_change'             => $options['select2']['blur_on_change'],
+                'select_id'                  => $options['select2']['select_id'],
+                'create_search_choice'       => $options['select2']['create_search_choice'],
+                'init_selection'             => $options['select2']['init_selection'],
+                'select_query'               => $options['select2']['select_query'],
+                'select_ajax'                => $options['select2']['select_ajax'],
+                'select_data'                => $options['select2']['select_data'],
+                'width'                      => $options['select2']['width'],
+            ),
+            'required' => $options['select2']['ajax'] ? false : $options['required'],
+        );
     }
 }
