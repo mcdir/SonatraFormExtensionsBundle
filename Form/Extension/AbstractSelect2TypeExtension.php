@@ -162,8 +162,61 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             'select2' => 'array',
         ));
 
+
+        $normalizers = array_merge($this->getSelect2Normalizer(), array(
+            'compound' => function (Options $options) {
+                if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
+                    return false;
+                }
+
+                return $options['expanded'];
+            },
+        ));
+
+        if ($resolver->isKnown('expanded')) {
+            $normalizers['expanded'] = function (Options $options, $value) {
+                return $value;
+            };
+        }
+
+        if ($resolver->isKnown('choice_list')) {
+            $normalizers['choice_list'] = function (Options $options, $value) {
+                if ($options['select2']['enabled']) {
+                    if (!$value instanceof AjaxChoiceListInterface) {
+                        $value = new AjaxSimpleChoiceList($options['select2']['formatter'], $options['choices'], $options['preferred_choices']);
+                    }
+
+                    $value->setAllowAdd($options['select2']['allow_add']);
+                    $value->setPageSize($options['select2']['page_size']);
+                    $value->setPageNumber(1);
+                    $value->setSearch('');
+                    $value->setIds(array());
+                    $value->reset();
+                }
+
+                return $value;
+            };
+        }
+
+        $resolver->setNormalizers($normalizers);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtendedType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSelect2Normalizer()
+    {
         $ajaxPageSize = $this->ajaxPageSize;
-        $normalizers = array(
+
+        return array(
             'select2' => function (Options $options, $value) use ($ajaxPageSize) {
                 $select2Resolver = new OptionsResolver();
                 $pDefault = $options;
@@ -210,7 +263,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
                     'select_ajax'                => null,
                     'select_data'                => null,
                     'tags'                       => null,
-                ));
+                    ));
 
                 $select2Resolver->setAllowedTypes(array(
                     'enabled'             => 'bool',
@@ -226,59 +279,17 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
                 $select2Resolver->setNormalizers(array(
                     'allow_add'  => function (Options $options, $value) {
-                        if (null !== $options['tags']) {
-                            return true;
-                        }
+                            if (null !== $options['tags']) {
+                                return true;
+                            }
 
-                        return $value;
-                    },
+                            return $value;
+                        },
                 ));
 
                 return $select2Resolver->resolve($value);
             },
-            'compound' => function (Options $options) {
-                if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
-                    return false;
-                }
-
-                return $options['expanded'];
-            },
         );
-
-        if ($resolver->isKnown('expanded')) {
-            $normalizers['expanded'] = function (Options $options, $value) {
-                return $value;
-            };
-        }
-
-        if ($resolver->isKnown('choice_list')) {
-            $normalizers['choice_list'] = function (Options $options, $value) {
-                if ($options['select2']['enabled']) {
-                    if (!$value instanceof AjaxChoiceListInterface) {
-                        $value = new AjaxSimpleChoiceList($options['select2']['formatter'], $options['choices'], $options['preferred_choices']);
-                    }
-
-                    $value->setAllowAdd($options['select2']['allow_add']);
-                    $value->setPageSize($options['select2']['page_size']);
-                    $value->setPageNumber(1);
-                    $value->setSearch('');
-                    $value->setIds(array());
-                    $value->reset();
-                }
-
-                return $value;
-            };
-        }
-
-        $resolver->setNormalizers($normalizers);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtendedType()
-    {
-        return $this->type;
     }
 
     /**
