@@ -162,23 +162,151 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             'select2' => 'array',
         ));
 
+        $normalizers = array();
+        $normalizers = $this->addSelect2Normalizer($normalizers);
+        $normalizers = $this->addCompoundNormalizer($normalizers);
+        $normalizers = $this->addExpandedNormalizer($normalizers, $resolver);
+        $normalizers = $this->addChoiceListNormalizer($normalizers, $resolver);
 
-        $normalizers = array_merge($this->getSelect2Normalizer(), array(
-            'compound' => function (Options $options) {
-                if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
-                    return false;
-                }
+        $resolver->setNormalizers($normalizers);
+    }
 
-                return $options['expanded'];
-            },
-        ));
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtendedType()
+    {
+        return $this->type;
+    }
 
+    /**
+     * @param array $normalizers The normalizers
+     *
+     * @return array The normalizers with new value
+     */
+    protected function addSelect2Normalizer(array $normalizers)
+    {
+        $ajaxPageSize = $this->ajaxPageSize;
+
+        $normalizers['select2'] = function (Options $options, $value) use ($ajaxPageSize) {
+            $select2Resolver = new OptionsResolver();
+            $pDefault = $options;
+            $enabled = function (Options $options) use ($pDefault) {
+                $options->valid();
+
+                return !$pDefault['expanded'];
+            };
+
+            $select2Resolver->setDefaults(array(
+                'enabled'                    => $enabled,
+                'wrapper_attr'               => array(),
+                'formatter'                  => new Select2AjaxChoiceListFormatter(),
+                'allow_add'                  => false,
+                'ajax'                       => false,
+                'ajax_route'                 => null,
+                'ajax_parameters'            => array(),
+                'ajax_reference_type'        => RouterInterface::ABSOLUTE_PATH,
+                'quiet_millis'               => 200,
+                'page_size'                  => $ajaxPageSize,
+                'width'                      => 'resolve',
+                'close_on_select'            => null,
+                'open_on_enter'              => null,
+                'container_css'              => null,
+                'dropdown_css'               => null,
+                'container_css_class'        => null,
+                'dropdown_css_class'         => null,
+                'format_result'              => null,
+                'format_selection'           => null,
+                'format_result_css_class'    => null,
+                'minimum_results_for_search' => null,
+                'minimum_input_length'       => 0,
+                'maximum_selection_size'     => null,
+                'matcher'                    => null,
+                'select_separator'           => null,
+                'token_separators'           => null,
+                'tokenizer'                  => null,
+                'escape_markup'              => null,
+                'blur_on_change'             => null,
+                'select_id'                  => null,
+                'create_search_choice'       => null,
+                'init_selection'             => null,
+                'select_query'               => null,
+                'select_ajax'                => null,
+                'select_data'                => null,
+                'tags'                       => null,
+                ));
+
+            $select2Resolver->setAllowedTypes(array(
+                'enabled'             => 'bool',
+                'wrapper_attr'        => 'array',
+                'formatter'           => 'Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface',
+                'allow_add'           => 'bool',
+                'ajax'                => 'bool',
+                'ajax_route'          => array('null', 'string'),
+                'ajax_parameters'     => 'array',
+                'ajax_reference_type' => 'bool',
+                'tags'                => array('null', 'array'),
+            ));
+
+            $select2Resolver->setNormalizers(array(
+                'allow_add'  => function (Options $options, $value) {
+                        if (null !== $options['tags']) {
+                            return true;
+                        }
+
+                        return $value;
+                    },
+            ));
+
+            return $select2Resolver->resolve($value);
+        };
+
+        return $normalizers;
+    }
+
+    /**
+     * @param array $normalizers The normalizers
+     *
+     * @return array The normalizers with new value
+     */
+    protected function addCompoundNormalizer(array $normalizers)
+    {
+        $normalizers['compound'] = function (Options $options) {
+            if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
+                return false;
+            }
+
+            return $options['expanded'];
+        };
+
+        return $normalizers;
+    }
+
+    /**
+     * @param array                    $normalizers The normalizers
+     * @param OptionsResolverInterface $resolver
+     *
+     * @return array The normalizers with new value
+     */
+    protected function addExpandedNormalizer(array $normalizers, OptionsResolverInterface $resolver)
+    {
         if ($resolver->isKnown('expanded')) {
             $normalizers['expanded'] = function (Options $options, $value) {
                 return $value;
             };
         }
 
+        return $normalizers;
+    }
+
+    /**
+     * @param array                    $normalizers The normalizers
+     * @param OptionsResolverInterface $resolver
+     *
+     * @return array The normalizers with new value
+     */
+    protected function addChoiceListNormalizer(array $normalizers, OptionsResolverInterface $resolver)
+    {
         if ($resolver->isKnown('choice_list')) {
             $normalizers['choice_list'] = function (Options $options, $value) {
                 if ($options['select2']['enabled']) {
@@ -198,98 +326,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             };
         }
 
-        $resolver->setNormalizers($normalizers);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtendedType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getSelect2Normalizer()
-    {
-        $ajaxPageSize = $this->ajaxPageSize;
-
-        return array(
-            'select2' => function (Options $options, $value) use ($ajaxPageSize) {
-                $select2Resolver = new OptionsResolver();
-                $pDefault = $options;
-                $enabled = function (Options $options) use ($pDefault) {
-                    $options->valid();
-
-                    return !$pDefault['expanded'];
-                };
-
-                $select2Resolver->setDefaults(array(
-                    'enabled'                    => $enabled,
-                    'wrapper_attr'               => array(),
-                    'formatter'                  => new Select2AjaxChoiceListFormatter(),
-                    'allow_add'                  => false,
-                    'ajax'                       => false,
-                    'ajax_route'                 => null,
-                    'ajax_parameters'            => array(),
-                    'ajax_reference_type'        => RouterInterface::ABSOLUTE_PATH,
-                    'quiet_millis'               => 200,
-                    'page_size'                  => $ajaxPageSize,
-                    'width'                      => 'resolve',
-                    'close_on_select'            => null,
-                    'open_on_enter'              => null,
-                    'container_css'              => null,
-                    'dropdown_css'               => null,
-                    'container_css_class'        => null,
-                    'dropdown_css_class'         => null,
-                    'format_result'              => null,
-                    'format_selection'           => null,
-                    'format_result_css_class'    => null,
-                    'minimum_results_for_search' => null,
-                    'minimum_input_length'       => 0,
-                    'maximum_selection_size'     => null,
-                    'matcher'                    => null,
-                    'select_separator'           => null,
-                    'token_separators'           => null,
-                    'tokenizer'                  => null,
-                    'escape_markup'              => null,
-                    'blur_on_change'             => null,
-                    'select_id'                  => null,
-                    'create_search_choice'       => null,
-                    'init_selection'             => null,
-                    'select_query'               => null,
-                    'select_ajax'                => null,
-                    'select_data'                => null,
-                    'tags'                       => null,
-                    ));
-
-                $select2Resolver->setAllowedTypes(array(
-                    'enabled'             => 'bool',
-                    'wrapper_attr'        => 'array',
-                    'formatter'           => 'Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface',
-                    'allow_add'           => 'bool',
-                    'ajax'                => 'bool',
-                    'ajax_route'          => array('null', 'string'),
-                    'ajax_parameters'     => 'array',
-                    'ajax_reference_type' => 'bool',
-                    'tags'                => array('null', 'array'),
-                ));
-
-                $select2Resolver->setNormalizers(array(
-                    'allow_add'  => function (Options $options, $value) {
-                            if (null !== $options['tags']) {
-                                return true;
-                            }
-
-                            return $value;
-                        },
-                ));
-
-                return $select2Resolver->resolve($value);
-            },
-        );
+        return $normalizers;
     }
 
     /**
