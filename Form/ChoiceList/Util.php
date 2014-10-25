@@ -84,11 +84,31 @@ class Util
                 $pos = array_search($item, $searchItems);
 
                 if (false === $pos) {
-                    $choices[] = $item;
+                    $choices[static::getNewIndex($choices)] = $item;
                 }
             }
         }
 
         return $choices;
+    }
+
+    /**
+     * Get the new integer index.
+     *
+     * @param array $values The array
+     *
+     * @return int
+     */
+    protected static function getNewIndex(array $values)
+    {
+        $index = 0;
+        $keys = array_keys($values);
+        $size = count($keys);
+
+        if ($size > 0) {
+            $index = ((int) $keys[$size - 1]) + 1;
+        }
+
+        return $index;
     }
 }
