@@ -86,7 +86,7 @@ class FormatterUtil
         $formattedChoices = array();
         list($startTo, $endTo) = $this->getRangeValues();
 
-        for ($index=$startTo; $index<$endTo; $index++) {
+        for ($index = $startTo; $index<$endTo; $index++) {
             $formattedChoices[] = $this->formatter->formatChoice($choices[$index]);
         }
 
