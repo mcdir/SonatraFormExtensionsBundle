@@ -392,7 +392,7 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
             if (null !== $this->ajaxLabelPath) {
                 // search filter
                 if (null !== $this->getSearch() && '' !== $this->getSearch() && $this->ajaxLabelPath) {
-                    $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->ajaxLabelPath}", ":{$this->ajaxLabelPath}" ));
+                    $qb->andWhere($qb->expr()->like("{$entityAlias}.{$this->ajaxLabelPath}", ":{$this->ajaxLabelPath}"));
                     $qb->setParameter($this->ajaxLabelPath, "%{$this->getSearch()}%");
                 }
             }
