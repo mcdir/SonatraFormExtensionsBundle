@@ -59,7 +59,7 @@ class CurrencySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
     protected function getValidFirstChoiceSelected()
     {
         $formatter = new Select2AjaxChoiceListFormatter();
-        $choice = new ChoiceView('XUA', 'XUA', 'ADB Unit of Account');
+        $choice = new ChoiceView('AFN', 'AFN', 'Afghan Afghani');
 
         return $formatter->formatChoice($choice);
     }

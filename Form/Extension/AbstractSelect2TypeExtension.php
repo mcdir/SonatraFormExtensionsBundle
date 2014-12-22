@@ -91,7 +91,6 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
 
         if ($options['multiple']) {
             $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['required']));
-
         } else {
             $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list'], $options['required']));
         }
@@ -192,8 +191,6 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             $select2Resolver = new OptionsResolver();
             $pDefault = $options;
             $enabled = function (Options $options) use ($pDefault) {
-                $options->valid();
-
                 return !$pDefault['expanded'];
             };
 

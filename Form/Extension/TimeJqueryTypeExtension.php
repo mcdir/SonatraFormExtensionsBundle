@@ -29,8 +29,8 @@ class TimeJqueryTypeExtension extends DateTimeJqueryTypeExtension
 
         $builder->resetViewTransformers();
         $builder->addViewTransformer(new DateTimeToLocalizedStringTransformer(
-            $options['model_timezone'],
-            $options['view_timezone'],
+            'UTC',
+            'UTC',
             \IntlDateFormatter::NONE,
             $time_format,
             null,

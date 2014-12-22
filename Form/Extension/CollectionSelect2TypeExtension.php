@@ -164,8 +164,6 @@ class CollectionSelect2TypeExtension extends AbstractSelect2TypeExtension
                 return true;
             },
             'type'      => function (Options $options, $value) {
-                $options->valid();
-
                 return $value;
             },
             'options'   => function (Options $options, $value) use ($factory) {
