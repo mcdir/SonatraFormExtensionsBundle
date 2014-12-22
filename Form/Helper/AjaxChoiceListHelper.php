@@ -79,7 +79,6 @@ class AjaxChoiceListHelper
 
         if (in_array($ajaxIds, array(null, ''))) {
             $ajaxIds = array();
-
         } else {
             $ajaxIds = explode(',', $ajaxIds);
         }

@@ -55,10 +55,8 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
 
             if (true === $value) {
                 $value = 'true';
-
             } elseif (false === $value) {
                 $value = 'false';
-
             } elseif (null === $value) {
                 continue;
             }
@@ -110,7 +108,6 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
             if (false === strpos($pattern, 'yyyy')) {
                 if (false !== strpos($pattern, 'yy')) {
                     $pattern = str_replace('yy', 'yyyy', $pattern);
-
                 } elseif (false !== strpos($pattern, 'y')) {
                     $pattern = str_replace('y', 'yyyy', $pattern);
                 }

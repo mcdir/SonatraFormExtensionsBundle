@@ -44,7 +44,6 @@ class FixStringInputSubscriber implements EventSubscriberInterface
         if (is_string($data)) {
             if ('' === $data) {
                 $event->setData(array());
-
             } else {
                 $event->setData(explode(',', $data));
             }

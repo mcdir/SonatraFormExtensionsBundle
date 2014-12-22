@@ -290,11 +290,9 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
             $qb->setParameters($qb->getParameters());
             $qb->select("count($entityAlias)");
             $this->size = (integer) $qb->getQuery()->getSingleScalarResult();
-
         } elseif ($this->size instanceof QueryBuilder) {
             $choices = $this->getChoices();
             $this->size = count($choices);
-
         } elseif (null === $this->size) {
             $choices = $this->getChoices();
             $this->size = count($choices);
@@ -411,7 +409,6 @@ class AjaxEntityChoiceList extends EntityChoiceList implements AjaxEntityChoiceL
                 $qb->setFirstResult(($this->getPageNumber() - 1) * $this->getPageSize())
                     ->setMaxResults($this->getPageSize());
             }
-
         } elseif ($this->isLazy()) {
             throw new InvalidConfigurationException('The lazy loading of ajax entity choice list must have a "Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader"');
         }

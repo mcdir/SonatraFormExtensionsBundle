@@ -127,7 +127,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
                 foreach ($choice as $subChoice) {
                     $this->addFormattedChoices($choices, $unresolvedValues, $values, $subChoice);
                 }
-
             } else {
                 $this->addFormattedChoices($choices, $unresolvedValues, $values, $choice);
             }
@@ -265,7 +264,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
 
         if (null === $this->search || '' === $this->search) {
             $filteredChoices = $this->backupChoices;
-
         } else {
             foreach ($this->backupChoices as $group => $choice) {
                 if (is_array($choice)) {
@@ -278,7 +276,6 @@ class AjaxSimpleChoiceList extends SimpleChoiceList implements AjaxChoiceListInt
                             $filteredChoices[$group][$id] = $subChoice;
                         }
                     }
-
                 } else {
                     if (false !== stripos($choice, $this->search) && !in_array($choice, $this->getIds())) {
                         $filteredChoices[$group] = $choice;

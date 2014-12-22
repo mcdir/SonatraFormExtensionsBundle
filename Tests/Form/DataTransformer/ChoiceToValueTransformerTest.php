@@ -95,7 +95,7 @@ class ChoiceToValueTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testReverseTransformExpectsScalar()
     {
-       $this->transformer->reverseTransform(array());
+        $this->transformer->reverseTransform(array());
     }
 
     public function testReverseTransformNotRequired()
