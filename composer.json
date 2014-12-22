@@ -23,7 +23,8 @@
         "bower-asset/select2": "3.5.*",
         "bower-asset/moment": "2.8.*",
         "bower-asset/jquery-knob": "1.2.*",
-        "bower-asset/hammerjs": "2.0.*"
+        "bower-asset/hammerjs": "2.0.*",
+        "bower-asset/sonatra-jquery-datetime-picker": "1.0.*@dev"
     },
     "require-dev" : {
         "symfony/doctrine-bridge" : "~2.4",

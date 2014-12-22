@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a868d9b6b3ef14abb1d78219abd207d5",
+    "hash": "b65ab1225929ab2e941286ee6e72f24d",
     "packages": [
         {
             "name": "bower-asset/hammerjs",
@@ -160,6 +160,49 @@
                     "select2-spinner.gif"
                 ]
             }
+        },
+        {
+            "name": "bower-asset/sonatra-jquery-datetime-picker",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sonatra/sonatra-jquery-datetime-picker.git",
+                "reference": "276bd317417cd70eb870d32280c2aa2158e4d452"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sonatra/sonatra-jquery-datetime-picker/zipball/276bd317417cd70eb870d32280c2aa2158e4d452",
+                "reference": "276bd317417cd70eb870d32280c2aa2158e4d452",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/hammerjs": "dev-2.0.*|2.0.*",
+                "bower-asset/jquery": ">=1.11.0",
+                "bower-asset/jquery-knob": "dev-1.2.*|1.2.*",
+                "bower-asset/moment": "dev-2.8.*|2.8.*"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "js/datetime-picker.js",
+                "bower-asset-ignore": [
+                    "examples",
+                    "doc",
+                    "README.md"
+                ],
+                "branch-alias": {
+                    "dev-master": "1.0.0-dev"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Jquery date time picker",
+            "keywords": [
+                "date",
+                "datetime",
+                "jquery",
+                "time"
+            ]
         },
         {
             "name": "doctrine/annotations",
@@ -2629,7 +2672,8 @@
     "stability-flags": {
         "fxp/require-asset": 20,
         "fxp/require-asset-bundle": 20,
-        "sonatra/ajax-bundle": 20
+        "sonatra/ajax-bundle": 20,
+        "bower-asset/sonatra-jquery-datetime-picker": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
