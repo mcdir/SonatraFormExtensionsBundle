@@ -44,6 +44,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'currency'        => array(
                 'enabled' => true,
             ),
+            'auto_configuration' => true,
         );
     }
 }

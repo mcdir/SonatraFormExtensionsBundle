@@ -29,6 +29,11 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sonatra_form_extensions');
+        $rootNode
+            ->children()
+                ->booleanNode('auto_configuration')->defaultTrue()
+            ->end()
+        ;
 
         $this->addSelect2($rootNode);
 

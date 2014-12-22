@@ -34,6 +34,8 @@ class SonatraFormExtensionsExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('form.xml');
 
+        $container->setParameter('sonatra_form_extensions.config.auto_configuration', $config['auto_configuration']);
+
         if (!$config['select2']['enabled']) {
             $container->removeDefinition('form.type_extension.sonatra.choice_select2');
             $container->removeDefinition('form.type_extension.sonatra.country_select2');

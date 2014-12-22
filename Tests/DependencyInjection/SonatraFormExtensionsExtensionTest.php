@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\DependencyInjection;
 
+use Fxp\Bundle\RequireAssetBundle\DependencyInjection\FxpRequireAssetExtension;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\FrameworkExtension;
 use Symfony\Bundle\TwigBundle\DependencyInjection\TwigExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -113,18 +114,23 @@ class SonatraFormExtensionsExtensionTest extends \PHPUnit_Framework_TestCase
             'kernel.name'        => 'kernel',
             'kernel.root_dir'    => __DIR__,
             'kernel.charset'     => 'UTF-8',
+            'locale'             => 'en',
+            'assetic.debug'      => true,
         )));
 
         $sfExt = new FrameworkExtension();
         $twigExt = new TwigExtension();
+        $requireAssetExt = new FxpRequireAssetExtension();
         $extension = new SonatraFormExtensionsExtension();
 
         $container->registerExtension($sfExt);
         $container->registerExtension($twigExt);
+        $container->registerExtension($requireAssetExt);
         $container->registerExtension($extension);
 
         $sfExt->load(array(), $container);
         $twigExt->load($twigConfigs, $container);
+        $requireAssetExt->load(array(), $container);
         $extension->load($configs, $container);
 
         if (!empty($twigConfigs)) {

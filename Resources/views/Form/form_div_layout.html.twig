@@ -5,6 +5,8 @@
 {#} Widget {#}
 {% block select2_widget_content %}
 {% spaceless %}
+    {% require_script '@bower/jquery/dist/jquery.js', '@bower/select2/select2.js' %}
+    {% require_style '@bower/select2/select2.css' %}
     {% set required = false %}
     {% set select2 = select2|merge({'wrapper_attr': select2.wrapper_attr|merge({'class': ('select2-wrapper ' ~ select2.wrapper_attr.class|default(''))|trim})}) %}
     <div{% for attrname, attrvalue in select2.wrapper_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
@@ -15,8 +17,8 @@
             {{ block('base_choice_widget') }}
         {% endif %}
     </div>
-    {% inline_javascript %}
-        <script type="text/javascript">
+    {% inline_script %}
+        <script>
         $( '#{{ id }}' ).select2( {
             {% if select2.minimum_input_length is not null %}minimumInputLength: {{ select2.minimum_input_length }},{% endif %}
             {% if select2.minimum_results_for_search is not null %}minimumResultsForSearch: {{ select2.minimum_results_for_search }},{% endif %}
@@ -120,7 +122,7 @@
         }){% endif %};
         $('input.select2-focusser', $( '#{{ id }}' ).data('select2').container).attr('readonly', 'readonly');
         </script>
-    {% endinline_javascript %}
+    {% endinline_script %}
 {% endspaceless %}
 {% endblock select2_widget_content %}
 
@@ -148,6 +150,8 @@
 
 {% block datetime_widget %}
 {% spaceless %}
+    {% require_script '@bower/jquery/dist/jquery.js', '@bower/moment/moment.js', '@bower/hammerjs/hammer.js', '@bower/jquery-knob/js/jquery-knob.js', '@sonatra_form_extensions_bundle/assetic/js/datetime-picker.js' %}
+    {% require_style '@sonatra_form_extensions_bundle/assetic/less/datetime-picker-build.less' %}
     {{ block('base_datetime_widget') }}
 {% endspaceless %}
 {% endblock datetime_widget %}

@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle;
 
+use Sonatra\Bundle\FormExtensionsBundle\DependencyInjection\Compiler\ConfigurationPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Sonatra\Bundle\FormExtensionsBundle\DependencyInjection\Compiler\FormTemplatePass;
@@ -25,5 +26,6 @@ class SonatraFormExtensionsBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new FormTemplatePass());
+        $container->addCompilerPass(new ConfigurationPass());
     }
 }
