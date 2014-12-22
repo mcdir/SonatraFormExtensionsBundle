@@ -44,27 +44,11 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
+        new Fxp\Bundle\RequireAssetBundle\FxpRequireAssetBundle(),
         new Sonatra\Bundle\FormExtensionsBundle\SonatraFormExtensionsBundle(),
     );
 }
 ```
-
-Adds stylesheet files in your template or assetic asset (with less filter):
-
-- '%kernel.root_dir%/../vendor/bower-asset/select2/select2.css'
-- '@SonatraFormExtensionsBundle/Resources/assetic/less/datetime-picker-build.less'
-
-Adds javascript files in your template or assetic asset:
-
-- '%kernel.root_dir%/../vendor/bower-asset/jquery/dist/jquery.js'
-- '%kernel.root_dir%/../vendor/bower-asset/select2/select2.js'
-- '%kernel.root_dir%/../vendor/bower-asset/select2/select2_locale_%locale%.js'
-- '%kernel.root_dir%/../vendor/npm-asset/hammerjs/hammer.js'
-- '%kernel.root_dir%/../vendor/bower-asset/jquery-knob/js/jquery.knob.js'
-- '%kernel.root_dir%/../vendor/bower-asset/moment/moment.js'
-- '%kernel.root_dir%/../vendor/bower-asset/moment/locale/%locale%.js'
-- '@SonatraFormExtensionsBundle/Resources/assetic/js/datetime-picker.js'
-- '@SonatraFormExtensionsBundle/Resources/assetic/js/lang/datetime-picker-%locale%.js'
 
 ### Step 3: Configure the bundle (optional)
 
