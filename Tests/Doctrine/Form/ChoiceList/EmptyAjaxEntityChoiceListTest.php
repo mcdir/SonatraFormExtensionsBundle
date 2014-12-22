@@ -26,7 +26,7 @@ class EmptyAjaxEntityChoiceListTest extends AbstractExtendAjaxEntityChoiceListTe
     {
         $query = $this->em->createQueryBuilder()
             ->add('select', 'e')
-            ->add('from', self::SINGLE_INT_ID_CLASS . ' e')
+            ->add('from', self::SINGLE_INT_ID_CLASS.' e')
         ;
         $loader = new AjaxORMQueryBuilderLoader($query);
 

@@ -58,7 +58,7 @@ class AjaxChoiceListHelper
         $serializer = new Serializer($normalizers, $encoders);
 
         $response = new Response();
-        $response->headers->set('Content-Type', 'application/' . $format);
+        $response->headers->set('Content-Type', 'application/'.$format);
         $response->setContent($serializer->serialize($data, $format));
 
         return $response;

@@ -63,12 +63,12 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
                 continue;
             }
 
-            $attr['data-' . $name] = $value;
+            $attr['data-'.$name] = $value;
         }
 
         $attr = array_merge($attr, array(
             'data-datetime-picker' => 'true',
-            'data-button-id'       => $view->vars['id'] . '_datetime_btn',
+            'data-button-id'       => $view->vars['id'].'_datetime_btn',
         ));
 
         $attr['data-format'] = str_replace('d', 'D', $attr['data-format']);

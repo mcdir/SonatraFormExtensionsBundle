@@ -53,7 +53,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $this->router->expects($this->any())
             ->method('generate')
             ->will($this->returnCallback(function ($param) {
-                return '/' . $param;
+                return '/'.$param;
             }))
         ;
 

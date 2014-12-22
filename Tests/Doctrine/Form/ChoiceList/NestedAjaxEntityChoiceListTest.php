@@ -41,7 +41,7 @@ class NestedAjaxEntityChoiceListTest extends AbstractExtendAjaxEntityChoiceListT
 
         $query = $this->em->createQueryBuilder()
             ->add('select', 'e')
-            ->add('from', self::GROUPABLE_CLASS . ' e')
+            ->add('from', self::GROUPABLE_CLASS.' e')
         ;
         $loader = new AjaxORMQueryBuilderLoader($query);
 
