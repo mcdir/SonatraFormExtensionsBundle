@@ -86,7 +86,7 @@ class EmptyAjaxEntityChoiceListTest extends AbstractExtendAjaxEntityChoiceListTe
 
     protected function getValidFirstChoiceView()
     {
-        return null;
+        return;
     }
 
     protected function getFormattedChoicesForValuesData()

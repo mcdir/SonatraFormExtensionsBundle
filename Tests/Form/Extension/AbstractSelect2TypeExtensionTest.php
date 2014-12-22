@@ -84,7 +84,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
      */
     protected function getChoices()
     {
-        return null;
+        return;
     }
 
     protected function mergeOptions(array $options)

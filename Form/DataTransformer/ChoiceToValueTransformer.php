@@ -91,8 +91,7 @@ class ChoiceToValueTransformer implements DataTransformerInterface
 
         if (null === $value) {
             if (!$this->required) {
-                return null;
-
+                return;
             } else {
                 throw new TransformationFailedException('Value is required.');
             }

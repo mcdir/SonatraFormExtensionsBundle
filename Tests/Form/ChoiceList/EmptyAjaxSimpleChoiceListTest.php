@@ -73,7 +73,7 @@ class EmptyAjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
 
     protected function getValidFirstChoiceView()
     {
-        return null;
+        return;
     }
 
     protected function getFormattedChoicesForValuesData()
