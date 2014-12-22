@@ -14,16 +14,16 @@
     "require" : {
         "php" : ">=5.3.3",
         "symfony/framework-bundle" : "~2.4",
+        "fxp/require-asset" : "~1.0@dev",
         "fxp/require-asset-bundle" : "~1.0@dev",
         "sonatra/ajax-bundle" : "~1.0@dev",
         "symfony/serializer": "~2.4",
         "symfony/form": "~2.4",
-        "oyejorge/less.php": "~1.7",
         "bower-asset/jquery": "1.11.*",
         "bower-asset/select2": "3.5.*",
         "bower-asset/moment": "2.8.*",
         "bower-asset/jquery-knob": "1.2.*",
-        "npm-asset/hammerjs": "2.0.*"
+        "bower-asset/hammerjs": "2.0.*"
     },
     "require-dev" : {
         "symfony/doctrine-bridge" : "~2.4",
