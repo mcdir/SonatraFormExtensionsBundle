@@ -150,8 +150,8 @@
 
 {% block datetime_widget %}
 {% spaceless %}
-    {% require_script '@bower/jquery/dist/jquery.js', '@bower/moment/moment.js', '@bower/hammerjs/hammer.js', '@bower/jquery-knob/js/jquery-knob.js', '@sonatra_form_extensions_bundle/assetic/js/datetime-picker.js' %}
-    {% require_style '@sonatra_form_extensions_bundle/assetic/less/datetime-picker-build.less' %}
+    {% require_script '@bower/jquery/dist/jquery.js', '@bower/moment/moment.js', '@bower/hammerjs/hammer.js', '@bower/jquery-knob/js/jquery-knob.js', '@bower/sonatra-jquery-datetime-picker/js/datetime-picker.js' %}
+    {% require_style '@bower/sonatra-jquery-datetime-picker/less/datetime-picker.less' %}
     {{ block('base_datetime_widget') }}
 {% endspaceless %}
 {% endblock datetime_widget %}

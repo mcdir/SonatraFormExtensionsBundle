@@ -72,10 +72,10 @@ class ConfigurationPass implements CompilerPassInterface
                 ),
             ),
             array(
-                'name' => 'sonatra_form_extensions_bundle',
+                'name' => '@bower/sonatra-jquery-datetime-picker',
                 'patterns' => array(
-                    'assetic/js/*',
-                    'assetic/less/datetime-picker-build.less',
+                    'js/*',
+                    'less/datetime-picker.less',
                 ),
             ),
         );
