@@ -55,7 +55,7 @@ interface AjaxChoiceListInterface extends ChoiceListInterface
      * Check if allow add.
      *
      * @return boolean
-    */
+     */
     public function getAllowAdd();
 
     /**
