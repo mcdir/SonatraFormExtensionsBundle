@@ -46,7 +46,7 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
             'minute_step',
             'second_min',
             'second_max',
-            'second_step'
+            'second_step',
         );
 
         foreach ($dataAttributes as $dataAttr) {

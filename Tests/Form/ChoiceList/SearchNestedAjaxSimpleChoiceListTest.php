@@ -121,7 +121,7 @@ class SearchNestedAjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
                 'label' => 'Group 1',
                 'choices' => array(
                     0 => array('value' => 'b', 'label' => 'B'),
-                )
+                ),
             ),
         );
     }
@@ -175,8 +175,8 @@ class SearchNestedAjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
                 'label' => 'Group 1',
                 'choices' => array(
                     0 => array('value' => 'b', 'label' => 'B'),
-                )
-            )
+                ),
+            ),
         );
     }
 }

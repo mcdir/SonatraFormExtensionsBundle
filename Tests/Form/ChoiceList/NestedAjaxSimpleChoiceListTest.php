@@ -136,16 +136,16 @@ class NestedAjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
                 'label' => 'Group 1',
                 'choices' => array(
                     0 => array('value' => 'b', 'label' => 'B'),
-                    1 => array('value' => 'a', 'label' => 'A')
-                )
+                    1 => array('value' => 'a', 'label' => 'A'),
+                ),
             ),
             1 => array(
                 'label' => 'Group 2',
                 'choices' => array(
                     0 => array('value' => 'c', 'label' => 'C'),
-                    1 => array('value' => 'd', 'label' => 'D')
-                )
-            )
+                    1 => array('value' => 'd', 'label' => 'D'),
+                ),
+            ),
         );
     }
 
@@ -198,8 +198,8 @@ class NestedAjaxSimpleChoiceListTest extends AbstractAjaxChoiceListTest
                 'label' => 'Group 1',
                 'choices' => array(
                     0 => array('value' => 'b', 'label' => 'B'),
-                )
-            )
+                ),
+            ),
         );
     }
 }
