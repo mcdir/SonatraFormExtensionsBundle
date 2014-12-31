@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "decf13fc10acf8462e09903f00896829",
+    "hash": "859f23ad4d869e4db1c0d9de7597c905",
     "packages": [
         {
             "name": "bower-asset/hammerjs",
@@ -330,12 +330,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/francoispluchino/fxp-require-asset.git",
-                "reference": "e94c74dcf011ebb77a34b3efecea795064003fca"
+                "reference": "0ca82f53bd3d2c864db465ba8bdbc7400b0cd48c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/francoispluchino/fxp-require-asset/zipball/e94c74dcf011ebb77a34b3efecea795064003fca",
-                "reference": "e94c74dcf011ebb77a34b3efecea795064003fca",
+                "url": "https://api.github.com/repos/francoispluchino/fxp-require-asset/zipball/0ca82f53bd3d2c864db465ba8bdbc7400b0cd48c",
+                "reference": "0ca82f53bd3d2c864db465ba8bdbc7400b0cd48c",
                 "shasum": ""
             },
             "require": {
@@ -354,7 +354,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.0-dev"
                 }
             },
             "autoload": {
@@ -384,7 +384,7 @@
                 "ui",
                 "user interface"
             ],
-            "time": "2014-12-22 12:12:45"
+            "time": "2014-12-31 15:07:12"
         },
         {
             "name": "fxp/require-asset-bundle",
@@ -392,16 +392,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/francoispluchino/FxpRequireAssetBundle.git",
-                "reference": "03e9ed988d7452a10015445849c9e3330beb7ae9"
+                "reference": "360693f9e86d827d460f7e803db3bfd60ed636bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/francoispluchino/FxpRequireAssetBundle/zipball/03e9ed988d7452a10015445849c9e3330beb7ae9",
-                "reference": "03e9ed988d7452a10015445849c9e3330beb7ae9",
+                "url": "https://api.github.com/repos/francoispluchino/FxpRequireAssetBundle/zipball/360693f9e86d827d460f7e803db3bfd60ed636bb",
+                "reference": "360693f9e86d827d460f7e803db3bfd60ed636bb",
                 "shasum": ""
             },
             "require": {
-                "fxp/require-asset": "~1.0@dev",
+                "fxp/require-asset": "1.0.*@dev",
                 "php": ">=5.3.3",
                 "symfony/assetic-bundle": "~2.4",
                 "symfony/framework-bundle": "~2.4",
@@ -413,7 +413,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.0-dev"
                 }
             },
             "autoload": {
@@ -445,7 +445,7 @@
                 "ui",
                 "user interface"
             ],
-            "time": "2014-12-24 12:15:29"
+            "time": "2014-12-31 15:15:37"
         },
         {
             "name": "kriswallsmith/assetic",

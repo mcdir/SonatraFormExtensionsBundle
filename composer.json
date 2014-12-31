@@ -14,13 +14,13 @@
     "require" : {
         "php" : ">=5.3.3",
         "symfony/framework-bundle" : "~2.4",
-        "fxp/require-asset" : "dev-master",
-        "fxp/require-asset-bundle" : "dev-master",
-        "sonatra/ajax-bundle" : "dev-master",
+        "fxp/require-asset" : "1.0.*@dev",
+        "fxp/require-asset-bundle" : "1.0.*@dev",
+        "sonatra/ajax-bundle" : "1.0.*@dev",
         "symfony/serializer": "~2.4",
         "symfony/form": "~2.4",
         "bower-asset/select2": "3.5.*",
-        "bower-asset/sonatra-jquery-datetime-picker": "dev-master"
+        "bower-asset/sonatra-jquery-datetime-picker": "1.0.*@dev"
     },
     "require-dev" : {
         "symfony/doctrine-bridge" : "~2.4",
