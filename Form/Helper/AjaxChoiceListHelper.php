@@ -32,16 +32,17 @@ class AjaxChoiceListHelper
     /**
      * Generates the ajax response.
      *
-     * @param Request                                                          $request
-     * @param AjaxChoiceListInterface|FormBuilderInterface|FormInterface|array $choiceList
-     * @param string                                                           $format
+     * @param Request                                                          $request    The request
+     * @param AjaxChoiceListInterface|FormBuilderInterface|FormInterface|array $choiceList The source
+     * @param string                                                           $format     The output format
+     * @param string                                                           $prefix     The prefix of parameters
      *
      * @return Response
      *
      * @throws InvalidArgumentException When the format is not allowed
      * @throws InvalidArgumentException When the choice list is not an instance of AjaxChoiceListInterface
      */
-    public static function generateResponse(Request $request, $choiceList, $format = 'json')
+    public static function generateResponse(Request $request, $choiceList, $format = 'json', $prefix = '')
     {
         $formats = array('xml', 'json');
 
@@ -51,7 +52,7 @@ class AjaxChoiceListHelper
         }
 
         $choiceList = static::convertChoiceList($choiceList);
-        $data = static::getData($request, $choiceList);
+        $data = static::getData($request, $choiceList, $prefix);
 
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());
