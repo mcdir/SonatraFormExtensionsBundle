@@ -3,37 +3,36 @@
                                         collection_widget as base_collection_widget %}
 
 {#} Widget {#}
-{% block select2_widget_content %}
-{% spaceless %}
-    {% require_script '@bower/jquery/dist/jquery.js', '@bower/select2/select2.js' %}
-    {% require_style '@bower/select2/select2.css' %}
-    {% set required = false %}
-    {% set select2 = select2|merge({'wrapper_attr': select2.wrapper_attr|merge({'class': ('select2-wrapper ' ~ select2.wrapper_attr.class|default(''))|trim})}) %}
+{% block select2_widget_content -%}
+    {%- require_script '@bower/jquery/dist/jquery.js', '@bower/select2/select2.js' -%}
+    {%- require_style '@bower/select2/select2.css' -%}
+    {%- set required = false -%}
+    {%- set select2 = select2|merge({'wrapper_attr': select2.wrapper_attr|merge({'class': ('select2-wrapper ' ~ select2.wrapper_attr.class|default(''))|trim})}) -%}
     <div{% for attrname, attrvalue in select2.wrapper_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-        {% if select2.ajax or select2.tags is defined %}
+        {%- if select2.ajax or select2.tags is defined -%}
             <input type="text" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}"{% endif %}/>
             <input type="hidden" id="{{ id }}__label" value="{{ choices_selected|json_encode }}" />
-        {% else %}
-            {{ block('base_choice_widget') }}
-        {% endif %}
+        {%- else -%}
+            {{- block('base_choice_widget') -}}
+        {%- endif -%}
     </div>
-    {% inline_script %}
+    {%- inline_script -%}
         <script>
         $( '#{{ id }}' ).select2( {
-            {% if select2.minimum_input_length is not null %}minimumInputLength: {{ select2.minimum_input_length }},{% endif %}
-            {% if select2.minimum_results_for_search is not null %}minimumResultsForSearch: {{ select2.minimum_results_for_search }},{% endif %}
-            {% if select2.maximum_selection_size is not null %}maximumSelectionSize: {{ select2.maximum_selection_size }},{% endif %}
-            {% if select2.select_separator is not null %}separator: {{ select2.select_separator|raw }},{% endif %}
+            {%- if select2.minimum_input_length is not null %}minimumInputLength: {{ select2.minimum_input_length }},{% endif -%}
+            {%- if select2.minimum_results_for_search is not null %}minimumResultsForSearch: {{ select2.minimum_results_for_search }},{% endif -%}
+            {%- if select2.maximum_selection_size is not null %}maximumSelectionSize: {{ select2.maximum_selection_size }},{% endif -%}
+            {%- if select2.select_separator is not null %}separator: {{ select2.select_separator|raw }},{% endif -%}
             allowClear: {{ select2.allow_clear|raw }},
-            {% if select2.ajax or select2.tags is defined %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif %}
-            {% if select2.close_on_select is not null %}closeOnSelect: {% if select2.close_on_select %}true{% else %}false{% endif %},{% endif %}
-            {% if select2.open_on_enter is not null %}openOnEnter: {% if select2.open_on_enter %}true{% else %}false{% endif %},{% endif %}
-            {% if select2.select_id is not null %}id: {{ select2.select_id|raw }},{% endif %}
-            {% if select2.matcher is not null %}matcher: {{ select2.matcher|raw }},{% endif %}
-            {% if select2.format_result is not null %}formatResult: {{ select2.format_result|raw }},{% endif %}
-            {% if select2.format_result_css_class is not null %}formatResultCssClass: {{ select2.format_result_css_class|raw }},{% endif %}
-            {% if select2.format_selection is not null %}formatSelection: {{ select2.format_selection|raw }},{% endif %}
-            {% if select2.create_search_choice is not null %}createSearchChoice: {{ select2.create_search_choice|raw }},{% elseif select2.tags is defined %}createSearchChoice: function(term, data) {
+            {%- if select2.ajax or select2.tags is defined %}multiple: {% if multiple|default(false) %}true{% else %}false{% endif %},{% endif -%}
+            {%- if select2.close_on_select is not null %}closeOnSelect: {% if select2.close_on_select %}true{% else %}false{% endif %},{% endif -%}
+            {%- if select2.open_on_enter is not null %}openOnEnter: {% if select2.open_on_enter %}true{% else %}false{% endif %},{% endif -%}
+            {%- if select2.select_id is not null %}id: {{ select2.select_id|raw }},{% endif -%}
+            {%- if select2.matcher is not null %}matcher: {{ select2.matcher|raw }},{% endif -%}
+            {%- if select2.format_result is not null %}formatResult: {{ select2.format_result|raw }},{% endif -%}
+            {%- if select2.format_result_css_class is not null %}formatResultCssClass: {{ select2.format_result_css_class|raw }},{% endif -%}
+            {%- if select2.format_selection is not null %}formatSelection: {{ select2.format_selection|raw }},{% endif -%}
+            {%- if select2.create_search_choice is not null %}createSearchChoice: {{ select2.create_search_choice|raw }},{% elseif select2.tags is defined -%}createSearchChoice: function(term, data) {
                 if ($(data).filter(function() {
                     return this.text.localeCompare(term) === 0;
                     }).length === 0) {
@@ -42,8 +41,8 @@
                         text: term
                     };
                 }
-            },{% endif %}
-            {% if select2.ajax or select2.tags is defined %}{% if select2.init_selection is not null %}initSelection: {{ select2.init_selection|raw }},{% else %}initSelection: function (element, callback) {
+            },{%- endif -%}
+            {%- if select2.ajax or select2.tags is defined %}{% if select2.init_selection is not null %}initSelection: {{ select2.init_selection|raw }},{% else %}initSelection: function (element, callback) {
                 var selected = $.parseJSON($( '#{{ id }}__label' ).val());
                 {% if multiple %}
                 var items = [];
@@ -54,7 +53,7 @@
                     }
                 });
                 callback(items);
-                {% else %}
+                {%- else -%}
                 $(selected).each(function() {
                     if ('' == element.val()) {
                         element.attr('value', this.id);
@@ -64,13 +63,13 @@
                         return;
                     }
                 });
-                {% endif %}
-            },{% endif %}
-            {% endif %}
-            {% if select2.tokenizer is not null %}tokenizer: {{ select2.tokenizer|raw }},{% endif %}
-            {% if select2.token_separators is not null %}tokenSeparators: {{ select2.token_separators|raw }},{% endif %}
-            {% if select2.select_query is not null %}query: {{ select2.select_query|raw }},{% endif %}
-            {% if select2.select_ajax is not null %}ajax: {{ select2.select_ajax|raw }}{% elseif select2.ajax %}ajax: {
+                {%- endif -%}
+            },{%- endif -%}
+            {%- endif -%}
+            {%- if select2.tokenizer is not null %}tokenizer: {{ select2.tokenizer|raw }},{% endif -%}
+            {%- if select2.token_separators is not null %}tokenSeparators: {{ select2.token_separators|raw }},{% endif -%}
+            {%- if select2.select_query is not null %}query: {{ select2.select_query|raw }},{% endif -%}
+            {%- if select2.select_ajax is not null %}ajax: {{ select2.select_ajax|raw }}{% elseif select2.ajax -%}ajax: {
                 url: "{{ select2.ajax_url|raw }}",
                 dataType: 'json',
                 quietMillis: {{ select2.quiet_millis }},
@@ -79,8 +78,8 @@
                     var data = {};
                     {% set prefix = '' %}
                     {% if select2.ajax_id is not empty %}
-                    {% set prefix = id ~ '_' %}
-                    data.ajax_id = "{{ select2.ajax_id }}";
+                        {% set prefix = id ~ '_' %}
+                        data.ajax_id = "{{ select2.ajax_id }}";
                     {% endif %}
                     data['{{ prefix }}s'] = search;
                     data['{{ prefix }}pn'] = pageNumber;
@@ -93,19 +92,19 @@
                     var more = (pageNumber * {{ select2.page_size }}) < data.length;
                     return {results: data.results, more: more};
                 }
-            },{% endif %}
-            {% if select2.select_data is not null %}data: {{ select2.select_data|json_encode|raw }},{% endif %}
-            {% if select2.tags is defined %}tags: {{ select2.tags|json_encode|raw }},{% endif %}
-            {% if select2.container_css is not null %}containerCss: {{ select2.container_css|raw }},{% endif %}
-            {% if select2.container_css_class is not null %}containerCssClass: {{ select2.container_css_class|raw }},{% endif %}
-            {% if select2.dropdown_css is not null %}dropdownCss: {{ select2.dropdown_css|raw }},{% endif %}
-            {% if select2.dropdown_css_class is not null %}dropdownCssClass: {{ select2.dropdown_css_class|raw }},{% endif %}
-            {% if select2.escape_markup is not null %}escapeMarkup: {{ select2.escape_markup|raw }},{% endif %}
+            },{%- endif -%}
+            {%- if select2.select_data is not null %}data: {{ select2.select_data|json_encode|raw }},{% endif -%}
+            {%- if select2.tags is defined %}tags: {{ select2.tags|json_encode|raw }},{% endif -%}
+            {%- if select2.container_css is not null %}containerCss: {{ select2.container_css|raw }},{% endif -%}
+            {%- if select2.container_css_class is not null %}containerCssClass: {{ select2.container_css_class|raw }},{% endif -%}
+            {%- if select2.dropdown_css is not null %}dropdownCss: {{ select2.dropdown_css|raw }},{% endif -%}
+            {%- if select2.dropdown_css_class is not null %}dropdownCssClass: {{ select2.dropdown_css_class|raw }},{% endif -%}
+            {%- if select2.escape_markup is not null %}escapeMarkup: {{ select2.escape_markup|raw }},{% endif -%}
             width: '{{ select2.width }}'
-        } ){% if select2.ajax or select2.tags is defined %}.change(function(event) {
+        } ){%- if select2.ajax or select2.tags is defined -%}.change(function(event) {
             var $label = $( '#{{ id }}__label' );
             var lData = $.parseJSON($label.val());
-            {% if multiple %}
+            {%- if multiple -%}
             if (event.added) {
                 lData.push(event.added);
             } else if (event.removed) {
@@ -115,56 +114,45 @@
                      }
                 }
             }
-            {% else %}
+            {%- else -%}
             lData = [$(this).select2('data')];
-            {% endif %}
+            {%- endif -%}
             $label.val(JSON.stringify(lData));
-        }){% endif %};
+        }){%- endif -%};
         $('input.select2-focusser', $( '#{{ id }}' ).data('select2').container).attr('readonly', 'readonly');
         </script>
-    {% endinline_script %}
-{% endspaceless %}
-{% endblock select2_widget_content %}
+    {%- endinline_script -%}
+{%- endblock select2_widget_content %}
 
 
-{% block choice_widget %}
-{% spaceless %}
-    {% if select2 is defined %}
-        {{ block('select2_widget_content') }}
-    {% else %}
-        {{ block('base_choice_widget') }}
-    {% endif %}
-{% endspaceless %}
-{% endblock choice_widget %}
+{% block choice_widget -%}
+    {%- if select2 is defined -%}
+        {{- block('select2_widget_content') -}}
+    {%- else -%}
+        {{- block('base_choice_widget') -}}
+    {%- endif -%}
+{%- endblock choice_widget %}
 
-{% block collection_widget %}
-{% spaceless %}
-    {% if select2 is defined %}
-        {{ block('select2_widget_content') }}
-    {% else %}
-        {{ block('base_collection_widget') }}
-    {% endif %}
-{% endspaceless %}
-{% endblock collection_widget %}
+{% block collection_widget -%}
+    {%- if select2 is defined -%}
+        {{- block('select2_widget_content') -}}
+    {%- else -%}
+        {{- block('base_collection_widget') -}}
+    {%- endif -%}
+{%- endblock collection_widget %}
 
 
-{% block datetime_widget %}
-{% spaceless %}
-    {% require_script '@bower/jquery/dist/jquery.js', '@bower/moment/moment.js', '@bower/hammerjs/hammer.js', '@bower/jquery-knob/js/jquery-knob.js', '@bower/sonatra-jquery-datetime-picker/js/datetime-picker.js' %}
-    {% require_style '@bower/sonatra-jquery-datetime-picker/less/datetime-picker.less' %}
-    {{ block('base_datetime_widget') }}
-{% endspaceless %}
-{% endblock datetime_widget %}
+{% block datetime_widget -%}
+    {%- require_script '@bower/jquery/dist/jquery.js', '@bower/moment/moment.js', '@bower/hammerjs/hammer.js', '@bower/jquery-knob/js/jquery-knob.js', '@bower/sonatra-jquery-datetime-picker/js/datetime-picker.js' -%}
+    {%- require_style '@bower/sonatra-jquery-datetime-picker/less/datetime-picker.less' -%}
+    {{- block('base_datetime_widget') -}}
+{%- endblock datetime_widget %}
 
-{% block date_widget %}
-{% spaceless %}
-    {{ block('datetime_widget') }}
-{% endspaceless %}
-{% endblock date_widget %}
+{% block date_widget -%}
+    {{- block('datetime_widget') -}}
+{%- endblock date_widget %}
 
-{% block time_widget %}
-{% spaceless %}
-    {% set type= 'text' %}
-    {{ block('datetime_widget') }}
-{% endspaceless %}
-{% endblock time_widget %}
+{% block time_widget -%}
+    {%- set type= 'text' -%}
+    {{- block('datetime_widget') -}}
+{%- endblock time_widget %}
