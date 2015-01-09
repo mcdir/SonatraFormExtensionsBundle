@@ -118,7 +118,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         }
 
         $view->vars = array_replace($view->vars,
-            $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName));
+        $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName, $choiceList));
 
         if ($options['select2']['ajax'] && !$options['multiple'] && !$options['required']) {
             $view->vars['attr']['placeholder'] = ' ';
@@ -374,14 +374,15 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     /**
      * Gets the new view vars for the replacement.
      *
-     * @param FormView    $view
-     * @param array       $options
-     * @param string      $ajaxUrl
-     * @param string|null $routeName
+     * @param FormView                     $view
+     * @param array                        $options
+     * @param string                       $ajaxUrl
+     * @param string|null                  $routeName
+     * @param AjaxChoiceListInterface|null $choiceList
      *
      * @return array
      */
-    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName)
+    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName, $choiceList = null)
     {
         return array(
             'select2'  => array(
