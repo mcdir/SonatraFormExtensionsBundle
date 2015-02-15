@@ -2,10 +2,10 @@ Sonatra Form Extensions Bundle
 ==============================
 
 [![Latest Version](https://img.shields.io/packagist/v/sonatra/form-extensions-bundle.svg)](https://packagist.org/packages/sonatra/form-extensions-bundle)
-[![Build Status](https://travis-ci.org/sonatra/SonatraFormExtensionsBundle.svg)](https://travis-ci.org/sonatra/SonatraFormExtensionsBundle)
-[![Coverage Status](https://img.shields.io/coveralls/sonatra/SonatraFormExtensionsBundle.svg)](https://coveralls.io/r/sonatra/SonatraFormExtensionsBundle)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sonatra/SonatraFormExtensionsBundle/badges/quality-score.png)](https://scrutinizer-ci.com/g/sonatra/SonatraFormExtensionsBundle)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/f353d527-edf0-42a5-aa13-8b045668d853/mini.png)](https://insight.sensiolabs.com/projects/f353d527-edf0-42a5-aa13-8b045668d853)
+[![Build Status](https://img.shields.io/travis/sonatra/SonatraFormExtensionsBundle/master.svg)](https://travis-ci.org/sonatra/SonatraFormExtensionsBundle)
+[![Coverage Status](https://img.shields.io/coveralls/sonatra/SonatraFormExtensionsBundle/master.svg)](https://coveralls.io/r/sonatra/SonatraFormExtensionsBundle?branch=master)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/sonatra/SonatraFormExtensionsBundle/master.svg)](https://scrutinizer-ci.com/g/sonatra/SonatraFormExtensionsBundle?branch=master)
+[![SensioLabsInsight](https://img.shields.io/sensiolabs/i/f353d527-edf0-42a5-aa13-8b045668d853.svg)](https://insight.sensiolabs.com/projects/f353d527-edf0-42a5-aa13-8b045668d853)
 
 The Sonatra FormExtensionsBundle add form types.
 
