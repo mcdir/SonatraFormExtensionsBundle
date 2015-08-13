@@ -15,6 +15,7 @@ use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\ChoiceList\Factory\DefaultChoiceListFactory;
 use Symfony\Component\Form\ChoiceList\Factory\PropertyAccessDecorator;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -37,7 +38,7 @@ abstract class AbstractDynamicChoiceLoader implements DynamicChoiceLoaderInterfa
     protected $allowAdd;
 
     /**
-     * @var string
+     * @var null|callable|string|PropertyPath
      */
     protected $label;
 
