@@ -56,6 +56,6 @@ class NewTagConverter implements NewTagConverterInterface
         $data = $ref->newInstanceWithoutConstructor();
         $this->propertyAccessor->setValue($data, $this->label, $value);
 
-        return $data;
+        return (object) $data;
     }
 }
