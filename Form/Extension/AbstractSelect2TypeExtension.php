@@ -13,27 +13,22 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
 use Sonatra\Bundle\AjaxBundle\AjaxEvents;
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
-use Sonatra\Bundle\FormExtensionsBundle\Form\EventListener\FixStringInputSubscriber;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoicesToValuesTransformer;
-use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\ChoiceToValueTransformer;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\DynamicChoiceLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
+use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
+use Symfony\Component\Form\ChoiceList\View\ChoiceListView;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
+abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
 {
     /**
      * @var EventDispatcherInterface
@@ -56,48 +51,23 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     protected $type;
 
     /**
-     * @var integer
-     */
-    protected $ajaxPageSize;
-
-    /**
      * Constructor.
      *
-     * @param EventDispatcherInterface $dispatcher
-     * @param RequestStack             $requestStack
-     * @param RouterInterface          $router
-     * @param string                   $type
-     * @param integer                  $defaultPageSize
+     * @param EventDispatcherInterface   $dispatcher
+     * @param RequestStack               $requestStack
+     * @param RouterInterface            $router
+     * @param string                     $type
+     * @param int                        $defaultPageSize
+     * @param ChoiceListFactoryInterface $choiceListFactory
      */
-    public function __construct(EventDispatcherInterface $dispatcher, RequestStack $requestStack, RouterInterface $router, $type, $defaultPageSize = 10)
+    public function __construct(EventDispatcherInterface $dispatcher, RequestStack $requestStack, RouterInterface $router, $type, $defaultPageSize = 10, ChoiceListFactoryInterface $choiceListFactory = null)
     {
         $this->dispatcher = $dispatcher;
         $this->requestStack = $requestStack;
         $this->router = $router;
         $this->type = $type;
-        $this->ajaxPageSize = $defaultPageSize;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        if (!$options['select2']['enabled']) {
-            return;
-        }
-
-        $builder->resetViewTransformers();
-
-        if ($options['multiple']) {
-            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list'], $options['required']));
-        } else {
-            $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list'], $options['required']));
-        }
-
-        if ($options['select2']['ajax'] && $options['multiple']) {
-            $builder->addEventSubscriber(new FixStringInputSubscriber());
-        }
+        parent::__construct($defaultPageSize, $choiceListFactory);
     }
 
     /**
@@ -109,24 +79,30 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
             return;
         }
 
-        list($ajaxUrl, $routeName) = $this->getAjaxUrlAndRouteName($form, $options);
-        $choiceList = $this->getAjaxChoiceList($form, $options);
+        if (isset($options['choice_loader'])
+            && $options['choice_loader'] instanceof DynamicChoiceLoaderInterface) {
+            /* @var DynamicChoiceLoaderInterface $loader */
+            $loader = $options['choice_loader'];
+            $values = is_object($form->getData()) ? array($form->getData()) : (array) $form->getData();
+            $choiceListView = $this->createChoiceListView($loader->loadChoiceListForView($values, $options['choice_name']), $options);
 
-        if ($options['select2']['ajax'] && null === $routeName) {
-            $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->requestStack, $choiceList);
+            $view->vars = array_replace($view->vars, array(
+                'preferred_choices' => $choiceListView->preferredChoices,
+                'choices' => $choiceListView->choices,
+            ));
+        }
+
+        list($ajaxUrl, $routeName) = $this->getAjaxUrlAndRouteName($form, $options);
+        $choiceLoader = $this->getChoiceLoader($form, $options);
+
+        if ($options['select2']['ajax'] && $choiceLoader instanceof AjaxChoiceLoaderInterface
+                && null === $routeName && null !== $choiceLoader) {
+            $event = new GetAjaxChoiceListEvent($view->vars['id'], $this->requestStack, $choiceLoader, $options['select2']['ajax_formatter']);
             $this->dispatcher->dispatch(AjaxEvents::INJECTION, $event);
         }
 
         $view->vars = array_replace($view->vars,
-        $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName, $choiceList));
-
-        if ($options['select2']['ajax'] && !$options['multiple'] && !$options['required']) {
-            $view->vars['attr']['placeholder'] = ' ';
-        }
-
-        if (is_array($options['select2']['tags'])) {
-            $view->vars['select2']['tags'] = $options['select2']['tags'];
-        }
+            $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName, $choiceLoader));
     }
 
     /**
@@ -139,35 +115,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
         }
 
         $view->vars['form']->vars['no_label_for'] = true;
-
-        $this->addChoicesSelectedInView($view, $options);
-
-        // convert array to string
-        if ($options['select2']['ajax'] && is_array($view->vars['value'])) {
-            $view->vars['value'] = implode(',', $view->vars['value']);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'select2' => array(),
-        ));
-
-        $resolver->setAllowedTypes(array(
-            'select2' => 'array',
-        ));
-
-        $normalizers = array();
-        $normalizers = $this->addSelect2Normalizer($normalizers);
-        $normalizers = $this->addCompoundNormalizer($normalizers);
-        $normalizers = $this->addExpandedNormalizer($normalizers, $resolver);
-        $normalizers = $this->addChoiceListNormalizer($normalizers, $resolver);
-
-        $resolver->setNormalizers($normalizers);
+        $view->vars['required'] = !isset($options['multiple']) || $options['multiple'] ? false : $view->vars['required'];
     }
 
     /**
@@ -176,173 +124,6 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     public function getExtendedType()
     {
         return $this->type;
-    }
-
-    /**
-     * @param array $normalizers The normalizers
-     *
-     * @return array The normalizers with new value
-     */
-    protected function addSelect2Normalizer(array $normalizers)
-    {
-        $ajaxPageSize = $this->ajaxPageSize;
-
-        $normalizers['select2'] = function (Options $options, $value) use ($ajaxPageSize) {
-            $select2Resolver = new OptionsResolver();
-            $pDefault = $options;
-            $enabled = function (Options $options) use ($pDefault) {
-                return !$pDefault['expanded'];
-            };
-
-            $select2Resolver->setDefaults(array(
-                'enabled'                    => $enabled,
-                'wrapper_attr'               => array(),
-                'formatter'                  => new Select2AjaxChoiceListFormatter(),
-                'allow_add'                  => false,
-                'ajax'                       => false,
-                'ajax_route'                 => null,
-                'ajax_parameters'            => array(),
-                'ajax_reference_type'        => RouterInterface::ABSOLUTE_PATH,
-                'quiet_millis'               => 200,
-                'page_size'                  => $ajaxPageSize,
-                'width'                      => 'resolve',
-                'close_on_select'            => null,
-                'open_on_enter'              => null,
-                'container_css'              => null,
-                'dropdown_css'               => null,
-                'container_css_class'        => null,
-                'dropdown_css_class'         => null,
-                'format_result'              => null,
-                'format_selection'           => null,
-                'format_result_css_class'    => null,
-                'minimum_results_for_search' => null,
-                'minimum_input_length'       => 0,
-                'maximum_selection_size'     => null,
-                'matcher'                    => null,
-                'select_separator'           => null,
-                'token_separators'           => null,
-                'tokenizer'                  => null,
-                'escape_markup'              => null,
-                'blur_on_change'             => null,
-                'select_id'                  => null,
-                'create_search_choice'       => null,
-                'init_selection'             => null,
-                'select_query'               => null,
-                'select_ajax'                => null,
-                'select_data'                => null,
-                'tags'                       => null,
-                ));
-
-            $select2Resolver->setAllowedTypes(array(
-                'enabled'             => 'bool',
-                'wrapper_attr'        => 'array',
-                'formatter'           => 'Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface',
-                'allow_add'           => 'bool',
-                'ajax'                => 'bool',
-                'ajax_route'          => array('null', 'string'),
-                'ajax_parameters'     => 'array',
-                'ajax_reference_type' => 'bool',
-                'tags'                => array('null', 'array'),
-            ));
-
-            $select2Resolver->setNormalizers(array(
-                'allow_add'  => function (Options $options, $value) {
-                        if (null !== $options['tags']) {
-                            return true;
-                        }
-
-                        return $value;
-                    },
-            ));
-
-            return $select2Resolver->resolve($value);
-        };
-
-        return $normalizers;
-    }
-
-    /**
-     * @param array $normalizers The normalizers
-     *
-     * @return array The normalizers with new value
-     */
-    protected function addCompoundNormalizer(array $normalizers)
-    {
-        $normalizers['compound'] = function (Options $options) {
-            if ($options['select2']['enabled'] && ($options['select2']['ajax'] || !$options['choice_list'] instanceof AjaxChoiceListInterface)) {
-                return false;
-            }
-
-            return $options['expanded'];
-        };
-
-        return $normalizers;
-    }
-
-    /**
-     * @param array                    $normalizers The normalizers
-     * @param OptionsResolverInterface $resolver
-     *
-     * @return array The normalizers with new value
-     */
-    protected function addExpandedNormalizer(array $normalizers, OptionsResolverInterface $resolver)
-    {
-        if ($resolver->isKnown('expanded')) {
-            $normalizers['expanded'] = function (Options $options, $value) {
-                return $value;
-            };
-        }
-
-        return $normalizers;
-    }
-
-    /**
-     * @param array                    $normalizers The normalizers
-     * @param OptionsResolverInterface $resolver
-     *
-     * @return array The normalizers with new value
-     */
-    protected function addChoiceListNormalizer(array $normalizers, OptionsResolverInterface $resolver)
-    {
-        if ($resolver->isKnown('choice_list')) {
-            $normalizers['choice_list'] = function (Options $options, $value) {
-                if ($options['select2']['enabled']) {
-                    if (!$value instanceof AjaxChoiceListInterface) {
-                        $value = new AjaxSimpleChoiceList($options['select2']['formatter'], $options['choices'], $options['preferred_choices']);
-                    }
-
-                    $value->setAllowAdd($options['select2']['allow_add']);
-                    $value->setPageSize($options['select2']['page_size']);
-                    $value->setPageNumber(1);
-                    $value->setSearch('');
-                    $value->setIds(array());
-                    $value->reset();
-                }
-
-                return $value;
-            };
-        }
-
-        return $normalizers;
-    }
-
-    /**
-     * Get ajax choice list.
-     *
-     * @param FormInterface $form
-     * @param array         $options
-     *
-     * @return AjaxChoiceListInterface
-     */
-    protected function getAjaxChoiceList(FormInterface $form, array $options)
-    {
-        $choiceList = $form->getConfig()->getAttribute('choice_list');
-
-        if (isset($options['choice_list'])) {
-            $choiceList = $options['choice_list'];
-        }
-
-        return $choiceList;
     }
 
     /**
@@ -372,82 +153,114 @@ abstract class AbstractSelect2TypeExtension extends AbstractTypeExtension
     }
 
     /**
+     * Get choice loader.
+     *
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return ChoiceLoaderInterface
+     */
+    protected function getChoiceLoader(FormInterface $form, array $options)
+    {
+        $choiceLoader = $form->getConfig()->getAttribute('choice_loader');
+
+        if (isset($options['choice_loader'])) {
+            $choiceLoader = $options['choice_loader'];
+        }
+
+        return $choiceLoader;
+    }
+
+    /**
      * Gets the new view vars for the replacement.
      *
-     * @param FormView                     $view
-     * @param array                        $options
-     * @param string                       $ajaxUrl
-     * @param string|null                  $routeName
-     * @param AjaxChoiceListInterface|null $choiceList
+     * @param FormView                          $view
+     * @param array                             $options
+     * @param string                            $ajaxUrl
+     * @param string|null                       $routeName
+     * @param DynamicChoiceLoaderInterface|null $choiceLoader
      *
      * @return array
      */
-    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName, $choiceList = null)
+    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName, $choiceLoader = null)
     {
         return array(
-            'select2'  => array(
-                'wrapper_attr'               => $options['select2']['wrapper_attr'],
-                'allow_clear'                => $options['required'] ? 'false' : 'true',
-                'ajax'                       => $options['select2']['ajax'],
-                'ajax_url'                   => $ajaxUrl,
-                'ajax_id'                    => (null === $routeName && isset($choiceList)) ? $view->vars['id'] : null,
-                'quiet_millis'               => $options['select2']['quiet_millis'],
-                'page_size'                  => $options['select2']['page_size'],
-                'close_on_select'            => $options['select2']['close_on_select'],
-                'open_on_enter'              => $options['select2']['open_on_enter'],
-                'container_css'              => $options['select2']['container_css'],
-                'dropdown_css'               => $options['select2']['dropdown_css'],
-                'container_css_class'        => $options['select2']['container_css_class'],
-                'dropdown_css_class'         => $options['select2']['dropdown_css_class'],
-                'format_result'              => $options['select2']['format_result'],
-                'format_selection'           => $options['select2']['format_selection'],
-                'format_result_css_class'    => $options['select2']['format_result_css_class'],
-                'minimum_results_for_search' => $options['select2']['minimum_results_for_search'],
-                'minimum_input_length'       => $options['select2']['minimum_input_length'],
-                'maximum_selection_size'     => $options['select2']['maximum_selection_size'],
-                'matcher'                    => $options['select2']['matcher'],
-                'select_separator'           => $options['select2']['select_separator'],
-                'token_separators'           => $options['select2']['token_separators'],
-                'tokenizer'                  => $options['select2']['tokenizer'],
-                'escape_markup'              => $options['select2']['escape_markup'],
-                'blur_on_change'             => $options['select2']['blur_on_change'],
-                'select_id'                  => $options['select2']['select_id'],
-                'create_search_choice'       => $options['select2']['create_search_choice'],
-                'init_selection'             => $options['select2']['init_selection'],
-                'select_query'               => $options['select2']['select_query'],
-                'select_ajax'                => $options['select2']['select_ajax'],
-                'select_data'                => $options['select2']['select_data'],
-                'width'                      => $options['select2']['width'],
-            ),
-            'required' => $options['select2']['ajax'] ? false : $options['required'],
+            'select2' => $this->skipNullValue(array(
+                'wrapper_attr' => $options['select2']['wrapper_attr'],
+                'placeholder' => isset($options['placeholder']) ? $options['placeholder'] : null,
+                'width' => $options['select2']['width'],
+                'allow_clear' => $options['required'] ? null : 'true',
+                'template_result' => $options['select2']['template_result'],
+                'template_selection' => $options['select2']['template_selection'],
+                'dropdown_parent' => $options['select2']['dropdown_parent'],
+                'selection_adapter' => $options['select2']['selection_adapter'],
+                'data_adapter' => $options['select2']['data_adapter'],
+                'dropdown_adapter' => $options['select2']['dropdown_adapter'],
+                'results_adapter' => $options['select2']['results_adapter'],
+                'matcher' => $options['select2']['matcher'],
+                'create_tag' => $options['select2']['create_tag'],
+                'close_on_select' => $options['select2']['close_on_select'],
+                'min_results_for_search' => $options['select2']['min_results_for_search'],
+                'min_input_length' => $options['select2']['min_input_length'],
+                'max_input_length' => $options['select2']['max_input_length'],
+                'data' => $options['select2']['data'],
+                'tags' => $options['select2']['tags'] ? 'true' : null,
+                'token_separators' => $options['select2']['token_separators'],
+                'dir' => $options['select2']['dir'],
+                'theme' => $options['select2']['theme'],
+                'language' => strtolower(str_replace('_', '-', $options['select2']['language'])),
+                'ajax' => array(
+                    'enabled' => $options['select2']['ajax'],
+                    'url' => $ajaxUrl,
+                    'data_type' => $options['select2']['ajax_data_type'],
+                    'delay' => $options['select2']['ajax_delay'],
+                    'cache' => $options['select2']['ajax_cache'] ? 'true' : null,
+                    'ajax_id' => (null === $routeName && isset($choiceLoader)) ? $view->vars['id'] : null,
+                    'page_size' => $options['select2']['ajax_page_size'],
+                ),
+            )),
         );
     }
 
     /**
-     * Adds formatted choices selected in form view.
+     * Remove the key with null values.
      *
-     * @param FormView $view
-     * @param array    $options
+     * @param array $attributes The view attributes
      *
-     * @return void
+     * @return array The view attributes without null values
      */
-    protected function addChoicesSelectedInView(FormView $view, array $options)
+    protected function skipNullValue(array $attributes)
     {
-        if ($options['select2']['ajax'] && isset($options['choice_list'])) {
-            /* @var AjaxChoiceListInterface $choiceList */
-            $choiceList = $options['choice_list'];
-            $values = (array) $view->vars['value'];
+        $attr = array();
 
-            // add first value
-            if ($options['required'] && null === $view->vars['data']) {
-                $firstChoice = $choiceList->getFirstChoiceView();
-
-                if (null !== $firstChoice) {
-                    $values = (array) $firstChoice->value;
-                }
+        foreach ($attributes as $key => $value) {
+            if (null !== $value) {
+                $attr[$key] = is_array($value)
+                    ? $this->skipNullValue($value)
+                    : $value;
             }
-
-            $view->vars['choices_selected'] = $choiceList->getFormattedChoicesForValues($values);
         }
+
+        return $attr;
+    }
+
+    /**
+     * Create a choice list view.
+     *
+     * @param ChoiceListInterface $choiceList The choice list
+     * @param array               $options    The form options
+     *
+     * @return ChoiceListView
+     */
+    private function createChoiceListView(ChoiceListInterface $choiceList, array $options)
+    {
+        return $this->choiceListFactory->createView(
+            $choiceList,
+            $options['preferred_choices'],
+            $options['choice_label'],
+            $options['choice_name'],
+            $options['group_by'],
+            $options['choice_attr']
+        );
     }
 }

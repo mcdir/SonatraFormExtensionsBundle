@@ -12,7 +12,8 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Event;
 
 use Sonatra\Bundle\AjaxBundle\Event\GetAjaxEvent;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Helper\AjaxChoiceListHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -28,24 +29,31 @@ class GetAjaxChoiceListEvent extends GetAjaxEvent
     protected $request;
 
     /**
-     * @var AjaxChoiceListInterface
+     * @var AjaxChoiceLoaderInterface
      */
-    protected $choiceList;
+    protected $choiceLoader;
+
+    /**
+     * @var AjaxChoiceListFormatterInterface
+     */
+    protected $formatter;
 
     /**
      * Constructor.
      *
-     * @param string                  $id
-     * @param RequestStack            $requestStack
-     * @param AjaxChoiceListInterface $choiceList
-     * @param string                  $format
+     * @param string                           $id
+     * @param RequestStack                     $requestStack
+     * @param AjaxChoiceLoaderInterface        $choiceLoader
+     * @param AjaxChoiceListFormatterInterface $formatter
+     * @param string                           $format
      */
-    public function __construct($id, RequestStack $requestStack, AjaxChoiceListInterface $choiceList, $format = 'json')
+    public function __construct($id, RequestStack $requestStack, AjaxChoiceLoaderInterface $choiceLoader, AjaxChoiceListFormatterInterface $formatter, $format = 'json')
     {
         parent::__construct($id, $format);
 
         $this->request = $requestStack->getMasterRequest();
-        $this->choiceList = $choiceList;
+        $this->choiceLoader = $choiceLoader;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -53,6 +61,6 @@ class GetAjaxChoiceListEvent extends GetAjaxEvent
      */
     public function getData()
     {
-        return AjaxChoiceListHelper::getData($this->request, $this->choiceList, $this->getId().'_');
+        return AjaxChoiceListHelper::getData($this->request, $this->choiceLoader, $this->formatter, $this->getId().'_');
     }
 }

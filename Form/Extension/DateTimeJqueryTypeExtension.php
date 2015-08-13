@@ -15,7 +15,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -66,7 +66,7 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
 
         $attr = array_merge($attr, array(
             'data-datetime-picker' => 'true',
-            'data-button-id'       => $view->vars['id'].'_datetime_btn',
+            'data-button-id' => $view->vars['id'].'_datetime_btn',
         ));
 
         $attr['data-format'] = str_replace('d', 'D', $attr['data-format']);
@@ -79,7 +79,7 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $format = function (Options $options) {
             $date_format = \IntlDateFormatter::NONE;
@@ -117,29 +117,29 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
         };
 
         $resolver->setDefaults(array(
-            'widget'            => 'single_text',
-            'locale'            => \Locale::getDefault(),
-            'user_timezone'     => null,
-            'date_picker'       => true,
-            'time_picker'       => true,
+            'widget' => 'single_text',
+            'locale' => \Locale::getDefault(),
+            'user_timezone' => null,
+            'date_picker' => true,
+            'time_picker' => true,
             'time_picker_first' => false,
-            'button_id'         => null,
-            'open_focus'        => true,
-            'hour_min'          => null,
-            'hour_max'          => null,
-            'hour_step'         => null,
-            'minute_min'        => null,
-            'minute_max'        => null,
-            'minute_step'       => null,
-            'second_min'        => null,
-            'second_max'        => null,
-            'second_step'       => null,
+            'button_id' => null,
+            'open_focus' => true,
+            'hour_min' => null,
+            'hour_max' => null,
+            'hour_step' => null,
+            'minute_min' => null,
+            'minute_max' => null,
+            'minute_step' => null,
+            'second_min' => null,
+            'second_max' => null,
+            'second_step' => null,
 
             // override parent type value (merge options for datetime, date, time)
-            'format'            => $format,
-            'empty_value'       => null,
-            'with_minutes'      => true,
-            'with_seconds'      => false,
+            'format' => $format,
+            'empty_value' => null,
+            'with_minutes' => true,
+            'with_seconds' => false,
         ));
     }
 

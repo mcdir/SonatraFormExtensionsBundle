@@ -11,9 +11,6 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
-
 /**
  * Tests case for currency of select2 form extension type.
  *
@@ -53,14 +50,6 @@ class CurrencySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
     protected function getValidAjaxMultipleValue()
     {
-        return implode(',', $this->getValidMultipleValue());
-    }
-
-    protected function getValidFirstChoiceSelected()
-    {
-        $formatter = new Select2AjaxChoiceListFormatter();
-        $choice = new ChoiceView('AFN', 'AFN', 'Afghan Afghani');
-
-        return $formatter->formatChoice($choice);
+        return $this->getValidMultipleValue();
     }
 }

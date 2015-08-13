@@ -12,11 +12,14 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Event;
 
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
+ * Tests case for choice list event.
+ *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
 class GetAjaxChoiceListEventTest extends \PHPUnit_Framework_TestCase
@@ -32,10 +35,17 @@ class GetAjaxChoiceListEventTest extends \PHPUnit_Framework_TestCase
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $requestStack = new RequestStack();
         $requestStack->push($request);
-        /* @var AjaxChoiceListInterface $choiceList */
-        $choiceList = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface');
 
-        $this->event = new GetAjaxChoiceListEvent('foo', $requestStack, $choiceList, 'json');
+        /* @var AjaxChoiceLoaderInterface $choiceLoader */
+        $choiceLoader = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface');
+
+        /* @var AjaxChoiceListFormatterInterface|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        $formatter = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface');
+        $formatter->expects($this->any())
+            ->method('formatResponseData')
+            ->will($this->returnValue('AJAX_FORMATTER_MOCK'));
+
+        $this->event = new GetAjaxChoiceListEvent('foo', $requestStack, $choiceLoader, $formatter, 'json');
     }
 
     protected function tearDown()
@@ -45,13 +55,7 @@ class GetAjaxChoiceListEventTest extends \PHPUnit_Framework_TestCase
 
     public function testAjaxChoiceListAction()
     {
-        $validData = array(
-            'length'      => null,
-            'page_number' => null,
-            'page_size'   => null,
-            'search'      => null,
-            'results'     => null,
-        );
+        $validData = 'AJAX_FORMATTER_MOCK';
 
         $this->assertSame($validData, $this->event->getData());
     }

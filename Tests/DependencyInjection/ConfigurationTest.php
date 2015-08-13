@@ -35,13 +35,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     protected static function getBundleDefaultConfig()
     {
         return array(
-            'select2'         => array(
+            'select2' => array(
                 'enabled' => true,
             ),
             'datetime_picker' => array(
                 'enabled' => true,
             ),
-            'currency'        => array(
+            'currency' => array(
                 'enabled' => true,
             ),
             'auto_configuration' => true,

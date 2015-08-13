@@ -14,38 +14,81 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\ChoiceList\Formatter;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
 
 /**
- * Tests case for select2 ajax choice list formatter.
+ * Tests case for select2 choice list formatter.
  *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
 class Select2AjaxChoiceListFormatterTest extends AbstractAjaxChoiceListFormatterTest
 {
-    protected function createFormatter()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFormatter()
     {
-        return new Select2AjaxChoiceListFormatter();
+        return new Select2AjaxChoiceListFormatter($this->choiceListFactory);
     }
 
-    protected function getValidFormattedChoice()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidResponseData()
     {
         return array(
-            'id'   => 'foo',
-            'text' => 'Bar',
+            'size' => 3,
+            'pageNumber' => 1,
+            'pageSize' => 10,
+            'search' => null,
+            'items' => array(
+                array(
+                    'id' => '0',
+                    'text' => 'Bar',
+                ),
+                array(
+                    'id' => '1',
+                    'text' => 'Foo',
+                ),
+                array(
+                    'id' => '2',
+                    'text' => 'Baz',
+                ),
+            ),
         );
     }
 
-    protected function getValidFormattedGroupChoice()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidGroupResponseData()
     {
         return array(
-            'text'     => 'Baz',
-            'children' => array(),
+            'size' => 3,
+            'pageNumber' => 1,
+            'pageSize' => 10,
+            'search' => null,
+            'items' => array(
+                array(
+                    'text' => 'Group 1',
+                    'children' => array(
+                        array(
+                            'id' => '0',
+                            'text' => 'Bar',
+                        ),
+                        array(
+                            'id' => '1',
+                            'text' => 'Foo',
+                        ),
+                    ),
+                ),
+                array(
+                    'text' => 'Group 2',
+                    'children' => array(
+                        array(
+                            'id' => '2',
+                            'text' => 'Baz',
+                        ),
+                    ),
+                ),
+            ),
         );
-    }
-
-    protected function getValidGroupWithChoiceAdded()
-    {
-        $group = $this->getValidFormattedGroupChoice();
-        $group['children'][] = $this->getValidFormattedChoice();
-
-        return $group;
     }
 }

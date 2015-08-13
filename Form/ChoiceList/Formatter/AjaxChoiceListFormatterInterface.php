@@ -11,13 +11,24 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter;
 
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface;
+use Symfony\Component\Form\ChoiceList\View\ChoiceGroupView;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
 interface AjaxChoiceListFormatterInterface
 {
+    /**
+     * Format the ajax response data.
+     *
+     * @param AjaxChoiceLoaderInterface $choiceLoader The choice loader
+     *
+     * @return array The formatted ajax data
+     */
+    public function formatResponseData(AjaxChoiceLoaderInterface $choiceLoader);
+
     /**
      * Formats the choice view to AJAX format.
      *
@@ -30,11 +41,11 @@ interface AjaxChoiceListFormatterInterface
     /**
      * Formats the group choice view to AJAX format.
      *
-     * @param string $name
+     * @param ChoiceGroupView $choiceGroup The choice group
      *
      * @return mixed
      */
-    public function formatGroupChoice($name);
+    public function formatGroupChoice(ChoiceGroupView $choiceGroup);
 
     /**
      * @param mixed      $group  The group choice formatted

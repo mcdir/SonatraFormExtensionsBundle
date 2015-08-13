@@ -12,96 +12,13 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
-use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceListInterface;
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
-class EntitySelect2TypeExtension extends AbstractTypeExtension
+class EntitySelect2TypeExtension extends DoctrineSelect2TypeExtension
 {
-    /**
-     * @var PropertyAccessorInterface
-     */
-    protected $propertyAccessor;
-
-    /**
-     * Constructor.
-     *
-     * @param PropertyAccessorInterface $propertyAccessor
-     */
-    public function __construct(PropertyAccessorInterface $propertyAccessor = null)
-    {
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $propertyAccessor = $this->propertyAccessor;
-        $type = $this;
-
-        $loader = function (Options $options) use ($type) {
-            /* @var EntityManager $em */
-            $em = $options['em'];
-
-            if (null !== $options['query_builder']) {
-                return $type->getLoader($em, $options['query_builder'], $options['class']);
-            }
-
-            $qb = $em->createQueryBuilder()
-                ->select('e')
-                ->from($options['class'], 'e')
-            ;
-
-            return $type->getLoader($em, $qb, $options['class']);
-        };
-
-        $choiceList = function (Options $options, $value) use ($propertyAccessor) {
-            if (!$value instanceof AjaxEntityChoiceListInterface) {
-                $value = new AjaxEntityChoiceList(
-                    isset($options['select2']) ? $options['select2']['formatter'] : new Select2AjaxChoiceListFormatter(),
-                    $options['em'],
-                    $options['class'],
-                    $options['property'],
-                    $options['loader'],
-                    $options['choices'],
-                    $options['preferred_choices'],
-                    $options['group_by'],
-                    $propertyAccessor
-                );
-            }
-
-            if ($value instanceof AjaxEntityChoiceList) {
-                $value->setLazy($options['lazy']);
-            }
-
-            return $value;
-        };
-
-        $resolver->setDefaults(array(
-            'lazy'        => false,
-            'loader'      => $loader,
-            'choice_list' => $choiceList,
-        ));
-
-        $resolver->setAllowedTypes(array(
-            'lazy'   => 'bool',
-            'loader' => 'Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader',
-        ));
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -111,13 +28,7 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
     }
 
     /**
-     * Return the default loader object.
-     *
-     * @param ObjectManager $manager
-     * @param mixed         $queryBuilder
-     * @param string        $class
-     *
-     * @return ORMQueryBuilderLoader
+     * {@inheritdoc}
      */
     public function getLoader(ObjectManager $manager, $queryBuilder, $class)
     {
@@ -125,6 +36,17 @@ class EntitySelect2TypeExtension extends AbstractTypeExtension
             $queryBuilder,
             $manager,
             $class
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueryBuilderPartsForCachingHash($queryBuilder)
+    {
+        return array(
+            $queryBuilder->getQuery()->getSQL(),
+            $queryBuilder->getParameters()->toArray(),
         );
     }
 }

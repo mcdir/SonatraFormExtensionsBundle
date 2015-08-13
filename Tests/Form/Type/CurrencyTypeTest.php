@@ -12,7 +12,7 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Type;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType;
-use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Intl\Intl;
 
@@ -27,10 +27,10 @@ class CurrencyTypeTest extends TypeTestCase
     {
         $type = new CurrencyType();
         $form = $this->factory->create($type);
-        /* @var SimpleChoiceList $list */
+        /* @var ArrayChoiceList $list */
         $list = $form->getConfig()->getOption('choice_list');
 
-        $this->assertInstanceOf('Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList', $list);
+        $this->assertInstanceOf('Symfony\Component\Form\ChoiceList\ArrayChoiceList', $list);
 
         $validList = array_keys(Intl::getCurrencyBundle()->getCurrencyNames('en'));
         sort($validList);

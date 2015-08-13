@@ -79,7 +79,6 @@ abstract class AbstractBaseChoiceSelect2TypeExtensionTest extends TypeTestCase
 
     public function test()
     {
-        //TODO
         $form = $this->factory->create($this->getExtensionTypeName());
         $config = $form->getConfig();
 

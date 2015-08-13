@@ -14,6 +14,7 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +76,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
     {
         parent::tearDown();
 
-        $this->request = null;
+        $this->requestStack = null;
         $this->router = null;
     }
 
@@ -94,6 +95,16 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         }
 
         return $options;
+    }
+
+    protected function getDynamicLoaderInterface()
+    {
+        return 'Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\DynamicChoiceLoaderInterface';
+    }
+
+    protected function getAjaxLoaderInterface()
+    {
+        return 'Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface';
     }
 
     /**
@@ -131,11 +142,6 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
      */
     abstract protected function getValidAjaxMultipleValue();
 
-    /**
-     * @return array
-     */
-    abstract protected function getValidFirstChoiceSelected();
-
     public function testDefaultOptions()
     {
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions(array()));
@@ -145,10 +151,39 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $this->assertFalse($config->getOption('multiple'));
         $this->assertTrue($config->hasOption('select2'));
         $select2Opts = $config->getOption('select2');
+        $this->assertFalse($select2Opts['enabled']);
+        $this->assertFalse($select2Opts['ajax']);
+        $this->validateChoiceLoaderForDefaultOptions($config);
+
+        $view = $form->createView();
+
+        $this->assertFalse(array_key_exists('select2', $view->vars));
+        $this->assertEquals($this->getSingleData(), $view->vars['data']);
+        $this->assertEquals($this->getValidSingleValue(), $view->vars['value']);
+    }
+
+    protected function validateChoiceLoaderForDefaultOptions(FormConfigInterface $config)
+    {
+        $this->assertNull($config->getOption('choice_loader'));
+    }
+
+    public function testDefaultEnabledOptions()
+    {
+        $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions(array(
+            'select2' => array(
+                'enabled' => true,
+            ),
+        )));
+        $config = $form->getConfig();
+
+        $this->assertFalse($config->getOption('compound'));
+        $this->assertFalse($config->getOption('multiple'));
+        $this->assertTrue($config->hasOption('select2'));
+        $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertFalse($select2Opts['ajax']);
-        $this->assertFalse($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertFalse($select2Opts['tags']);
+        $this->assertInstanceOf($this->getDynamicLoaderInterface(), $config->getOption('choice_loader'));
 
         $view = $form->createView();
 
@@ -168,6 +203,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $this->assertTrue($config->hasOption('select2'));
         $select2Opts = $config->getOption('select2');
         $this->assertFalse($select2Opts['enabled']);
+        $this->assertFalse($select2Opts['tags']);
 
         $view = $form->createView();
         $this->assertFalse(array_key_exists('select2', $view->vars));
@@ -177,7 +213,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 
     public function testSingleWithTags()
     {
-        $options = array('select2' => array('tags' => array()));
+        $options = array('select2' => array('enabled' => true, 'tags' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
         $config = $form->getConfig();
 
@@ -187,8 +223,8 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertFalse($select2Opts['ajax']);
-        $this->assertTrue($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertTrue($select2Opts['tags']);
+        $this->assertInstanceOf($this->getDynamicLoaderInterface(), $config->getOption('choice_loader'));
 
         $view = $form->createView();
 
@@ -200,7 +236,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 
     public function testSingleAjax()
     {
-        $options = array('select2' => array('ajax' => true));
+        $options = array('select2' => array('enabled' => true, 'ajax' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
         $config = $form->getConfig();
 
@@ -210,8 +246,8 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertTrue($select2Opts['ajax']);
-        $this->assertFalse($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertFalse($select2Opts['tags']);
+        $this->assertInstanceOf($this->getAjaxLoaderInterface(), $config->getOption('choice_loader'));
 
         $view = $form->createView();
 
@@ -222,7 +258,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 
     public function testSingleAjaxWithTags()
     {
-        $options = array('select2' => array('ajax' => true, 'tags' => array()));
+        $options = array('select2' => array('enabled' => true, 'ajax' => true, 'tags' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
         $config = $form->getConfig();
 
@@ -232,8 +268,8 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertTrue($select2Opts['ajax']);
-        $this->assertTrue($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertTrue($select2Opts['tags']);
+        $this->assertInstanceOf($this->getAjaxLoaderInterface(), $config->getOption('choice_loader'));
 
         $view = $form->createView();
 
@@ -244,7 +280,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 
     public function testMultiple()
     {
-        $options = array('multiple' => true);
+        $options = array('multiple' => true, 'select2' => array('enabled' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getMultipleData(), $this->mergeOptions($options));
         $config = $form->getConfig();
 
@@ -254,8 +290,8 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertFalse($select2Opts['ajax']);
-        $this->assertFalse($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertFalse($select2Opts['tags']);
+        $this->assertInstanceOf($this->getDynamicLoaderInterface(), $config->getOption('choice_loader'));
 
         $view = $form->createView();
 
@@ -266,7 +302,7 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
 
     public function testMultipleAjax()
     {
-        $options = array('multiple' => true, 'select2' => array('ajax' => true));
+        $options = array('multiple' => true, 'select2' => array('enabled' => true, 'ajax' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getMultipleData(), $this->mergeOptions($options));
         $config = $form->getConfig();
 
@@ -276,8 +312,8 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertTrue($select2Opts['ajax']);
-        $this->assertFalse($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertFalse($select2Opts['tags']);
+        $this->assertInstanceOf($this->getAjaxLoaderInterface(), $config->getOption('choice_loader'));
 
         $view = $form->createView();
 
@@ -286,31 +322,58 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
         $this->assertEquals($this->getValidAjaxMultipleValue(), $view->vars['value']);
     }
 
-    public function testRequiredAjaxFirstChoice()
+    public function testRequiredAjaxEmptyChoice()
     {
-        $options = array('select2' => array('ajax' => true));
+        $options = array('select2' => array('enabled' => true, 'ajax' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), null, $this->mergeOptions($options));
         $view = $form->createView();
 
-        $this->assertEquals(array($this->getValidFirstChoiceSelected()), $view->vars['choices_selected']);
+        $this->assertEquals(array(), $view->vars['choices']);
     }
 
     public function testSinglePlaceHolder()
     {
-        $options = array('required' => false, 'select2' => array('ajax' => true));
+        $options = array('required' => false, 'select2' => array('enabled' => true, 'ajax' => true));
         $form = $this->factory->create($this->getExtensionTypeName(), null, $this->mergeOptions($options));
         $view = $form->createView();
 
-        $this->assertTrue(isset($view->vars['attr']['placeholder']));
-        $this->assertEquals(' ', $view->vars['attr']['placeholder']);
+        $this->assertTrue(isset($view->vars['placeholder']));
+        $this->assertEquals('', $view->vars['placeholder']);
     }
 
     public function testAjaxRoute()
     {
-        $options = array('required' => false, 'select2' => array('ajax' => true, 'ajax_route' => 'foobar'));
+        $options = array('required' => false, 'select2' => array('enabled' => true, 'ajax' => true, 'ajax_route' => 'foobar'));
         $form = $this->factory->create($this->getExtensionTypeName(), null, $this->mergeOptions($options));
         $view = $form->createView();
 
-        $this->assertEquals('/foobar', $view->vars['select2']['ajax_url']);
+        $this->assertEquals('/foobar', $view->vars['select2']['ajax']['url']);
+    }
+
+    public function testChoiceLoaderOption()
+    {
+        $choiceLoader = $this->getMock($this->getDynamicLoaderInterface());
+        $choiceLoader->expects($this->any())
+            ->method('loadValuesForChoices')
+            ->will($this->returnValue(array()));
+        $choiceLoader->expects($this->any())
+            ->method('loadChoicesForValues')
+            ->will($this->returnValue(array()));
+
+        $options = array('select2' => array('enabled' => true), 'choice_loader' => $choiceLoader);
+
+        $form = $this->factory->create($this->getExtensionTypeName(), null, $this->mergeOptions($options));
+
+        $this->assertSame($choiceLoader, $form->getConfig()->getOption('choice_loader'));
+    }
+
+    public function testInvalidChoiceLoaderOption()
+    {
+        $msg = 'The "choice_loader" option must be an instance of DynamicChoiceLoaderInterface or the "choices" option must be an array';
+        $this->setExpectedException('Symfony\Component\Form\Exception\InvalidConfigurationException', $msg);
+
+        $options = array('select2' => array('enabled' => true), 'choices' => null);
+
+        $this->factory->create($this->getExtensionTypeName(), null, $options);
     }
 }

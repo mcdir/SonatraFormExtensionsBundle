@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AjaxFormController extends Controller
 {
     /**
-     * Gets the ajax response of country choice list.
+     * Gets the ajax response of choice list.
      *
      * @param Request $request
      * @param string  $type
@@ -31,6 +31,8 @@ class AjaxFormController extends Controller
      */
     public function ajaxChoiceListAction(Request $request, $type)
     {
-        return AjaxChoiceListHelper::generateResponse($request, $this->get('form.factory')->createBuilder($type));
+        return AjaxChoiceListHelper::generateResponse($request,
+            $this->get('form.factory')->createBuilder($type, null,
+                array('select2' => array('enabled' => true, 'ajax' => true))));
     }
 }

@@ -70,16 +70,16 @@ class BirthdayJqueryTypeExtensionTest extends TypeTestCase
         $form = $this->factory->create('birthday', null, array('locale' => 'en'));
         $view = $form->createView();
         $validAttr = array(
-            'data-locale'            => 'en',
-            'data-date-picker'       => 'true',
-            'data-time-picker'       => 'false',
+            'data-locale' => 'en',
+            'data-date-picker' => 'true',
+            'data-time-picker' => 'false',
             'data-time-picker-first' => 'false',
-            'data-open-focus'        => 'true',
-            'data-format'            => 'M/D/YYYY',
-            'data-with-minutes'      => 'true',
-            'data-with-seconds'      => 'false',
-            'data-datetime-picker'   => 'true',
-            'data-button-id'         => 'birthday_datetime_btn',
+            'data-open-focus' => 'true',
+            'data-format' => 'M/D/YYYY',
+            'data-with-minutes' => 'true',
+            'data-with-seconds' => 'false',
+            'data-datetime-picker' => 'true',
+            'data-button-id' => 'birthday_datetime_btn',
         );
 
         $this->assertEquals($validAttr, $view->vars['attr']);

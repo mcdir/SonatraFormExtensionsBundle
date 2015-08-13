@@ -19,8 +19,9 @@ use Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension\AbstractSelect2Type
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\Test\DoctrineTestHelper;
 use Symfony\Bridge\Doctrine\Tests\Fixtures\SingleIntIdEntity;
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Forms;
 
 /**
@@ -179,7 +180,7 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
     protected function getValidAjaxMultipleValue()
     {
-        return implode(',', $this->getValidMultipleValue());
+        return $this->getValidMultipleValue();
     }
 
     protected function getValidFirstChoiceSelected()
@@ -190,6 +191,16 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
         return $formatter->formatChoice($choice);
     }
 
+    protected function validateChoiceLoaderForDefaultOptions(FormConfigInterface $config)
+    {
+        $this->assertInstanceOf('Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader', $config->getOption('choice_loader'));
+    }
+
+    public function testInvalidChoiceLoaderOption()
+    {
+        // Skip test
+    }
+
     public function testWithQueryBuilder()
     {
         $qb = $this->em->createQueryBuilder()
@@ -198,6 +209,9 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
         ;
         $options = array(
             'query_builder' => $qb,
+            'select2' => array(
+                'enabled' => true,
+            ),
         );
 
         $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
@@ -209,7 +223,26 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
         $select2Opts = $config->getOption('select2');
         $this->assertTrue($select2Opts['enabled']);
         $this->assertFalse($select2Opts['ajax']);
-        $this->assertFalse($select2Opts['allow_add']);
-        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface', $config->getOption('choice_list'));
+        $this->assertFalse($select2Opts['tags']);
+        $this->assertInstanceOf('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\DynamicChoiceLoaderInterface', $config->getOption('choice_loader'));
+
+        // test cache with hash
+        $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
+    }
+
+    public function testDeprecatedLoader()
+    {
+        $loader = $this->getMock('Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface');
+
+        $options = array(
+            'loader' => $loader,
+            'select2' => array(
+                'enabled' => true,
+            ),
+        );
+
+        $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
+        $config = $form->getConfig();
+        $this->assertInstanceOf($this->getDynamicLoaderInterface(), $config->getOption('choice_loader'));
     }
 }

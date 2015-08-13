@@ -57,9 +57,9 @@ class SonatraFormExtensionsExtensionTest extends \PHPUnit_Framework_TestCase
     public function testExtensionLoaderWithDisabledConfig()
     {
         $container = $this->createContainer(array(
-            'select2'         => array('enabled' => false),
+            'select2' => array('enabled' => false),
             'datetime_picker' => array('enabled' => false),
-            'currency'        => array('enabled' => false),
+            'currency' => array('enabled' => false),
         ));
 
         $this->assertFalse($container->hasDefinition('form.type_extension.sonatra.choice_select2'));
@@ -103,19 +103,19 @@ class SonatraFormExtensionsExtensionTest extends \PHPUnit_Framework_TestCase
         $configs = empty($config) ? array() : array($config);
         $twigConfigs = empty($twigConfig) ? array() : array($twigConfig);
         $container = new ContainerBuilder(new ParameterBag(array(
-            'kernel.bundles'     => array(
-                'FrameworkBundle'             => 'Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle',
-                'TwigBundle'                  => 'Symfony\\Bundle\\TwigBundle\\TwigBundle',
+            'kernel.bundles' => array(
+                'FrameworkBundle' => 'Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle',
+                'TwigBundle' => 'Symfony\\Bundle\\TwigBundle\\TwigBundle',
                 'SonatraFormExtensionsBundle' => 'Sonatra\\Bundle\\FormExtensionsBundle\\SonatraFormExtensionsBundle',
             ),
-            'kernel.cache_dir'   => __DIR__,
-            'kernel.debug'       => false,
+            'kernel.cache_dir' => __DIR__,
+            'kernel.debug' => false,
             'kernel.environment' => 'test',
-            'kernel.name'        => 'kernel',
-            'kernel.root_dir'    => __DIR__,
-            'kernel.charset'     => 'UTF-8',
-            'locale'             => 'en',
-            'assetic.debug'      => true,
+            'kernel.name' => 'kernel',
+            'kernel.root_dir' => __DIR__,
+            'kernel.charset' => 'UTF-8',
+            'locale' => 'en',
+            'assetic.debug' => true,
         )));
 
         $sfExt = new FrameworkExtension();

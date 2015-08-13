@@ -66,16 +66,16 @@ class TimeJqueryTypeExtensionTest extends TypeTestCase
         $form = $this->factory->create('time', null, array('locale' => 'en'));
         $view = $form->createView();
         $validAttr = array(
-            'data-locale'            => 'en',
-            'data-date-picker'       => 'false',
-            'data-time-picker'       => 'true',
+            'data-locale' => 'en',
+            'data-date-picker' => 'false',
+            'data-time-picker' => 'true',
             'data-time-picker-first' => 'false',
-            'data-open-focus'        => 'true',
-            'data-format'            => 'h:mm A',
-            'data-with-minutes'      => 'true',
-            'data-with-seconds'      => 'false',
-            'data-datetime-picker'   => 'true',
-            'data-button-id'         => 'time_datetime_btn',
+            'data-open-focus' => 'true',
+            'data-format' => 'h:mm A',
+            'data-with-minutes' => 'true',
+            'data-with-seconds' => 'false',
+            'data-datetime-picker' => 'true',
+            'data-button-id' => 'time_datetime_btn',
         );
 
         $this->assertEquals($validAttr, $view->vars['attr']);

@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * Tests case for controller.
+ *
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
 class AjaxFormControllerTest extends \PHPUnit_Framework_TestCase
@@ -42,13 +44,27 @@ class AjaxFormControllerTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->helper = $this->getMockClass('Sonatra\Bundle\FormExtensionsBundle\Form\Helper\AjaxChoiceListHelper', array('generateResponse'));
 
-        $ajaxChoiceList = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxChoiceListInterface');
+        $ajaxFormatter = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\AjaxChoiceListFormatterInterface');
+        $ajaxFormatter->expects($this->any())
+            ->method('formatResponseData')
+            ->will($this->returnValue('AJAX_FORMATTER_MOCK'));
+
+        $ajaxChoiceLoader = $this->getMock('Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface');
 
         $formBuilder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $formBuilder->expects($this->any())
             ->method('getAttribute')
-            ->with($this->equalTo('choice_list'))
-            ->will($this->returnValue($ajaxChoiceList));
+            ->will($this->returnCallback(function ($value) use ($ajaxFormatter, $ajaxChoiceLoader) {
+                if ('select2' === $value) {
+                    return array(
+                        'ajax_formatter' => $ajaxFormatter,
+                    );
+                } elseif ('choice_loader') {
+                    return $ajaxChoiceLoader;
+                }
+
+                return $value;
+            }));
 
         $formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
         $formFactory->expects($this->any())
@@ -78,7 +94,7 @@ class AjaxFormControllerTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
-        $response->setContent('{"length":null,"page_number":null,"page_size":null,"search":null,"results":null}');
+        $response->setContent(json_encode('AJAX_FORMATTER_MOCK'));
 
         $this->assertEquals($response->getContent(), $this->controller->ajaxChoiceListAction($request, 'locale')->getContent());
     }

@@ -11,7 +11,6 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Helper;
 
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\AjaxSimpleChoiceList;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
 
 /**
@@ -24,8 +23,8 @@ class Select2ChoiceListHelper extends AjaxChoiceListHelper
     /**
      * {@inheritdoc}
      */
-    protected static function createChoiceList(array $choices)
+    protected static function createChoiceListFormatter()
     {
-        return new AjaxSimpleChoiceList(new Select2AjaxChoiceListFormatter(), $choices);
+        return new Select2AjaxChoiceListFormatter();
     }
 }

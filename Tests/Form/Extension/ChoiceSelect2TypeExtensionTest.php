@@ -11,9 +11,6 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
-use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
-
 /**
  * Tests case for choice of select2 form extension type.
  *
@@ -58,14 +55,6 @@ class ChoiceSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
     protected function getValidAjaxMultipleValue()
     {
-        return implode(',', $this->getValidMultipleValue());
-    }
-
-    protected function getValidFirstChoiceSelected()
-    {
-        $formatter = new Select2AjaxChoiceListFormatter();
-        $choice = new ChoiceView('0', '0', 'A');
-
-        return $formatter->formatChoice($choice);
+        return $this->getValidMultipleValue();
     }
 }
