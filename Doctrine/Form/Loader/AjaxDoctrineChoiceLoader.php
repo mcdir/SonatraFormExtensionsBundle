@@ -13,6 +13,7 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Loader;
 
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityLoaderInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\Traits\AjaxLoaderTrait;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\IdReader;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -22,30 +23,12 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 class AjaxDoctrineChoiceLoader extends DynamicDoctrineChoiceLoader implements AjaxChoiceLoaderInterface
 {
+    use AjaxLoaderTrait;
+
     /**
      * @var AjaxEntityLoaderInterface
      */
     protected $objectLoader;
-
-    /**
-     * @var int
-     */
-    protected $pageSize;
-
-    /**
-     * @var int
-     */
-    protected $pageNumber;
-
-    /**
-     * @var string
-     */
-    protected $search;
-
-    /**
-     * @var array
-     */
-    protected $ids;
 
     /**
      * Creates a new choice loader.
@@ -74,78 +57,6 @@ class AjaxDoctrineChoiceLoader extends DynamicDoctrineChoiceLoader implements Aj
     public function getSize()
     {
         return $this->objectLoader->getSize();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPageSize($size)
-    {
-        $this->pageSize = $size;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPageSize()
-    {
-        return $this->pageSize;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPageNumber($number)
-    {
-        $this->pageNumber = $number;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPageNumber()
-    {
-        return $this->pageNumber;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSearch($search)
-    {
-        $this->search = $search;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearch()
-    {
-        return $this->search;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setIds(array $ids)
-    {
-        $this->ids = $ids;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIds()
-    {
-        return $this->ids;
     }
 
     /**
