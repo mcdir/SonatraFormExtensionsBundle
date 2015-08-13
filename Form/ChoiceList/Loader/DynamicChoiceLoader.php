@@ -211,7 +211,7 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
             $choices = $this->addNewTagsInChoices($choices, $allChoices, $values, $isGrouped);
         }
 
-        return $choices;
+        return (array) $choices;
     }
 
     /**
