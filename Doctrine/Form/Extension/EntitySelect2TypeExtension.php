@@ -32,11 +32,7 @@ class EntitySelect2TypeExtension extends DoctrineSelect2TypeExtension
      */
     public function getLoader(ObjectManager $manager, $queryBuilder, $class)
     {
-        return new AjaxORMQueryBuilderLoader(
-            $queryBuilder,
-            $manager,
-            $class
-        );
+        return new AjaxORMQueryBuilderLoader($queryBuilder);
     }
 
     /**
