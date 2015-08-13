@@ -38,10 +38,7 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
     {
         parent::__construct($choices, $choiceAsValues, $factory);
 
-        $this->pageSize = 10;
-        $this->pageNumber = 1;
-        $this->search = '';
-        $this->ids = array();
+        $this->initAjax();
         $this->reset();
     }
 

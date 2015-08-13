@@ -44,10 +44,7 @@ class AjaxDoctrineChoiceLoader extends DynamicDoctrineChoiceLoader implements Aj
     {
         parent::__construct($objectLoader, $idReader, $label, $factory);
 
-        $this->pageSize = 10;
-        $this->pageNumber = 1;
-        $this->search = '';
-        $this->ids = array();
+        $this->initAjax();
         $this->reset();
     }
 

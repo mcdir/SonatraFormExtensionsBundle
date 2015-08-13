@@ -107,4 +107,15 @@ trait AjaxLoaderTrait
     {
         return $this->ids;
     }
+
+    /**
+     * Initialize properties for ajax.
+     */
+    protected function initAjax()
+    {
+        $this->pageSize = 10;
+        $this->pageNumber = 1;
+        $this->search = '';
+        $this->ids = array();
+    }
 }
