@@ -235,10 +235,10 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     /**
      * Add new tags in choices.
      *
-     * @param array $choices    The choices
-     * @param array $allChoices The all choices
-     * @param array $values     The values
-     * @param bool  $isGrouped  Check if the choices is grouped
+     * @param array    $choices    The choices
+     * @param array    $allChoices The all choices
+     * @param string[] $values     The values
+     * @param bool     $isGrouped  Check if the choices is grouped
      *
      * @return array The choice with new tags
      */
