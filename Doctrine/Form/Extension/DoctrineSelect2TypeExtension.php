@@ -12,11 +12,11 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxEntityLoaderInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Converter\NewTagConverter;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\EventListener\NewTagConverterListener;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Loader\AjaxDoctrineChoiceLoader;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Loader\DynamicDoctrineChoiceLoader;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\ChoiceList\Factory\CachingFactoryDecorator;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
@@ -155,7 +155,7 @@ abstract class DoctrineSelect2TypeExtension extends AbstractTypeExtension
      * @param mixed         $queryBuilder
      * @param string        $class
      *
-     * @return ORMQueryBuilderLoader
+     * @return AjaxEntityLoaderInterface
      */
     abstract public function getLoader(ObjectManager $manager, $queryBuilder, $class);
 
