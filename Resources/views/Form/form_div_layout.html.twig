@@ -8,11 +8,34 @@
     {%- require_style '@bower/select2/dist/css/select2.css' -%}
     {%- set select2 = select2|merge({'wrapper_attr': select2.wrapper_attr|merge({'class': ('select2-wrapper ' ~ select2.wrapper_attr.class|default(''))|trim})}) -%}
     <div{% for attrname, attrvalue in select2.wrapper_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+        {% if select2.ajax.enabled or select2.tags is defined %}
+        <input type="hidden" id="{{ id }}_values" />
+        {% endif %}
         {{- block('base_choice_widget') -}}
     </div>
 
     {%- inline_script -%}
     <script>
+        {% if select2.ajax.enabled or select2.tags is defined %}
+            var {{ id }}Init = function ($el, $val) {
+                if ($val.val() != '') {
+                    var opts = JSON.parse($val.val());
+                    var values = [];
+                    for (var i = 0; i < opts.length; i++) {
+                        values.push(opts[i].v);
+                        if ($el.find('option[value="'+opts[i].v+'"]').length  == 0) {
+                            var $opt = $('<option value="'+opts[i].v+'" selected="selected">'+opts[i].l+'</option>');
+                            if (opts[i].t) {
+                                $opt.attr('data-select2-tag', true);
+                            }
+                            $el.append($opt);
+                        }
+                    }
+                    $el.val(values);
+                }
+            };
+            {{ id }}Init($( '#{{ id }}' ), $( '#{{ id }}'+'_values' ));
+        {% endif %}
         $( '#{{ id }}' ).select2({
             {%- if select2.template_result is defined -%}
                 'templateResult': {{- select2.template_result|raw -}},
@@ -128,6 +151,16 @@
             {%- endif -%}
             'language': '{{- select2.language|e -}}'
         });
+        {% if select2.ajax.enabled or select2.tags is defined %}
+        $( '#{{ id }}' ).on('change.sonatra_select2', function () {
+            var opts = [];
+            $('option:selected', this).each(function (index, el) {
+                var $el = $(el);
+                opts.push({v: $el.prop('value'), l: $el.text(), t: undefined != $el.attr('data-select2-tag')});
+            });
+            $( '#{{ id }}'+'_values' ).val(JSON.stringify(opts));
+        });
+        {% endif %}
     </script>
     {%- endinline_script -%}
 {%- endblock select2_widget_content %}
