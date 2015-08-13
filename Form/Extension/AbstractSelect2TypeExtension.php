@@ -102,7 +102,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExt
         }
 
         $view->vars = array_replace($view->vars,
-            $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName, $choiceLoader));
+            $this->getReplaceViewVars($view, $options, $ajaxUrl, $routeName));
     }
 
     /**
@@ -174,15 +174,14 @@ abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExt
     /**
      * Gets the new view vars for the replacement.
      *
-     * @param FormView                          $view
-     * @param array                             $options
-     * @param string                            $ajaxUrl
-     * @param string|null                       $routeName
-     * @param DynamicChoiceLoaderInterface|null $choiceLoader
+     * @param FormView    $view
+     * @param array       $options
+     * @param string      $ajaxUrl
+     * @param string|null $routeName
      *
      * @return array
      */
-    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName, $choiceLoader = null)
+    protected function getReplaceViewVars(FormView $view, array $options, $ajaxUrl, $routeName)
     {
         return array(
             'select2' => $this->skipNullValue(array(
@@ -215,7 +214,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExt
                     'data_type' => $options['select2']['ajax_data_type'],
                     'delay' => $options['select2']['ajax_delay'],
                     'cache' => $options['select2']['ajax_cache'] ? 'true' : null,
-                    'ajax_id' => (null === $routeName && isset($choiceLoader)) ? $view->vars['id'] : null,
+                    'ajax_id' => null === $routeName ? $view->vars['id'] : null,
                     'page_size' => $options['select2']['ajax_page_size'],
                 ),
             )),
