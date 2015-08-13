@@ -59,14 +59,6 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     /**
      * {@inheritdoc}
      */
-    public function getLabel()
-    {
-        return;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSize()
     {
         if (null === $this->size) {

@@ -34,11 +34,6 @@ class DynamicDoctrineChoiceLoader extends AbstractDynamicChoiceLoader
     protected $idReader;
 
     /**
-     * @var string
-     */
-    protected $label;
-
-    /**
      * Creates a new choice loader.
      *
      * @param EntityLoaderInterface             $objectLoader The objects loader
@@ -55,14 +50,6 @@ class DynamicDoctrineChoiceLoader extends AbstractDynamicChoiceLoader
         $this->objectLoader = $objectLoader;
         $this->idReader = $idReader;
         $this->label = $label;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel()
-    {
-        return $this->label;
     }
 
     /**

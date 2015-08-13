@@ -37,6 +37,11 @@ abstract class AbstractDynamicChoiceLoader implements DynamicChoiceLoaderInterfa
     protected $allowAdd;
 
     /**
+     * @var string
+     */
+    protected $label;
+
+    /**
      * Creates a new choice loader.
      *
      * @param ChoiceListFactoryInterface|null $factory The factory for creating
@@ -46,6 +51,14 @@ abstract class AbstractDynamicChoiceLoader implements DynamicChoiceLoaderInterfa
     {
         $this->factory = $factory ?: new PropertyAccessDecorator(new DefaultChoiceListFactory());
         $this->allowAdd = false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 
     /**
