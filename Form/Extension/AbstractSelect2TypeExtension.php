@@ -79,18 +79,7 @@ abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExt
             return;
         }
 
-        if (isset($options['choice_loader'])
-            && $options['choice_loader'] instanceof DynamicChoiceLoaderInterface) {
-            /* @var DynamicChoiceLoaderInterface $loader */
-            $loader = $options['choice_loader'];
-            $values = is_object($form->getData()) ? array($form->getData()) : (array) $form->getData();
-            $choiceListView = $this->createChoiceListView($loader->loadChoiceListForView($values, $options['choice_name']), $options);
-
-            $view->vars = array_replace($view->vars, array(
-                'preferred_choices' => $choiceListView->preferredChoices,
-                'choices' => $choiceListView->choices,
-            ));
-        }
+        $this->prepareView($view, $form, $options);
 
         list($ajaxUrl, $routeName) = $this->getAjaxUrlAndRouteName($form, $options);
         $choiceLoader = $this->getChoiceLoader($form, $options);
@@ -124,6 +113,29 @@ abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExt
     public function getExtendedType()
     {
         return $this->type;
+    }
+
+    /**
+     * Prepare the view.
+     *
+     * @param FormView      $view    The view
+     * @param FormInterface $form    The form
+     * @param array         $options The form options
+     */
+    protected function prepareView(FormView $view, FormInterface $form, array $options)
+    {
+        if (isset($options['choice_loader'])
+            && $options['choice_loader'] instanceof DynamicChoiceLoaderInterface) {
+            /* @var DynamicChoiceLoaderInterface $loader */
+            $loader = $options['choice_loader'];
+            $values = is_object($form->getData()) ? array($form->getData()) : (array) $form->getData();
+            $choiceListView = $this->createChoiceListView($loader->loadChoiceListForView($values, $options['choice_name']), $options);
+
+            $view->vars = array_replace($view->vars, array(
+                'preferred_choices' => $choiceListView->preferredChoices,
+                'choices' => $choiceListView->choices,
+            ));
+        }
     }
 
     /**

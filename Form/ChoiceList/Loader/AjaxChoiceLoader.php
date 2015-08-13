@@ -78,29 +78,53 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
     {
         $filteredChoices = array();
 
-        foreach ($this->choices as $group => $choice) {
+        foreach ($this->choices as $key => $choice) {
             if (is_array($choice)) {
-                foreach ($choice as $key => $subChoice) {
-                    list($id, $label) = $this->getIdAndLabel($key, $subChoice);
-
-                    if (false !== stripos($label, $this->search) && !in_array($id, $this->getIds())) {
-                        if (!array_key_exists($group, $filteredChoices)) {
-                            $filteredChoices[$group] = array();
-                        }
-
-                        $filteredChoices[$group][$key] = $subChoice;
-                    }
-                }
+                $this->resetSearchGroupChoices($filteredChoices, $key, $choice);
             } else {
-                list($id, $label) = $this->getIdAndLabel($group, $choice);
-
-                if (false !== stripos($label, $this->search) && !in_array($id, $this->getIds())) {
-                    $filteredChoices[$group] = $choice;
-                }
+                $this->resetSearchSimpleChoices($filteredChoices, $key, $choice);
             }
         }
 
         return $filteredChoices;
+    }
+
+    /**
+     * Reset the search group choices.
+     *
+     * @param array  $filteredChoices The filtered choices
+     * @param string $group           The group name
+     * @param array  $choices         The choices
+     */
+    protected function resetSearchGroupChoices(array &$filteredChoices, $group, array $choices)
+    {
+        foreach ($choices as $key => $choice) {
+            list($id, $label) = $this->getIdAndLabel($key, $choice);
+
+            if (false !== stripos($label, $this->search) && !in_array($id, $this->getIds())) {
+                if (!array_key_exists($group, $filteredChoices)) {
+                    $filteredChoices[$group] = array();
+                }
+
+                $filteredChoices[$group][$key] = $choice;
+            }
+        }
+    }
+
+    /**
+     * Reset the search simple choices.
+     *
+     * @param array  $filteredChoices The filtered choices
+     * @param string $key             The key
+     * @param string $choice          The choice
+     */
+    protected function resetSearchSimpleChoices(array &$filteredChoices, $key, $choice)
+    {
+        list($id, $label) = $this->getIdAndLabel($key, $choice);
+
+        if (false !== stripos($label, $this->search) && !in_array($id, $this->getIds())) {
+            $filteredChoices[$key] = $choice;
+        }
     }
 
     /**
