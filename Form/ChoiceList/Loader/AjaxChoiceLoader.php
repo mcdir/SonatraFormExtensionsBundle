@@ -38,6 +38,7 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
     {
         parent::__construct($choices, $choiceAsValues, $factory);
 
+        $this->allChoices = false;
         $this->initAjax();
         $this->reset();
     }
@@ -50,28 +51,6 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
         $choices = LoaderUtil::paginateChoices($this, $this->filteredChoices);
 
         return $this->createChoiceList($choices, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function loadChoiceListForView(array $values, $value = null)
-    {
-        $choices = $this->getSelectedChoices($values, $value);
-
-        return $this->createChoiceList($choices, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function loadChoiceList($value = null)
-    {
-        if ($this->choiceList) {
-            return $this->choiceList;
-        }
-
-        return $this->choiceList = $this->createChoiceList($this->filteredChoices, $value);
     }
 
     /**
@@ -151,43 +130,10 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
     }
 
     /**
-     * Keep only the selected values in choices.
-     *
-     * @param array         $values The selected values
-     * @param null|callable $value  The callable function
-     *
-     * @return array The selected choices
+     * {@inheritdoc}
      */
-    protected function getSelectedChoices(array $values, $value = null)
+    protected function getChoicesForChoiceList()
     {
-        $structuredValues = $this->loadChoiceList($value)->getStructuredValues();
-        $values = $this->forceStringValues($values);
-        $allChoices = array();
-        $choices = array();
-        $isGrouped = false;
-
-        foreach ($structuredValues as $group => $choice) {
-            // group
-            if (is_array($choice)) {
-                $isGrouped = true;
-                foreach ($choice as $choiceKey => $choiceValue) {
-                    if (in_array($choiceValue, $values)) {
-                        $key = $this->choiceAsValues ? $choiceKey : $choiceValue;
-                        $choices[$group][$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
-                        $allChoices[$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
-                    }
-                }
-            } elseif (in_array($choice, $values)) {
-                $key = $this->choiceAsValues ? $group : $choice;
-                $choices[$key] = $this->choiceAsValues ? $choice : $group;
-                $allChoices[$key] = $this->choiceAsValues ? $choice : $group;
-            }
-        }
-
-        if ($this->isAllowAdd()) {
-            $choices = $this->addNewTagsInChoices($choices, $allChoices, $values, $isGrouped);
-        }
-
-        return $choices;
+        return $this->filteredChoices;
     }
 }

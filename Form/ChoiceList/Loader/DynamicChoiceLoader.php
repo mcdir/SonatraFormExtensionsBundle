@@ -35,6 +35,11 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     protected $size;
 
     /**
+     * @var bool
+     */
+    protected $allChoices;
+
+    /**
      * Creates a new choice loader.
      *
      * @param array                           $choices        The choices
@@ -46,6 +51,7 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     {
         parent::__construct($factory);
 
+        $this->allChoices = true;
         $this->choices = $choices;
         $this->choiceAsValues = $choiceAsValues;
     }
@@ -75,7 +81,7 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
      */
     public function loadChoiceListForView(array $values, $value = null)
     {
-        $choices = $this->getChoices($values, $value);
+        $choices = $this->getSelectedChoices($values, $value);
 
         return $this->createChoiceList($choices, $value);
     }
@@ -89,7 +95,7 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
             return $this->choiceList;
         }
 
-        return $this->choiceList = $this->createChoiceList($this->choices, $value);
+        return $this->choiceList = $this->createChoiceList($this->getChoicesForChoiceList(), $value);
     }
 
     /**
@@ -176,14 +182,14 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     }
 
     /**
-     * Keep only the values in choices.
+     * Keep only the selected values in choices.
      *
      * @param array         $values The selected values
      * @param null|callable $value  The callable function
      *
-     * @return array The choices
+     * @return array The selected choices
      */
-    protected function getChoices(array $values, $value = null)
+    protected function getSelectedChoices(array $values, $value = null)
     {
         $structuredValues = $this->loadChoiceList($value)->getStructuredValues();
         $values = $this->forceStringValues($values);
@@ -196,11 +202,13 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
             if (is_array($choice)) {
                 $isGrouped = true;
                 foreach ($choice as $choiceKey => $choiceValue) {
-                    $key = $this->choiceAsValues ? $choiceKey : $choiceValue;
-                    $choices[$group][$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
-                    $allChoices[$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
+                    if ($this->allChoices || in_array($choiceValue, $values)) {
+                        $key = $this->choiceAsValues ? $choiceKey : $choiceValue;
+                        $choices[$group][$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
+                        $allChoices[$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
+                    }
                 }
-            } else {
+            } elseif ($this->allChoices || in_array($choice, $values)) {
                 $key = $this->choiceAsValues ? $group : $choice;
                 $choices[$key] = $this->choiceAsValues ? $choice : $group;
                 $allChoices[$key] = $this->choiceAsValues ? $choice : $group;
@@ -256,5 +264,15 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
         }
 
         return $choices;
+    }
+
+    /**
+     * Get the choices for choice list.
+     *
+     * @return array
+     */
+    protected function getChoicesForChoiceList()
+    {
+        return $this->choices;
     }
 }
