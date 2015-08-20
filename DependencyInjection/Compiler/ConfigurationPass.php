@@ -52,7 +52,6 @@ class ConfigurationPass implements CompilerPassInterface
                 'patterns' => array(
                     'dist/css/select2.css',
                     'dist/js/select2.js',
-                    'dist/js/i18n/*',
                 ),
             ),
             array(
