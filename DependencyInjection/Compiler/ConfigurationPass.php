@@ -50,7 +50,6 @@ class ConfigurationPass implements CompilerPassInterface
             array(
                 'name' => '@bower/select2',
                 'patterns' => array(
-                    'dist/css/select2.css',
                     'dist/js/select2.js',
                 ),
             ),
