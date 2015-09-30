@@ -43,7 +43,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
 
         try {
             $selector = $builder->getFormFactory()->createBuilder($options['type'], null, array_merge(
-                $options['options'], array(
+                $this->normalizeOptions($options, $options['options']), array(
                     'multiple' => true,
                 ))
             );
@@ -107,17 +107,26 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
         $resolver->setNormalizer('prototype', function (Options $options, $value) {
             return $options['select2']['enabled'] ? false : $value;
         });
+    }
 
-        $resolver->setNormalizer('options', function (Options $options, $value) {
-            return $options['select2']['enabled']
-                ? array_merge($value, array(
-                    'error_bubbling' => false,
-                    'multiple' => false,
-                    'select2' => array_merge($options['select2'], array(
-                        'tags' => $options['allow_add'],
-                    )),
-                ))
-                : $value;
-        });
+    /**
+     * Normalise the options for selector.
+     *
+     * @param array $options The form options
+     * @param array $value   The options of form type
+     *
+     * @return array The normalized options for selector
+     */
+    protected function normalizeOptions(array $options, array $value)
+    {
+        return $options['select2']['enabled']
+            ? array_merge($value, array(
+                'error_bubbling' => false,
+                'multiple' => false,
+                'select2' => array_merge($options['select2'], array(
+                    'tags' => $options['allow_add'],
+                )),
+            ))
+            : $value;
     }
 }
