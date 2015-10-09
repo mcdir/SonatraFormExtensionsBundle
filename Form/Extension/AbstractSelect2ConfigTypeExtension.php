@@ -77,7 +77,7 @@ abstract class AbstractSelect2ConfigTypeExtension extends AbstractTypeExtension
             $select2Resolver->setDefaults(array(
                 'enabled' => false,
                 'wrapper_attr' => array(),
-                'width' => null,
+                'width' => '100%',
                 'template_result' => null,
                 'template_selection' => null,
                 'dropdown_parent' => null,
