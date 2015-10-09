@@ -27,7 +27,7 @@ class DateTimeJqueryTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $attr = $options['attr'];
+        $attr = $view->vars['attr'];
         $dataAttributes = array(
             'locale',
             'date_picker',
