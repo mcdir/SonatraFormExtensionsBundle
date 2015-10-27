@@ -3,27 +3,27 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="sonatra_form_extensions_ajax_country" path="/country-choice-list">
+    <route id="sonatra_form_extensions_ajax_country" path="/country-choice-list" methods="GET">
         <default key="_controller">SonatraFormExtensionsBundle:AjaxForm:ajaxChoiceList</default>
         <default key="type">country</default>
     </route>
 
-    <route id="sonatra_form_extensions_ajax_currency" path="/currency-choice-list">
+    <route id="sonatra_form_extensions_ajax_currency" path="/currency-choice-list" methods="GET">
         <default key="_controller">SonatraFormExtensionsBundle:AjaxForm:ajaxChoiceList</default>
         <default key="type">currency</default>
     </route>
 
-    <route id="sonatra_form_extensions_ajax_language" path="/language-choice-list">
+    <route id="sonatra_form_extensions_ajax_language" path="/language-choice-list" methods="GET">
         <default key="_controller">SonatraFormExtensionsBundle:AjaxForm:ajaxChoiceList</default>
         <default key="type">language</default>
     </route>
 
-    <route id="sonatra_form_extensions_ajax_locale" path="/locale-choice-list">
+    <route id="sonatra_form_extensions_ajax_locale" path="/locale-choice-list" methods="GET">
         <default key="_controller">SonatraFormExtensionsBundle:AjaxForm:ajaxChoiceList</default>
         <default key="type">locale</default>
     </route>
 
-    <route id="sonatra_form_extensions_ajax_timezone" path="/timezone-choice-list">
+    <route id="sonatra_form_extensions_ajax_timezone" path="/timezone-choice-list" methods="GET">
         <default key="_controller">SonatraFormExtensionsBundle:AjaxForm:ajaxChoiceList</default>
         <default key="type">timezone</default>
     </route>
