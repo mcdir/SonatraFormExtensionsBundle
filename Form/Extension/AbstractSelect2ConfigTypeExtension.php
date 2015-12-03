@@ -100,7 +100,7 @@ abstract class AbstractSelect2ConfigTypeExtension extends AbstractTypeExtension
                 'ajax' => false,
                 'ajax_formatter' => new Select2AjaxChoiceListFormatter($choiceListFactory),
                 'ajax_parameters' => array(),
-                'ajax_reference_type' => RouterInterface::ABSOLUTE_PATH,
+                'ajax_reference_type' => (bool) RouterInterface::ABSOLUTE_PATH,
                 'ajax_data_type' => 'json',
                 'ajax_delay' => 250,
                 'ajax_cache' => false,
