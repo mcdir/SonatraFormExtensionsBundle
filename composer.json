@@ -13,16 +13,16 @@
     ],
     "require" : {
         "php" : ">=5.4",
-        "symfony/framework-bundle" : "~2.7",
+        "symfony/framework-bundle" : "~2.8",
         "fxp/require-asset" : "1.0.*@dev",
         "fxp/require-asset-bundle" : "1.0.*@dev",
         "sonatra/ajax-bundle" : "1.0.*@dev",
-        "symfony/serializer": "~2.7",
-        "symfony/form": "~2.7"
+        "symfony/serializer": "~2.8",
+        "symfony/form": "~2.8"
     },
     "require-dev" : {
-        "symfony/doctrine-bridge" : "~2.4",
-        "doctrine/orm" : "~2.4",
+        "symfony/doctrine-bridge" : "~2.8",
+        "doctrine/orm" : "~2.5",
         "bower-asset/select2": "4.0.*",
         "bower-asset/sonatra-jquery-datetime-picker": "1.0.*@dev"
     },
