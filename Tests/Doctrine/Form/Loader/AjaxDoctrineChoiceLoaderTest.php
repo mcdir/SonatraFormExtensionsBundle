@@ -146,9 +146,9 @@ class AjaxDoctrineChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
     protected function getValidStructuredValues($group)
     {
         return array(
-            '0' => '0',
-            '1' => '1',
-            '2' => '2',
+            '0' => 'foo',
+            '1' => 'bar',
+            '2' => 'Test',
         );
     }
 
@@ -160,6 +160,17 @@ class AjaxDoctrineChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
         // new tags is not included because they are not managed by Doctrine
 
         return $this->getValidStructuredValues($group);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDataChoicesForValues()
+    {
+        return array(
+            0,
+            'Test',
+        );
     }
 
     /**

@@ -148,6 +148,17 @@ class DynamicDoctrineChoiceLoaderTest extends AbstractChoiceLoaderTest
     /**
      * {@inheritdoc}
      */
+    protected function getDataChoicesForValues()
+    {
+        return array(
+            0,
+            'Test',
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getValidChoicesForValues($group)
     {
         return array(

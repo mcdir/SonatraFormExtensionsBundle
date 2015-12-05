@@ -20,7 +20,7 @@ class ChoiceSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 {
     protected function getChoices()
     {
-        return array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D');
+        return array_flip(array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D'));
     }
 
     protected function getExtensionTypeName()

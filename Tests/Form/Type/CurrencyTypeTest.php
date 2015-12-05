@@ -32,7 +32,7 @@ class CurrencyTypeTest extends TypeTestCase
 
         $this->assertInstanceOf('Symfony\Component\Form\ChoiceList\ArrayChoiceList', $list);
 
-        $validList = array_keys(Intl::getCurrencyBundle()->getCurrencyNames('en'));
+        $validList = Intl::getCurrencyBundle()->getCurrencyNames('en');
         sort($validList);
 
         $choices = $list->getChoices();

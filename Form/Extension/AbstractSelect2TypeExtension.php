@@ -15,11 +15,13 @@ use Sonatra\Bundle\AjaxBundle\AjaxEvents;
 use Sonatra\Bundle\FormExtensionsBundle\Event\GetAjaxChoiceListEvent;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\AjaxChoiceLoaderInterface;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader\DynamicChoiceLoaderInterface;
+use Sonatra\Bundle\FormExtensionsBundle\Form\DataTransformer\Select2ChoiceToValueTransformer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceListView;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -68,6 +70,19 @@ abstract class AbstractSelect2TypeExtension extends AbstractSelect2ConfigTypeExt
         $this->type = $type;
 
         parent::__construct($defaultPageSize, $choiceListFactory);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        if (!$options['select2']['enabled'] || $options['multiple'] || !$options['select2']['tags']) {
+            return;
+        }
+
+        $builder->resetViewTransformers();
+        $builder->addViewTransformer(new Select2ChoiceToValueTransformer($options['choice_loader']));
     }
 
     /**

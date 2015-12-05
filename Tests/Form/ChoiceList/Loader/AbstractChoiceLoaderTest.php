@@ -51,6 +51,11 @@ abstract class AbstractChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     abstract protected function getValidStructuredValuesWithNewTags($group);
 
     /**
+     * @return array
+     */
+    abstract protected function getDataChoicesForValues();
+
+    /**
      * @param bool $group
      *
      * @return array
@@ -131,7 +136,7 @@ abstract class AbstractChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadChoiceListForView($group)
     {
         $loader = $this->createChoiceLoader($group);
-        $choiceList = $loader->loadChoiceListForView(array(0, 1, 'Test'));
+        $choiceList = $loader->loadChoiceListForView(array('foo', 'bar', 'Test'));
 
         $this->assertInstanceOf('Symfony\Component\Form\ChoiceList\ChoiceListInterface', $choiceList);
         $this->assertEquals($this->getValidStructuredValues($group), $choiceList->getStructuredValues());
@@ -146,7 +151,7 @@ abstract class AbstractChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = $this->createChoiceLoader($group);
         $loader->setAllowAdd(true);
-        $choiceList = $loader->loadChoiceListForView(array(0, 1, 'Test'));
+        $choiceList = $loader->loadChoiceListForView(array('foo', 'bar', 'Test'));
 
         $this->assertInstanceOf('Symfony\Component\Form\ChoiceList\ChoiceListInterface', $choiceList);
 
@@ -173,7 +178,7 @@ abstract class AbstractChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = $this->createChoiceLoader($group);
 
-        $this->assertEquals($this->getValidChoicesForValues($group), $loader->loadChoicesForValues(array(0, 'Test')));
+        $this->assertEquals($this->getValidChoicesForValues($group), $loader->loadChoicesForValues($this->getDataChoicesForValues()));
     }
 
     /**
@@ -186,7 +191,7 @@ abstract class AbstractChoiceLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = $this->createChoiceLoader($group);
         $loader->setAllowAdd(true);
 
-        $this->assertEquals($this->getValidChoicesForValuesWithNewTags($group), $loader->loadChoicesForValues(array(0, 'Test')));
+        $this->assertEquals($this->getValidChoicesForValuesWithNewTags($group), $loader->loadChoicesForValues($this->getDataChoicesForValues()));
     }
 
     /**

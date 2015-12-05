@@ -42,8 +42,8 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
         }
 
         try {
-            $selector = $builder->getFormFactory()->createBuilder($options['type'], null, array_merge(
-                $this->normalizeOptions($options, $options['options']), array(
+            $selector = $builder->getFormFactory()->createBuilder($options['entry_type'], null, array_merge(
+                $this->normalizeOptions($options, $options['entry_options']), array(
                     'multiple' => true,
                 ))
             );
@@ -51,7 +51,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
             $builder->setAttribute('choice_loader', $selector->getOption('choice_loader'));
         } catch (UndefinedOptionsException $e) {
             $msg = 'The "%s" type is not an "choice" with Select2 extension, because: %s';
-            throw new InvalidConfigurationException(sprintf($msg, $options['type'], lcfirst($e->getMessage())), 0, $e);
+            throw new InvalidConfigurationException(sprintf($msg, $options['entry_type'], lcfirst($e->getMessage())), 0, $e);
         }
     }
 
@@ -90,7 +90,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
         parent::configureOptions($resolver);
 
         $resolver->setDefaults(array(
-            'type' => function (Options $options, $value) {
+            'entry_type' => function (Options $options, $value) {
                 return $options['select2']['enabled'] ? 'choice' : $value;
             },
             'allow_add' => function (Options $options, $value) {
@@ -106,6 +106,18 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
 
         $resolver->setNormalizer('prototype', function (Options $options, $value) {
             return $options['select2']['enabled'] ? false : $value;
+        });
+
+        $resolver->setNormalizer('entry_options', function (Options $options, $value) {
+            if ($options['select2']['enabled']) {
+                $value = array_merge($value, array(
+                    'select2' => array_merge($options['select2'], array(
+                        'tags' => $options['allow_add'],
+                    )),
+                ));
+            }
+
+            return $value;
         });
     }
 

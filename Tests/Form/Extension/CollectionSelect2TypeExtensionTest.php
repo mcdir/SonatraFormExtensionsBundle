@@ -57,7 +57,7 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
     protected function mergeOptions(array $options)
     {
         $options = parent::mergeOptions($options);
-        $options['type'] = 'currency';
+        $options['entry_type'] = 'currency';
         $options['select2'] = array_merge_recursive(isset($options['select2']) ? $options['select2'] : array(), array('enabled' => true));
 
         return $options;
@@ -299,7 +299,7 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
         $this->setExpectedException('Symfony\Component\Form\Exception\InvalidConfigurationException', $msg);
 
         $options = $this->mergeOptions(array());
-        $options['type'] = 'text';
+        $options['entry_type'] = 'text';
 
         $this->factory->create($this->getExtensionTypeName(), null, $options);
     }
@@ -324,12 +324,12 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
         $form = $this->factory->create($this->getExtensionTypeName(), null, $options);
 
-        $this->assertSame('choice', $form->getConfig()->getOption('type'));
+        $this->assertSame('choice', $form->getConfig()->getOption('entry_type'));
     }
 
     public function testAllowAddTag()
     {
-        $options = array('allow_add' => true, 'options' => array('choices' => array('foo' => 'Bar')));
+        $options = array('allow_add' => true, 'entry_options' => array('choices' => array('Bar' => 'foo')));
         $data = array('foo', 'Baz');
         $form = $this->factory->create($this->getExtensionTypeName(), $data, $this->mergeOptions($options));
         $view = $form->createView();
@@ -349,7 +349,7 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
     public function testDenyAddTag()
     {
-        $options = array('allow_add' => false, 'options' => array('choices' => array('foo' => 'Bar')));
+        $options = array('allow_add' => false, 'entry_options' => array('choices' => array('Bar' => 'foo')));
         $data = array('foo', 'Baz');
         $form = $this->factory->create($this->getExtensionTypeName(), $data, $this->mergeOptions($options));
         $view = $form->createView();

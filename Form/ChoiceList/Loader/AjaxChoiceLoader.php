@@ -34,7 +34,7 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
      * @param ChoiceListFactoryInterface|null $factory        The factory for creating
      *                                                        the loaded choice list
      */
-    public function __construct(array $choices, $choiceAsValues = false, $factory = null)
+    public function __construct(array $choices, $choiceAsValues = true, $factory = null)
     {
         parent::__construct($choices, $choiceAsValues, $factory);
 

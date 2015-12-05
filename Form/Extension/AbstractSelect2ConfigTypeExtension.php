@@ -55,6 +55,7 @@ abstract class AbstractSelect2ConfigTypeExtension extends AbstractTypeExtension
     {
         $resolver->setDefaults(array(
             'select2' => array(),
+            'choices_as_values' => true,
         ));
 
         $resolver->setAllowedTypes('select2', 'array');

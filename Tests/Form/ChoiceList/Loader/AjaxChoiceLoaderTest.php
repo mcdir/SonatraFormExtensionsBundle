@@ -54,15 +54,15 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
         if ($group) {
             return array(
                 'Group 1' => array(
-                    'Bar' => '0',
-                    'Foo' => '1',
+                    'Bar' => 'foo',
+                    'Foo' => 'bar',
                 ),
             );
         }
 
         return array(
-            'Bar' => '0',
-            'Foo' => '1',
+            'Bar' => 'foo',
+            'Foo' => 'bar',
         );
     }
 
@@ -75,10 +75,10 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
 
         if ($group) {
             $existing['-------'] = array(
-                'Test' => '2',
+                'Test' => 'Test',
             );
         } else {
-            $existing['Test'] = '2';
+            $existing['Test'] = 'Test';
         }
 
         return $existing;
@@ -92,16 +92,16 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
         if ($group) {
             $valid = array(
                 'Group 1' => array(
-                    'Bar' => '0',
+                    'Bar' => 'foo',
                 ),
                 'Group 2' => array(
-                    'Baz' => '1',
+                    'Baz' => 'baz',
                 ),
             );
         } else {
             $valid = array(
-                'Bar' => '0',
-                'Baz' => '1',
+                'Bar' => 'foo',
+                'Baz' => 'baz',
             );
         }
 
@@ -116,42 +116,53 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
         if ($group) {
             $valid = array(
                 'Group 1' => array(
-                    'Bar' => '0',
-                    'Foo' => '1',
+                    'Bar' => 'foo',
+                    'Foo' => 'bar',
                 ),
             );
 
             if ($pageSize <= 0) {
                 $valid['Group 2'] = array(
-                    'Baz' => '2',
+                    'Baz' => 'baz',
                 );
             }
 
             if ($pageNumber === 2) {
                 $valid = array(
                     'Group 2' => array(
-                        'Baz' => '0',
+                        'Baz' => 'baz',
                     ),
                 );
             }
         } else {
             $valid = array(
-                'Bar' => '0',
-                'Foo' => '1',
+                'Bar' => 'foo',
+                'Foo' => 'bar',
             );
 
             if ($pageSize <= 0) {
-                $valid['Baz'] = '2';
+                $valid['Baz'] = 'baz';
             }
 
             if ($pageNumber === 2) {
                 $valid = array(
-                    'Baz' => '0',
+                    'Baz' => 'baz',
                 );
             }
         }
 
         return $valid;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDataChoicesForValues()
+    {
+        return array(
+            'foo',
+            'Test',
+        );
     }
 
     /**
@@ -192,7 +203,7 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
     protected function getValidValuesForChoices($group)
     {
         return array(
-            '0',
+            'foo',
         );
     }
 
@@ -213,8 +224,8 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
     protected function getValidValuesForChoicesWithNewTags($group)
     {
         return array(
-            '0',
-            'Test',
+            2 => '0',
+            3 => 'Test',
         );
     }
 }
