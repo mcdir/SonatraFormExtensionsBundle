@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -36,6 +37,6 @@ class DateJqueryTypeExtension extends DateTimeJqueryTypeExtension
      */
     public function getExtendedType()
     {
-        return 'date';
+        return DateType::class;
     }
 }

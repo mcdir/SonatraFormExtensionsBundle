@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
+use Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType;
+
 /**
  * Tests case for currency of base choice select2 form extension type.
  *
@@ -20,6 +22,6 @@ class CurrencyBaseChoiceSelect2TypeExtensionTest extends AbstractBaseChoiceSelec
 {
     protected function getExtensionTypeName()
     {
-        return 'currency';
+        return CurrencyType::class;
     }
 }

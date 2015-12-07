@@ -43,7 +43,7 @@ class DynamicChoiceLoaderTest extends AbstractChoiceLoaderTest
             );
         }
 
-        return new DynamicChoiceLoader($choices, true);
+        return new DynamicChoiceLoader($choices);
     }
 
     /**
@@ -161,51 +161,5 @@ class DynamicChoiceLoaderTest extends AbstractChoiceLoaderTest
             2 => '0',
             3 => 'Test',
         );
-    }
-
-    /**
-     * @dataProvider getIsGroup
-     *
-     * @param bool $group
-     */
-    public function testLoadFlippedChoiceListForView($group)
-    {
-        if ($group) {
-            $choices = array(
-                'Group 1' => array(
-                    'foo' => 'Bar',
-                    'bar' => 'Foo',
-                ),
-                'Group 2' => array(
-                    'baz' => 'Baz',
-                ),
-            );
-            $validValues = array(
-                'Group 1' => array(
-                    'Bar' => 'foo',
-                    'Foo' => 'bar',
-                ),
-                'Group 2' => array(
-                    'Baz' => 'baz',
-                ),
-            );
-        } else {
-            $choices = array(
-                'foo' => 'Bar',
-                'bar' => 'Foo',
-                'baz' => 'Baz',
-            );
-            $validValues = array(
-                'Bar' => 'foo',
-                'Foo' => 'bar',
-                'Baz' => 'baz',
-            );
-        }
-
-        $loader = new DynamicChoiceLoader($choices, false);
-        $choiceList = $loader->loadChoiceListForView(array('foo', 'bar', 'test'));
-
-        $this->assertInstanceOf('Symfony\Component\Form\ChoiceList\ChoiceListInterface', $choiceList);
-        $this->assertEquals($validValues, $choiceList->getStructuredValues());
     }
 }

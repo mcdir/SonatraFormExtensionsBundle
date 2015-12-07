@@ -83,10 +83,8 @@ class SonatraFormExtensionsExtensionTest extends \PHPUnit_Framework_TestCase
     public function testExtensionLoaderWithCustomTwigResources()
     {
         $container = $this->createContainer(array(), array(
-            'form' => array(
-                'resources' => array(
-                    'TestBundle:Form:form_test.html.twig',
-                ),
+            'form_themes' => array(
+                'TestBundle:Form:form_test.html.twig',
             ),
         ));
 

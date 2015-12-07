@@ -34,9 +34,14 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
     protected $requestStack;
 
     /**
-     * @var RouterInterface
+     * @var RouterInterface||\PHPUnit_Framework_MockObject_MockObject
      */
     protected $router;
+
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $dispatcher;
 
     protected function setUp()
     {
@@ -58,14 +63,9 @@ abstract class AbstractSelect2TypeExtensionTest extends TypeTestCase
             }))
         ;
 
-        /* @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $this->dispatcher;
-        /* @var RouterInterface $router */
-        $router = $this->router;
-
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, $this->getExtensionTypeName(), 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($this->dispatcher, $this->requestStack, $this->router, $this->getExtensionTypeName(), 10))
             ->getFormFactory();
 
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');

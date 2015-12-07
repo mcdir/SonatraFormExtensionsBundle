@@ -45,12 +45,10 @@ class Select2Util
 
         if ($options['select2']['ajax']) {
             return new AjaxChoiceLoader($options['choices'],
-                $options['choices_as_values'],
                 $choiceListFactory);
         }
 
         return new DynamicChoiceLoader($options['choices'],
-            $options['choices_as_values'],
             $choiceListFactory);
     }
 }

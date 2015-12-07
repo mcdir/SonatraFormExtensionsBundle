@@ -84,7 +84,6 @@ abstract class DoctrineSelect2TypeExtension extends AbstractTypeExtension
                         $options['em'],
                         $options['class'],
                         $qbParts,
-                        $options['loader'],
                         $options['select2']['ajax'],
                     ));
 
@@ -93,9 +92,7 @@ abstract class DoctrineSelect2TypeExtension extends AbstractTypeExtension
                     }
                 }
 
-                if ($options['loader']) {
-                    $entityLoader = $options['loader'];
-                } elseif (null !== $options['query_builder']) {
+                if (null !== $options['query_builder']) {
                     $entityLoader = $type->getLoader($options['em'], $options['query_builder'], $options['class']);
                 } else {
                     $queryBuilder = $options['em']->getRepository($options['class'])->createQueryBuilder('e');

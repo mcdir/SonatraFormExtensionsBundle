@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -56,6 +57,6 @@ class TimeJqueryTypeExtension extends DateTimeJqueryTypeExtension
      */
     public function getExtendedType()
     {
-        return 'time';
+        return TimeType::class;
     }
 }

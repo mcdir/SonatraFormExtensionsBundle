@@ -70,7 +70,7 @@ class AjaxORMQueryBuilderLoader implements AjaxEntityLoaderInterface
     public function getSize()
     {
         if (null === $this->size) {
-            $qb = clone ($this->queryBuilder);
+            $qb = clone $this->queryBuilder;
             $alias = current($qb->getRootAliases());
             $qb->setParameters($this->queryBuilder->getParameters());
             $qb->select("count($alias)");
@@ -87,7 +87,7 @@ class AjaxORMQueryBuilderLoader implements AjaxEntityLoaderInterface
     {
         $pageSize = $pageSize < 1 ? 1 : $pageSize;
         $pageNumber = $pageNumber < 1 ? 1 : $pageNumber;
-        $qb = clone ($this->queryBuilder);
+        $qb = clone $this->queryBuilder;
 
         $qb->setFirstResult(($pageNumber - 1) * $pageSize)
             ->setMaxResults($pageSize);
@@ -100,7 +100,7 @@ class AjaxORMQueryBuilderLoader implements AjaxEntityLoaderInterface
      */
     public function getEntities()
     {
-        $qb = clone ($this->queryBuilder);
+        $qb = clone $this->queryBuilder;
 
         return $qb->getQuery()->getResult();
     }
@@ -110,7 +110,7 @@ class AjaxORMQueryBuilderLoader implements AjaxEntityLoaderInterface
      */
     public function getEntitiesByIds($identifier, array $values)
     {
-        $qb = clone ($this->backupQueryBuilder);
+        $qb = clone $this->backupQueryBuilder;
         $alias = current($qb->getRootAliases());
         $parameter = 'AjaxORMQueryBuilderLoader_getEntitiesByIds_'.$identifier;
         $where = $qb->expr()->in($alias.'.'.$identifier, ':'.$parameter);
@@ -144,7 +144,7 @@ class AjaxORMQueryBuilderLoader implements AjaxEntityLoaderInterface
      */
     public function reset()
     {
-        $this->queryBuilder = clone ($this->backupQueryBuilder);
+        $this->queryBuilder = clone $this->backupQueryBuilder;
         $this->size = null;
     }
 }

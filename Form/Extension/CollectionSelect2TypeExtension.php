@@ -12,6 +12,8 @@
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -29,7 +31,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
      */
     public function getExtendedType()
     {
-        return 'collection';
+        return CollectionType::class;
     }
 
     /**
@@ -91,7 +93,7 @@ class CollectionSelect2TypeExtension extends AbstractSelect2ConfigTypeExtension
 
         $resolver->setDefaults(array(
             'entry_type' => function (Options $options, $value) {
-                return $options['select2']['enabled'] ? 'choice' : $value;
+                return $options['select2']['enabled'] ? ChoiceType::class : $value;
             },
             'allow_add' => function (Options $options, $value) {
                 return $options['select2']['enabled'] ? true : $value;

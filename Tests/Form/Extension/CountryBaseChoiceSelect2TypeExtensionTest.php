@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
+
 /**
  * Tests case for country of base choice select2 form extension type.
  *
@@ -20,6 +22,6 @@ class CountryBaseChoiceSelect2TypeExtensionTest extends AbstractBaseChoiceSelect
 {
     protected function getExtensionTypeName()
     {
-        return 'country';
+        return CountryType::class;
     }
 }

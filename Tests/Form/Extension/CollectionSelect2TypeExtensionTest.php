@@ -14,8 +14,12 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExtension;
+use Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Forms;
@@ -40,9 +44,9 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, 'choice', 10))
-            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, 'currency', 10))
-            ->addTypeExtension(new BaseChoiceSelect2TypeExtension('currency'))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, ChoiceType::class, 10))
+            ->addTypeExtension(new ChoiceSelect2TypeExtension($dispatcher, $this->requestStack, $router, CurrencyType::class, 10))
+            ->addTypeExtension(new BaseChoiceSelect2TypeExtension(CurrencyType::class))
             ->addTypeExtension(new CollectionSelect2TypeExtension(10))
             ->getFormFactory();
 
@@ -51,13 +55,13 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
     protected function getExtensionTypeName()
     {
-        return 'collection';
+        return CollectionType::class;
     }
 
     protected function mergeOptions(array $options)
     {
         $options = parent::mergeOptions($options);
-        $options['entry_type'] = 'currency';
+        $options['entry_type'] = CurrencyType::class;
         $options['select2'] = array_merge_recursive(isset($options['select2']) ? $options['select2'] : array(), array('enabled' => true));
 
         return $options;
@@ -295,11 +299,11 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
     public function testWithoutChoice()
     {
-        $msg = 'The "text" type is not an "choice" with Select2 extension, because: the options "multiple", "select2" do not exist.';
+        $msg = 'The "Symfony\Component\Form\Extension\Core\Type\TextType" type is not an "choice" with Select2 extension, because: the options "multiple", "select2" do not exist.';
         $this->setExpectedException('Symfony\Component\Form\Exception\InvalidConfigurationException', $msg);
 
         $options = $this->mergeOptions(array());
-        $options['entry_type'] = 'text';
+        $options['entry_type'] = TextType::class;
 
         $this->factory->create($this->getExtensionTypeName(), null, $options);
     }
@@ -324,7 +328,7 @@ class CollectionSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTes
 
         $form = $this->factory->create($this->getExtensionTypeName(), null, $options);
 
-        $this->assertSame('choice', $form->getConfig()->getOption('entry_type'));
+        $this->assertSame('Symfony\Component\Form\Extension\Core\Type\ChoiceType', $form->getConfig()->getOption('entry_type'));
     }
 
     public function testAllowAddTag()

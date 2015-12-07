@@ -7,65 +7,65 @@
     <services>
         <!-- Types -->
         <service id="form.type.sonatra.currency" class="Sonatra\Bundle\FormExtensionsBundle\Form\Type\CurrencyType">
-            <tag name="form.type" alias="currency" />
+            <tag name="form.type" />
         </service>
 
         <!-- Extensions -->
         <service id="form.type_extension.sonatra.choice_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\ChoiceSelect2TypeExtension">
-            <tag name="form.type_extension" alias="choice" />
+            <tag name="form.type_extension" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="router" />
-            <argument>choice</argument>
+            <argument>Symfony\Component\Form\Extension\Core\Type\ChoiceType</argument>
         </service>
 
         <service id="form.type_extension.sonatra.country_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
-            <tag name="form.type_extension" alias="country" />
-            <argument>country</argument>
+            <tag name="form.type_extension" />
+            <argument>Symfony\Component\Form\Extension\Core\Type\CountryType</argument>
         </service>
 
         <service id="form.type_extension.sonatra.currency_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
-            <tag name="form.type_extension" alias="currency" />
-            <argument>currency</argument>
+            <tag name="form.type_extension" />
+            <argument>Symfony\Component\Form\Extension\Core\Type\CurrencyType</argument>
         </service>
 
         <service id="form.type_extension.sonatra.language_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
-            <tag name="form.type_extension" alias="language" />
-            <argument>language</argument>
+            <tag name="form.type_extension" />
+            <argument>Symfony\Component\Form\Extension\Core\Type\LanguageType</argument>
         </service>
 
         <service id="form.type_extension.sonatra.locale_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
-            <tag name="form.type_extension" alias="locale" />
-            <argument>locale</argument>
+            <tag name="form.type_extension" />
+            <argument>Symfony\Component\Form\Extension\Core\Type\LocaleType</argument>
         </service>
 
         <service id="form.type_extension.sonatra.timezone_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BaseChoiceSelect2TypeExtension">
-            <tag name="form.type_extension" alias="timezone" />
-            <argument>timezone</argument>
+            <tag name="form.type_extension" />
+            <argument>Symfony\Component\Form\Extension\Core\Type\TimezoneType</argument>
         </service>
 
         <service id="form.type_extension.sonatra.collection_select2" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\CollectionSelect2TypeExtension">
-            <tag name="form.type_extension" alias="collection" />
+            <tag name="form.type_extension" />
         </service>
 
         <service id="form.type_extension.sonatra.entity_select2" class="Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension\EntitySelect2TypeExtension">
-            <tag name="form.type_extension" alias="entity" />
+            <tag name="form.type_extension" />
         </service>
 
         <service id="form.type_extension.sonatra.datetime_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateTimeJqueryTypeExtension">
-            <tag name="form.type_extension" alias="datetime" />
+            <tag name="form.type_extension" />
         </service>
 
         <service id="form.type_extension.sonatra.date_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateJqueryTypeExtension">
-            <tag name="form.type_extension" alias="date" />
+            <tag name="form.type_extension" />
         </service>
 
         <service id="form.type_extension.sonatra.time_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\TimeJqueryTypeExtension">
-            <tag name="form.type_extension" alias="time" />
+            <tag name="form.type_extension" />
         </service>
 
         <service id="form.type_extension.sonatra.birthday_jquery" class="Sonatra\Bundle\FormExtensionsBundle\Form\Extension\BirthdayJqueryTypeExtension">
-            <tag name="form.type_extension" alias="birthday" />
+            <tag name="form.type_extension" />
         </service>
     </services>
 </container>

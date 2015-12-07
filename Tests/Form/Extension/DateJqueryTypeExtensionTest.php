@@ -13,6 +13,7 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateJqueryTypeExtension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\Extension\DateTimeJqueryTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -44,7 +45,7 @@ class DateJqueryTypeExtensionTest extends TypeTestCase
 
     public function testDefaultOption()
     {
-        $form = $this->factory->create('date', null, array('locale' => 'en'));
+        $form = $this->factory->create(DateType::class, null, array('locale' => 'en'));
         $config = $form->getConfig();
 
         $this->assertEquals('single_text', $config->getOption('widget'));
@@ -56,14 +57,14 @@ class DateJqueryTypeExtensionTest extends TypeTestCase
 
     public function testFormatFr()
     {
-        $form = $this->factory->create('date', null, array('locale' => 'fr_FR'));
+        $form = $this->factory->create(DateType::class, null, array('locale' => 'fr_FR'));
 
         $this->assertEquals('dd/MM/yyyy', $form->getConfig()->getOption('format'));
     }
 
     public function testDefaultAttributes()
     {
-        $form = $this->factory->create('date', null, array('locale' => 'en'));
+        $form = $this->factory->create(DateType::class, null, array('locale' => 'en'));
         $view = $form->createView();
         $validAttr = array(
             'data-locale' => 'en',

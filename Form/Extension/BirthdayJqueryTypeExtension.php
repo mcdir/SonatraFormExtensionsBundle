@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
  */
@@ -21,6 +23,6 @@ class BirthdayJqueryTypeExtension extends DateJqueryTypeExtension
      */
     public function getExtendedType()
     {
-        return 'birthday';
+        return BirthdayType::class;
     }
 }

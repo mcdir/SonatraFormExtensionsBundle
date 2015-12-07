@@ -11,7 +11,6 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Loader;
 
-use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 
 /**
@@ -23,11 +22,6 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
      * @var array
      */
     protected $choices;
-
-    /**
-     * @var bool
-     */
-    protected $choiceAsValues;
 
     /**
      * @var int|null
@@ -42,18 +36,16 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     /**
      * Creates a new choice loader.
      *
-     * @param array                           $choices        The choices
-     * @param bool                            $choiceAsValues Check if the values are the keys in choices
-     * @param ChoiceListFactoryInterface|null $factory        The factory for creating
-     *                                                        the loaded choice list
+     * @param array                           $choices The choices
+     * @param ChoiceListFactoryInterface|null $factory The factory for creating
+     *                                                 the loaded choice list
      */
-    public function __construct(array $choices, $choiceAsValues = true, $factory = null)
+    public function __construct(array $choices, $factory = null)
     {
         parent::__construct($factory);
 
         $this->allChoices = true;
         $this->choices = $choices;
-        $this->choiceAsValues = $choiceAsValues;
     }
 
     /**
@@ -75,7 +67,7 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     {
         $choices = $this->getSelectedChoices($values, $value);
 
-        return $this->createChoiceList($choices, $value);
+        return $this->factory->createListFromChoices($choices, $value);
     }
 
     /**
@@ -87,7 +79,9 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
             return $this->choiceList;
         }
 
-        return $this->choiceList = $this->createChoiceList($this->getChoicesForChoiceList(), $value);
+        $choices = $this->getChoicesForChoiceList();
+
+        return $this->choiceList = $this->factory->createListFromChoices($choices, $value);
     }
 
     /**
@@ -140,23 +134,6 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     }
 
     /**
-     * Create the choice list.
-     *
-     * @param array         $choices The choices
-     * @param null|callable $value   The callable function
-     *
-     * @return ChoiceListInterface
-     */
-    protected function createChoiceList(array $choices, $value = null)
-    {
-        if (!$this->choiceAsValues) {
-            return $this->factory->createListFromFlippedChoices($choices, $value);
-        }
-
-        return $this->factory->createListFromChoices($choices, $value);
-    }
-
-    /**
      * @param array $choices The choices
      */
     protected function initialize($choices)
@@ -195,15 +172,13 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
                 $isGrouped = true;
                 foreach ($choice as $choiceKey => $choiceValue) {
                     if ($this->allChoices || in_array($choiceValue, $values)) {
-                        $key = $this->choiceAsValues ? $choiceKey : $choiceValue;
-                        $choices[$group][$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
-                        $allChoices[$key] = $this->choiceAsValues ? $choiceValue : $choiceKey;
+                        $choices[$group][$choiceKey] = $choiceValue;
+                        $allChoices[$choiceKey] = $choiceValue;
                     }
                 }
             } elseif ($this->allChoices || in_array($choice, $values)) {
-                $key = $this->choiceAsValues ? $group : $choice;
-                $choices[$key] = $this->choiceAsValues ? $choice : $group;
-                $allChoices[$key] = $this->choiceAsValues ? $choice : $group;
+                $choices[$group] = $choice;
+                $allChoices[$group] = $choice;
             }
         }
 
@@ -245,8 +220,7 @@ class DynamicChoiceLoader extends AbstractDynamicChoiceLoader
     protected function addNewTagsInChoices(array $choices, array $allChoices, array $values, $isGrouped)
     {
         foreach ($values as $value) {
-            if (($this->choiceAsValues && !in_array($value, $allChoices))
-                    || (!$this->choiceAsValues && !isset($allChoices[$value]))) {
+            if (!in_array($value, $allChoices)) {
                 if ($isGrouped) {
                     $choices['-------'][$value] = $value;
                 } else {

@@ -41,7 +41,7 @@ class LoaderUtil
      *
      * @param AjaxChoiceLoaderInterface $choiceLoader The ajax choice loader
      *
-     * @return integer[] The startTo and endTo
+     * @return int[] The startTo and endTo
      */
     protected static function getRangeValues(AjaxChoiceLoaderInterface $choiceLoader)
     {

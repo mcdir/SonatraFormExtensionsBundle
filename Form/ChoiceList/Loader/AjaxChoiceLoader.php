@@ -29,14 +29,13 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
     /**
      * Creates a new choice loader.
      *
-     * @param array                           $choices        The choices
-     * @param bool                            $choiceAsValues Check if the values are the keys in choices
-     * @param ChoiceListFactoryInterface|null $factory        The factory for creating
-     *                                                        the loaded choice list
+     * @param array                           $choices The choices
+     * @param ChoiceListFactoryInterface|null $factory The factory for creating
+     *                                                 the loaded choice list
      */
-    public function __construct(array $choices, $choiceAsValues = true, $factory = null)
+    public function __construct(array $choices, $factory = null)
     {
-        parent::__construct($choices, $choiceAsValues, $factory);
+        parent::__construct($choices, $factory);
 
         $this->allChoices = false;
         $this->initAjax();
@@ -50,7 +49,7 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
     {
         $choices = LoaderUtil::paginateChoices($this, $this->filteredChoices);
 
-        return $this->createChoiceList($choices, $value);
+        return $this->factory->createListFromChoices($choices, $value);
     }
 
     /**
@@ -137,9 +136,7 @@ class AjaxChoiceLoader extends DynamicChoiceLoader implements AjaxChoiceLoaderIn
      */
     protected function getIdAndLabel($key, $value)
     {
-        return $this->choiceAsValues
-            ? array($value, $key)
-            : array($key, $value);
+        return array($value, $key);
     }
 
     /**

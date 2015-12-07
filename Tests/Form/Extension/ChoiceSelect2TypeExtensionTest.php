@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
 /**
  * Tests case for choice of select2 form extension type.
  *
@@ -25,7 +27,7 @@ class ChoiceSelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
     protected function getExtensionTypeName()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     protected function getSingleData()

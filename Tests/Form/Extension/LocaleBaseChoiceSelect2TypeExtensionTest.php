@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\LocaleType;
+
 /**
  * Tests case for locale of base choice select2 form extension type.
  *
@@ -20,6 +22,6 @@ class LocaleBaseChoiceSelect2TypeExtensionTest extends AbstractBaseChoiceSelect2
 {
     protected function getExtensionTypeName()
     {
-        return 'locale';
+        return LocaleType::class;
     }
 }

@@ -13,6 +13,7 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\ChoiceList\AjaxORMQueryBuilderLoader;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 /**
  * @author François Pluchino <francois.pluchino@sonatra.com>
@@ -24,7 +25,7 @@ class EntitySelect2TypeExtension extends DoctrineSelect2TypeExtension
      */
     public function getExtendedType()
     {
-        return 'entity';
+        return EntityType::class;
     }
 
     /**

@@ -11,6 +11,7 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Doctrine\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\SchemaTool;
 use Sonatra\Bundle\FormExtensionsBundle\Doctrine\Form\Extension\EntitySelect2TypeExtension;
 use Sonatra\Bundle\FormExtensionsBundle\Form\ChoiceList\Formatter\Select2AjaxChoiceListFormatter;
@@ -39,7 +40,7 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
     protected $em;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     private $emRegistry;
 
@@ -150,7 +151,7 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
     protected function getExtensionTypeName()
     {
-        return 'entity';
+        return EntityType::class;
     }
 
     protected function getSingleData()
@@ -228,21 +229,5 @@ class EntitySelect2TypeExtensionTest extends AbstractSelect2TypeExtensionTest
 
         // test cache with hash
         $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
-    }
-
-    public function testDeprecatedLoader()
-    {
-        $loader = $this->getMock('Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface');
-
-        $options = array(
-            'loader' => $loader,
-            'select2' => array(
-                'enabled' => true,
-            ),
-        );
-
-        $form = $this->factory->create($this->getExtensionTypeName(), $this->getSingleData(), $this->mergeOptions($options));
-        $config = $form->getConfig();
-        $this->assertInstanceOf($this->getDynamicLoaderInterface(), $config->getOption('choice_loader'));
     }
 }

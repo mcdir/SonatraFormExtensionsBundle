@@ -43,7 +43,7 @@ class AjaxChoiceLoaderTest extends AbstractAjaxChoiceLoaderTest
             );
         }
 
-        return new AjaxChoiceLoader($choices, true);
+        return new AjaxChoiceLoader($choices);
     }
 
     /**

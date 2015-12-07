@@ -11,6 +11,8 @@
 
 namespace Sonatra\Bundle\FormExtensionsBundle\Tests\Form\Extension;
 
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
+
 /**
  * Tests case for language of base choice select2 form extension type.
  *
@@ -20,6 +22,6 @@ class LanguageBaseChoiceSelect2TypeExtensionTest extends AbstractBaseChoiceSelec
 {
     protected function getExtensionTypeName()
     {
-        return 'language';
+        return LanguageType::class;
     }
 }

@@ -30,8 +30,8 @@ class FormTemplatePass implements CompilerPassInterface
         $resources = $container->getParameter('twig.form.resources');
         $offset = count($resources);
 
-        if (isset($configs[0]['form']['resources'])) {
-            $configResources = $configs[0]['form']['resources'];
+        if (isset($configs[0]['form_themes'])) {
+            $configResources = $configs[0]['form_themes'];
 
             $offset = array_search($configResources[count($configResources) - 1], $resources);
         }
