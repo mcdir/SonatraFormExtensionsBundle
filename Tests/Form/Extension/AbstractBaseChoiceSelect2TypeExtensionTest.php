@@ -17,6 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
@@ -85,6 +86,6 @@ abstract class AbstractBaseChoiceSelect2TypeExtensionTest extends TypeTestCase
         $select2Opts = $config->getOption('select2');
         $this->assertTrue(array_key_exists('ajax_route', $select2Opts));
         $this->assertNull($select2Opts['ajax_route']);
-        $this->assertEquals('sonatra_form_extensions_ajax_'.$this->getExtensionTypeName(), $config->getAttribute('select2_ajax_route'));
+        $this->assertEquals('sonatra_form_extensions_ajax_'.StringUtil::fqcnToBlockPrefix($this->getExtensionTypeName()), $config->getAttribute('select2_ajax_route'));
     }
 }

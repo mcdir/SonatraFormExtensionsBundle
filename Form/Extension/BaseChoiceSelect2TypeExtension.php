@@ -13,6 +13,7 @@ namespace Sonatra\Bundle\FormExtensionsBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Util\StringUtil;
 
 /**
  * Base of choice type extension for types that have choice type for parent type.
@@ -42,7 +43,7 @@ class BaseChoiceSelect2TypeExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (null === $options['select2']['ajax_route']) {
-            $builder->setAttribute('select2_ajax_route', 'sonatra_form_extensions_ajax_'.$this->type);
+            $builder->setAttribute('select2_ajax_route', 'sonatra_form_extensions_ajax_'.StringUtil::fqcnToBlockPrefix($this->type));
         }
     }
 
