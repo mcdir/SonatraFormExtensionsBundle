@@ -60,15 +60,14 @@ abstract class AbstractBaseChoiceSelect2TypeExtensionTest extends TypeTestCase
             ->addTypeExtension(new BaseChoiceSelect2TypeExtension($this->getExtensionTypeName()))
             ->getFormFactory();
 
-        $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->builder = new FormBuilder(null, null, $this->dispatcher, $this->factory);
+        $this->builder = new FormBuilder(null, null, $dispatcher, $this->factory);
     }
 
     protected function tearDown()
     {
         parent::tearDown();
 
-        $this->request = null;
+        $this->requestStack = null;
         $this->router = null;
     }
 
